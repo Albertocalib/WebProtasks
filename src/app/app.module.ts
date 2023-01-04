@@ -11,6 +11,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatDialogModule} from "@angular/material/dialog";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
+import {LoginService} from "./logIn.service";
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import {HttpClientModule} from "@angular/common/http";
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [LoginService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

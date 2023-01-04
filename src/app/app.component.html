@@ -11,7 +11,7 @@
 
 <div class="content" role="main">
   <mat-dialog-content>
-    <form #loginForm="ngForm" (keyup.enter)="logIn($event,userElement.value,passElement.value)">
+    <form (keyup.enter)="logIn($event,userElement.value,passElement.value)">
         <mat-form-field class="example-full-width">
           <input matInput #userElement #userControl="ngModel" placeholder="Username" type="text"
                  maxlength="30" name="username" [(ngModel)]="username" required>

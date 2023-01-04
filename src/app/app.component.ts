@@ -1,6 +1,7 @@
-import {Component} from '@angular/core';
-import {FormControl, FormGroupDirective, NgForm, Validators} from '@angular/forms';
-import {ErrorStateMatcher} from '@angular/material/core';
+import { Component} from '@angular/core';
+import {LoginService} from "./logIn.service";
+import {Router} from "@angular/router";
+
 
 @Component({
   selector: 'app-root',
@@ -9,26 +10,34 @@ import {ErrorStateMatcher} from '@angular/material/core';
 })
 export class AppComponent{
   hide = true;
-  emailFormControl = new FormControl('', [Validators.required, Validators.email]);
   title = "WebProtasks"
-  matcher = new MyErrorStateMatcher();
   username: string | undefined;
   password: string | undefined;
 
-
-  logIn($event: any, email:String, password:String) {
-    console.log(email)
-    console.log(password)
+  constructor(
+    public loginService: LoginService,
+    public router: Router
+  )
+  {
 
   }
-}
 
-/** Error when invalid control is dirty, touched, or submitted. */
-export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  logIn($event: any, email:string, password:string) {
+    console.log(email);
+    console.log(password);
+    this.loginService.logIn(email, password).subscribe(
+      (u) => {
+        this.router.navigate(['/']);
+        console.log(u);
+      },
+      (error) => {
+        console.log(error);
+        alert('Invalid user or password');
+      },
+    );
+
   }
+
 }
 
 
