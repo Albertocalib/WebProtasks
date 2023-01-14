@@ -1,0 +1,78 @@
+<div class="content" role="main">
+  <mat-dialog-content>
+    <form (keyup.enter)="signUp()">
+      <div class="row">
+        <mat-form-field appearance="fill" class="example-full-width" >
+          <mat-label>Nombre</mat-label>
+          <input matInput name="name" [(ngModel)]="userRegister.name">
+        </mat-form-field>
+      </div>
+      <div class="row">
+
+        <mat-form-field appearance="fill" class="example-full-width "  >
+          <mat-label>Apellidos</mat-label>
+          <input matInput [(ngModel)]="userRegister.surname" name="surname">
+        </mat-form-field>
+      </div>
+      <div class="row">
+
+        <mat-form-field appearance="fill" class="example-full-width ">
+          <mat-label>Nombre de Usuario</mat-label>
+          <input matInput [(ngModel)]="userRegister.username" name="username">
+        </mat-form-field>
+      </div>
+      <div class="row">
+
+        <mat-form-field appearance="fill" class="example-full-width ">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" name="email" #emailControl="ngModel" [(ngModel)]="userRegister.email" email="true">
+          <mat-hint align="start">
+							<span [hidden]="!emailControl.errors?.['email'] || emailControl.pristine"
+                    class="tc-red-600">El email no es correcto</span>
+          </mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="fill" class="example-full-width " >
+          <input matInput #passElement #passControl="ngModel" placeholder="Password" type="password"
+                 name="password" [(ngModel)]="userRegister.password" [type]="hide ? 'password' : 'text'" required>
+          <span matPrefix>
+							<mat-icon>lock</mat-icon>
+						</span>
+          <mat-hint align="start">
+							<span [hidden]="!passControl.errors?.['required'] || passControl.pristine"
+                    class="tc-red-600">Required</span>
+          </mat-hint>
+          <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="fill">
+          <input matInput #passEqualsControl="ngModel" placeholder="Password" type="password"
+                 name="password1" [(ngModel)]="passEqualsElement" [type]="hide ? 'password' : 'text'" required>
+          <span matPrefix>
+							<mat-icon>lock</mat-icon>
+						</span>
+          <mat-hint align="start">
+							<span [hidden]="!passEqualsControl.errors?.['required'] || passEqualsControl.pristine"
+                    class="tc-red-600">Required</span>
+          </mat-hint>
+          <mat-hint align="end">
+							<span [hidden]="passEqualsElement==userRegister.password || passEqualsControl.pristine"
+                    class="tc-red-600">Passwords don't match</span>
+          </mat-hint>
+          <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </mat-form-field>
+      </div>
+      <div layout="row">
+        <button mat-raised-button color="primary" (click)="signUp()">Acceder
+        </button>
+      </div>
+
+    </form>
+
+  </mat-dialog-content>
+
+
+</div>
+

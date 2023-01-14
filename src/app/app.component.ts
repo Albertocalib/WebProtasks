@@ -1,6 +1,6 @@
 import { Component} from '@angular/core';
-import {LoginService} from "./logIn.service";
 import {Router} from "@angular/router";
+import {LoginService} from "./logIn/logIn.service";
 
 
 @Component({
@@ -9,35 +9,19 @@ import {Router} from "@angular/router";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent{
-  hide = true;
   title = "WebProtasks"
-  username: string | undefined;
-  password: string | undefined;
-
   constructor(
-    public loginService: LoginService,
-    public router: Router
+    public router: Router,
+    public loginService: LoginService
   )
   {
 
   }
 
-  logIn($event: any, email:string, password:string) {
-    console.log(email);
-    console.log(password);
-    this.loginService.logIn(email, password).subscribe(
-      (u) => {
-        this.router.navigate(['/']);
-        console.log(u);
-      },
-      (error) => {
-        console.log(error);
-        alert('Invalid user or password');
-      },
-    );
-
+  logOut(){
+    this.loginService.logOut()
+    this.router.navigate(["/logIn"])
   }
-
 }
 
 

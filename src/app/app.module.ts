@@ -11,11 +11,16 @@ import {MatInputModule} from '@angular/material/input';
 import {MatDialogModule} from "@angular/material/dialog";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
-import {LoginService} from "./logIn.service";
+import {LoginService} from "./logIn/logIn.service";
+import {signUpComponent} from "./SignUp/signUp.component";
+import {logInComponent} from "./logIn/logIn.component";
+import {AuthGuard} from "./AuthGuard";
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    signUpComponent,
+    logInComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +35,7 @@ import {LoginService} from "./logIn.service";
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [LoginService],
+  providers: [LoginService,AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
