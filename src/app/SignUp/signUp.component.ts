@@ -1,5 +1,5 @@
 import { Component} from '@angular/core';
-import {LoginService} from "../logIn/logIn.service";
+import {LoginService} from "../services/logIn.service";
 import {Router} from "@angular/router";
 import {User} from "../user.model";
 
@@ -29,7 +29,6 @@ export class signUpComponent {
     this.loginService.logIn(email, password).subscribe(
       (u) => {
         this.router.navigate(['/']);
-        console.log(u);
       },
       (error) => {
         console.log(error);
@@ -39,7 +38,6 @@ export class signUpComponent {
 
   }
   signUp(){
-    console.log("PATATAAA")
     this.loginService.register(this.userRegister).subscribe(
       (u:User)=>{
         alert("Cuenta creada satisfactoriamente");

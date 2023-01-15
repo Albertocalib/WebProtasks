@@ -1,6 +1,6 @@
-import { Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import {LoginService} from "./logIn/logIn.service";
+import {LoginService} from "./services/logIn.service";
 
 
 @Component({
@@ -12,10 +12,9 @@ export class AppComponent{
   title = "WebProtasks"
   constructor(
     public router: Router,
-    public loginService: LoginService
+    public loginService: LoginService,
   )
   {
-
   }
 
   logOut(){

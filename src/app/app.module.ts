@@ -11,16 +11,21 @@ import {MatInputModule} from '@angular/material/input';
 import {MatDialogModule} from "@angular/material/dialog";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
-import {LoginService} from "./logIn/logIn.service";
+import {LoginService} from "./services/logIn.service";
 import {signUpComponent} from "./SignUp/signUp.component";
 import {logInComponent} from "./logIn/logIn.component";
 import {AuthGuard} from "./AuthGuard";
+import {MatCard, MatCardModule} from "@angular/material/card";
+import {BoardService} from "./services/board.service";
+import {MatGridListModule} from "@angular/material/grid-list";
+import {MainBoardComponent} from "./main.board.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     signUpComponent,
-    logInComponent
+    logInComponent,
+    MainBoardComponent
   ],
   imports: [
     BrowserModule,
@@ -34,8 +39,10 @@ import {AuthGuard} from "./AuthGuard";
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    MatCardModule,
+    MatGridListModule
   ],
-  providers: [LoginService,AuthGuard],
+  providers: [LoginService,AuthGuard,BoardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
