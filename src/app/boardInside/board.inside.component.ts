@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {TaskList} from "../tasklist.model";
+import {Task} from "../task.model";
 import {TaskListService} from "../services/tasklist.service";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 
@@ -43,6 +44,20 @@ export class BoardInsideComponent implements OnInit{
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       console.log(event)
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+  }
+  dropTask(event: CdkDragDrop<Task[]>) {
+    if (event.previousContainer === event.container) {
+      console.log("AQUIIII TASK")
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      console.log("AQUIIII 2 TASK")
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,

@@ -1,11 +1,15 @@
-<div cdkDropListGroup class="example-container">
-  <!-- All lists in here will be connected. -->
-
-  <div cdkDropList class="example-list" [cdkDropListData]="taskLists" *ngFor="let list of taskLists" (cdkDropListDropped)="drop($event)">
-    <h2>{{list.title}}</h2>
-    <div class="example-box" cdkDrag [cdkDragData]="list.tasks" *ngFor="let item of list.tasks">
-      <p>{{item.title}}</p>
+<div cdkDropListGroup >
+  <div cdkDropList [cdkDropListData]="taskLists" (cdkDropListDropped)="drop($event)"
+       cdkDropListOrientation="horizontal" class="example-container">
+    <div cdkDrag *ngFor="let list of taskLists" class="example-list">
+      <h2>{{list.title}}</h2>
+      <div cdkDropListGroup>
+        <div cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="dropTask($event)">
+          <div *ngFor="let task of list.tasks" cdkDrag class="example-box">
+            <p>{{task.title}}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
 </div>
