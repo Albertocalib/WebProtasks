@@ -13,6 +13,9 @@
   display: block;
   margin: 30px;
 }
+.example-list .cdk-drop-list{
+  min-height: 300px;
+}
 
 .example-box {
   padding: 20px 10px;
