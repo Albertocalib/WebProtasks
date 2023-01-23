@@ -1,6 +1,6 @@
 <mat-grid-list cols="6" rowHeight="250px" [gutterSize]="'10px'">
   <mat-grid-tile *ngFor="let board of boards">
-  <mat-card class="example-card">
+  <mat-card class="example-card" [routerLink]="'/board/'+board.id">
     <mat-card-header>
       <mat-card-title>{{board.name}}</mat-card-title>
     </mat-card-header>

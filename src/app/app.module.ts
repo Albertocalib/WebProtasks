@@ -18,14 +18,18 @@ import {AuthGuard} from "./AuthGuard";
 import {MatCard, MatCardModule} from "@angular/material/card";
 import {BoardService} from "./services/board.service";
 import {MatGridListModule} from "@angular/material/grid-list";
-import {MainBoardComponent} from "./main.board.component";
+import {MainBoardComponent} from "./mainBoard/main.board.component";
+import {BoardInsideComponent} from "./boardInside/board.inside.component";
+import {TaskListService} from "./services/tasklist.service";
+import {DragDropModule} from "@angular/cdk/drag-drop";
 
 @NgModule({
   declarations: [
     AppComponent,
     signUpComponent,
     logInComponent,
-    MainBoardComponent
+    MainBoardComponent,
+    BoardInsideComponent
   ],
   imports: [
     BrowserModule,
@@ -40,9 +44,10 @@ import {MainBoardComponent} from "./main.board.component";
     ReactiveFormsModule,
     HttpClientModule,
     MatCardModule,
-    MatGridListModule
+    MatGridListModule,
+    DragDropModule
   ],
-  providers: [LoginService,AuthGuard,BoardService],
+  providers: [LoginService,AuthGuard,BoardService,TaskListService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
