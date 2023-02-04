@@ -27,6 +27,14 @@ export class TaskListService {
         catchError(error => this.handleError(error))
       );
   }
+  updatePosition(id:Number,position:Number):Observable<TaskList> {
+    console.log(`ID=${id} , position=${position}`)
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    return this.http.put<{tl:TaskList}>(`${BASE_URL}id=${id}&position=${position}`,{},{headers})
+      .pipe(map(response => response.tl),catchError(error => this.handleError(error)));
+  }
 
   private handleError(error: any) {
     console.error(error);

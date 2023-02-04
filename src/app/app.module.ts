@@ -22,6 +22,7 @@ import {MainBoardComponent} from "./mainBoard/main.board.component";
 import {BoardInsideComponent} from "./boardInside/board.inside.component";
 import {TaskListService} from "./services/tasklist.service";
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import {TaskService} from "./services/task.service";
 
 @NgModule({
   declarations: [
@@ -47,7 +48,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     MatGridListModule,
     DragDropModule
   ],
-  providers: [LoginService,AuthGuard,BoardService,TaskListService],
+  providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

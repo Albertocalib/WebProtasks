@@ -1,10 +1,10 @@
 <div cdkDropListGroup>
-  <div cdkDropList [cdkDropListData]="taskLists" (cdkDropListDropped)="drop($event)"
+  <div cdkDropList [cdkDropListData]="taskLists" (cdkDropListDropped)="drop($event,'list')"
        cdkDropListOrientation="horizontal">
     <div cdkDropListGroup class="example-container">
       <div cdkDrag *ngFor="let list of taskLists" class="example-list">
         <h2>{{list.title}}</h2>
-        <div cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="dropTask($event)">
+        <div cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
           <div *ngFor="let task of list.tasks" cdkDrag class="example-box">
             <p>{{task.title}}</p>
           </div>
