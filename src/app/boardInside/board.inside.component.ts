@@ -3,30 +3,32 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {TaskList} from "../tasklist.model";
 import {Task} from "../task.model";
 import {TaskListService} from "../services/tasklist.service";
+import {TaskService} from "../services/task.service";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 
 @Component({
   templateUrl: './board.inside.component.html',
   styleUrls: ['./board.inside.component.css']
 })
-export class BoardInsideComponent implements OnInit{
-  taskLists : TaskList[]
+export class BoardInsideComponent implements OnInit {
+  taskLists: TaskList[]
 
-  boardId : string | null
+  boardId: string | null
+
   constructor(
     public router: Router,
     public taskListService: TaskListService,
-    private activateRoute: ActivatedRoute
-  )
-  {
+    private activateRoute: ActivatedRoute,
+    public taskService: TaskService
+  ) {
     this.taskLists = []
-    this.boardId=""
+    this.boardId = ""
   }
 
 
   ngOnInit(): void {
     this.activateRoute.paramMap.subscribe((obs) => {
-      if (obs.get('id')!=null){
+      if (obs.get('id') != null) {
         this.boardId = obs.get('id')
       }
     });
@@ -34,36 +36,42 @@ export class BoardInsideComponent implements OnInit{
       (lists: TaskList[]) => {
         console.log("Actualizar lista")
         this.taskLists = lists
-      },error => console.log(error)
+      }, error => console.log(error)
     );
   }
 
-  drop(event: CdkDragDrop<TaskList[]>) {
-    if (event.previousContainer === event.container) {
-      console.log(event)
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      console.log(event)
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
-    }
+  updatePositionTask(id: Number, position: Number, listId: Number) {
+    this.taskService.updatePosition(id, position, listId).subscribe(
+      (_: Task) => {
+      }, error => console.log(error)
+    );
   }
-  dropTask(event: CdkDragDrop<Task[]>) {
+
+  updatePositionTaskList(id: Number, position: Number) {
+    this.taskListService.updatePosition(id, position).subscribe(
+      (_: TaskList) => {
+
+      }, error => console.log(error)
+    );
+  }
+
+  getTaskListId(event: CdkDragDrop<any[]>) {
+    return event.previousContainer === event.container ? event.container.data[event.previousIndex].id :
+      event.previousContainer.data[event.previousIndex].id
+  }
+
+  drop(event: CdkDragDrop<any[]>, type: String, list?: TaskList) {
+    if (type === "task") {
+      let taskId = event.previousContainer.data[event.previousIndex].id;
+      this.updatePositionTask(taskId, event.currentIndex + 1, list!!.id!!);
+    } else {
+      let taskListId = this.getTaskListId(event)
+      this.updatePositionTaskList(taskListId, event.currentIndex + 1);
+    }
     if (event.previousContainer === event.container) {
-      console.log("AQUIIII TASK")
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      console.log("AQUIIII 2 TASK")
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     }
   }
 }
