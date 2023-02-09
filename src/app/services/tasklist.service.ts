@@ -6,6 +6,7 @@ import {Observable, throwError} from "rxjs";
 import {environment} from "../../environments/environment";
 import {Board} from "../board.model";
 import {TaskList} from "../tasklist.model";
+import {Task} from "../task.model";
 
 const BASE_URL = environment.apiEndpoint + "/list/";
 
@@ -39,5 +40,16 @@ export class TaskListService {
   private handleError(error: any) {
     console.error(error);
     return throwError("Server error (" + error.status + "): " + error.text());
+  }
+
+  createList(list:TaskList,boardId: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}newList/boardId=${boardId}`
+    return this.http.post<TaskList>(url, list, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
   }
 }

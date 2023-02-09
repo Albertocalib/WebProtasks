@@ -19,10 +19,11 @@ import {MatCard, MatCardModule} from "@angular/material/card";
 import {BoardService} from "./services/board.service";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MainBoardComponent} from "./mainBoard/main.board.component";
-import {BoardInsideComponent} from "./boardInside/board.inside.component";
+import {AddElementDialogComponent} from "./AddElementDialog/add.element.dialog.component";
 import {TaskListService} from "./services/tasklist.service";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TaskService} from "./services/task.service";
+import {BoardInsideComponent} from "./boardInside/board.inside.component";
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {TaskService} from "./services/task.service";
     signUpComponent,
     logInComponent,
     MainBoardComponent,
-    BoardInsideComponent
+    BoardInsideComponent,
+    AddElementDialogComponent
   ],
   imports: [
     BrowserModule,

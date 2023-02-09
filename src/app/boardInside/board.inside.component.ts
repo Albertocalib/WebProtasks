@@ -5,6 +5,8 @@ import {Task} from "../task.model";
 import {TaskListService} from "../services/tasklist.service";
 import {TaskService} from "../services/task.service";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {MatDialog} from "@angular/material/dialog";
+import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -19,7 +21,8 @@ export class BoardInsideComponent implements OnInit {
     public router: Router,
     public taskListService: TaskListService,
     private activateRoute: ActivatedRoute,
-    public taskService: TaskService
+    public taskService: TaskService,
+    private _dialog: MatDialog
   ) {
     this.taskLists = []
     this.boardId = ""
@@ -73,6 +76,35 @@ export class BoardInsideComponent implements OnInit {
     } else {
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     }
+  }
+  addTask(list:TaskList){
+    let dialogAddTask = this._dialog.open(AddElementDialogComponent, {
+      data:{'title':'','description':'','type':'task'}
+    });
+    dialogAddTask.afterClosed().subscribe(result => {
+      let t: Task = {
+        title: result.title,
+        description: result.description,
+        position: list.tasks.length + 1
+      }
+      this.taskService.createTask(t, list.id!!)
+        .subscribe(task => {list.tasks.push(task)});
+    })
+
+  }
+  addTaskList(){
+    let dialogAddTaskList = this._dialog.open(AddElementDialogComponent, {
+      data:{'title':'','type':'list'}
+    });
+    dialogAddTaskList.afterClosed().subscribe(result => {
+      let list: TaskList = {
+        title: result.title,
+        position: this.taskLists.length + 1,
+        tasks: Array<Task>()
+      }
+      this.taskListService.createList(list,+this.boardId!!)
+        .subscribe(list => {this.taskLists.push(list)});
+    })
   }
 }
 

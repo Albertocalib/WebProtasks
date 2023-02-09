@@ -2,14 +2,19 @@
   <div cdkDropList [cdkDropListData]="taskLists" (cdkDropListDropped)="drop($event,'list')"
        cdkDropListOrientation="horizontal">
     <div cdkDropListGroup class="example-container">
-      <div cdkDrag *ngFor="let list of taskLists" class="example-list">
+      <div cdkDrag *ngFor="let list of taskLists" class="example-list mat-elevation-z1">
         <h2>{{list.title}}</h2>
         <div cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
           <div *ngFor="let task of list.tasks" cdkDrag class="example-box">
             <p>{{task.title}}</p>
           </div>
         </div>
+        <div fxLayout="row" fxLayoutAlign="baseline baseline">
+          <button style="width: fit-content;" class="add-task" (click)="addTask(list)" color="primary" mat-raised-button>Add Task</button>
+        </div>
       </div>
+      <button class="example-list mat-elevation-z1" (click)="addTaskList()" mat-raised-button>Add TaskList</button>
+
     </div>
   </div>
 </div>
