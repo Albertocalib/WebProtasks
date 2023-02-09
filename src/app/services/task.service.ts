@@ -16,13 +16,24 @@ export class TaskService {
   }
 
   updatePosition(id:Number,position:Number,newTaskListId:Number):Observable<Task> {
-    console.log(`ID=${id} , position=${position}, newTasklist=${newTaskListId}`)
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
-    return this.http.put<{t:Task}>(`${BASE_URL}id=${id}&newPosition=${position}&newTaskList=${newTaskListId}`,{},{headers})
-      .pipe(map(response => response.t),catchError(error => this.handleError(error)));
+    return this.http.put<Task>(`${BASE_URL}id=${id}&newPosition=${position}&newTaskList=${newTaskListId}`,{},{headers})
+      .pipe(map(response => response),catchError(error => this.handleError(error)));
   }
+  createTask(task:Task, listId:Number):Observable<Task> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}newTask/listId=${listId}`
+    console.log(url)
+    return this.http.post<Task>(url, task, {headers}).pipe(
+        map(response => response),
+        catchError(error => this.handleError(error))
+      );
+  }
+
 
   private handleError(error: any) {
     console.error(error);

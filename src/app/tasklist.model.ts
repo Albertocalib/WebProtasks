@@ -3,7 +3,7 @@ import {Task} from "./task.model";
 export interface TaskList {
     id?: number;
     title: string;
-    photo: string;
+    position?: number;
     tasks: Array<Task>;
 }
 
