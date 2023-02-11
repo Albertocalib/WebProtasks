@@ -24,6 +24,9 @@ import {TaskListService} from "./services/tasklist.service";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TaskService} from "./services/task.service";
 import {BoardInsideComponent} from "./boardInside/board.inside.component";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatListModule} from "@angular/material/list";
 
 @NgModule({
   declarations: [
@@ -48,7 +51,10 @@ import {BoardInsideComponent} from "./boardInside/board.inside.component";
     HttpClientModule,
     MatCardModule,
     MatGridListModule,
-    DragDropModule
+    DragDropModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule
   ],
   providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService],
   bootstrap: [AppComponent]

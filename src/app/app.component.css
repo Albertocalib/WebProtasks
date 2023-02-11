@@ -19,6 +19,7 @@
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%
 }
 
 h1,
@@ -39,18 +40,18 @@ p {
 }
 
 .toolbar {
-  position: relative;
+  position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  background-color:#ff8a1a;
+  z-index: 2;
+  width: 100% !important;
   color: white;
+  height: 60px;
   font-weight: 1000;
 }
-
+.router-outlet-content{
+  padding-top: 60px;
+}
 .toolbar img {
   margin: 0 16px;
 }
