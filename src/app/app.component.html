@@ -1,20 +1,3 @@
-<mat-toolbar color="primary" class="toolbar">
-  <button mat-icon-button *ngIf="loginService.isLogged">
-    <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
-  </button>
-  <img
-    width="40"
-    alt="ProTasks Logo"
-    src="./assets/logonaranja.png"
-    [routerLink]="'/'"
-  />
-  <span [routerLink]="'/'">ProTasks</span>
-  <span class="spacer"></span>
-  <button mat-icon-button class="example-icon favorite-icon" aria-label="LogOut button"
-          *ngIf="loginService.isLogged" (click)='logOut()'>
-    <mat-icon>exit_to_app</mat-icon>
-  </button>
-</mat-toolbar>
 <mat-sidenav-container fullscreen>
   <mat-sidenav #sidenav mode="side">
     <mat-nav-list>
@@ -29,8 +12,23 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <div class="router-outlet-content">
-      <router-outlet></router-outlet>
-    </div>
+    <mat-toolbar color="primary" class="toolbar">
+      <button mat-icon-button *ngIf="loginService.isLogged">
+        <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
+      </button>
+      <img
+        width="40"
+        alt="ProTasks Logo"
+        src="./assets/logonaranja.png"
+        [routerLink]="'/'"
+      />
+      <span [routerLink]="'/'">ProTasks</span>
+      <span class="spacer"></span>
+      <button mat-icon-button class="example-icon favorite-icon" aria-label="LogOut button"
+              *ngIf="loginService.isLogged" (click)='logOut()'>
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </mat-toolbar>
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -1,0 +1,6 @@
+<h1 mat-dialog-title *ngIf="data.type=='task'">¿Estás seguro de que deseas eliminar la Tarea {{data.title}}?</h1>
+<h1 mat-dialog-title *ngIf="data.type=='list'">¿Estás seguro de que deseas eliminar la Lista {{data.title}}?</h1>
+<div mat-dialog-actions class="example-full-width">
+  <button color="primary" mat-raised-button [mat-dialog-close]="true">Confirmar</button>
+  <button mat-button (click)="onNoClick()">Cerrar</button>
+</div>

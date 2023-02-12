@@ -27,6 +27,11 @@ import {BoardInsideComponent} from "./boardInside/board.inside.component";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatListModule} from "@angular/material/list";
+import {MatMenuModule} from "@angular/material/menu";
+import {DeleteElementDialogComponent} from "./DeleteElementDialog/delete.element.dialog.component";
+import {CopyOrMoveElementDialogComponent} from "./CopyOrMoveElementDialog/copy.or.move.element.dialog.component";
+import {MatOptionModule} from "@angular/material/core";
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -35,7 +40,9 @@ import {MatListModule} from "@angular/material/list";
     logInComponent,
     MainBoardComponent,
     BoardInsideComponent,
-    AddElementDialogComponent
+    AddElementDialogComponent,
+    DeleteElementDialogComponent,
+    CopyOrMoveElementDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +61,10 @@ import {MatListModule} from "@angular/material/list";
     DragDropModule,
     MatToolbarModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatMenuModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService],
   bootstrap: [AppComponent]

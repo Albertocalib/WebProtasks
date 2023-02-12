@@ -7,6 +7,8 @@ import {TaskService} from "../services/task.service";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {MatDialog} from "@angular/material/dialog";
 import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
+import {DeleteElementDialogComponent} from "../DeleteElementDialog/delete.element.dialog.component";
+import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copy.or.move.element.dialog.component";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -82,10 +84,14 @@ export class BoardInsideComponent implements OnInit {
       data:{'title':'','description':'','type':'task'}
     });
     dialogAddTask.afterClosed().subscribe(result => {
+      let position = 1
+      if (list.tasks){
+        position = list.tasks.length + 1
+      }
       let t: Task = {
         title: result.title,
         description: result.description,
-        position: list.tasks.length + 1
+        position: position
       }
       this.taskService.createTask(t, list.id!!)
         .subscribe(task => {list.tasks.push(task)});
@@ -97,15 +103,66 @@ export class BoardInsideComponent implements OnInit {
       data:{'title':'','type':'list'}
     });
     dialogAddTaskList.afterClosed().subscribe(result => {
+      let position = 1
+      if (this.taskLists){
+        position = this.taskLists.length + 1
+      }
       let list: TaskList = {
         title: result.title,
-        position: this.taskLists.length + 1,
+        position: position,
         tasks: Array<Task>()
       }
       this.taskListService.createList(list,+this.boardId!!)
         .subscribe(list => {this.taskLists.push(list)});
     })
   }
+
+  deleteList(list: TaskList) {
+    let dialogDeleteTaskList = this._dialog.open(DeleteElementDialogComponent, {
+      data: {'title': list.title, 'type': 'list'}
+    });
+    dialogDeleteTaskList.afterClosed().subscribe(_ => {
+      this.taskListService.delete(list.id!!)
+        .subscribe(listResponse => {
+          if (listResponse) {
+            let index = this.taskLists.indexOf(list)
+            if (index !== -1) {
+              this.taskLists.splice(index, 1);
+            }
+          }
+        });
+    })
+  }
+  copyList(list:TaskList){
+    let dialogCopyTaskList = this._dialog.open(CopyOrMoveElementDialogComponent, {
+      data: {'title': list.title, 'type': 'list', 'mode': 'copy'}
+    });
+    dialogCopyTaskList.afterClosed().subscribe(boardSelected => {
+      this.taskListService.copy(list.id!!,boardSelected.id)
+        .subscribe(listResponse => {
+          if (listResponse && list.board!!.id==listResponse.board!!.id) {
+            this.taskLists.push(listResponse)
+          }
+        });
+    })
+  }
+  moveList(list:TaskList){
+    let dialogMoveTaskList = this._dialog.open(CopyOrMoveElementDialogComponent, {
+      data: {'title': list.title, 'type': 'list','mode': 'move'}
+    });
+    dialogMoveTaskList.afterClosed().subscribe(boardSelected => {
+      this.taskListService.move(list.id!!,boardSelected.id)
+        .subscribe(listResponse => {
+          if (listResponse && list.board!!.id!=listResponse.board!!.id) {
+            let index = this.taskLists.indexOf(list)
+            if (index !== -1) {
+              this.taskLists.splice(index, 1);
+            }
+          }
+        });
+    })
+  }
+
 }
 
 

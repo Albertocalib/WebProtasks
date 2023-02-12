@@ -3,14 +3,40 @@
        cdkDropListOrientation="horizontal">
     <div cdkDropListGroup class="example-container">
       <div cdkDrag *ngFor="let list of taskLists" class="example-list mat-elevation-z1">
-        <h2>{{list.title}}</h2>
-        <div cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
+        <div class="list-header">
+          <span class="mat-h2">{{list.title}}</span>
+          <span class="spacer"></span>
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="addTask(list)">
+              <mat-icon>add</mat-icon>
+              <span>Añadir Tarea</span>
+            </button>
+            <button mat-menu-item (click)="deleteList(list)">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+            <button mat-menu-item (click)="copyList(list)">
+              <mat-icon>content_copy</mat-icon>
+              <span>Copiar</span>
+            </button>
+            <button mat-menu-item (click)="moveList(list)">
+              <mat-icon>drive_file_move_outline</mat-icon>
+              <span>Mover</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div class="card-list-content" cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
           <div *ngFor="let task of list.tasks" cdkDrag class="example-box">
             <p>{{task.title}}</p>
           </div>
         </div>
         <div fxLayout="row" fxLayoutAlign="baseline baseline">
-          <button style="width: fit-content;" class="add-task" (click)="addTask(list)" color="primary" mat-raised-button>Add Task</button>
+          <button style="width: fit-content;" class="add-task" (click)="addTask(list)" color="primary"
+                  mat-raised-button>Add Task
+          </button>
         </div>
       </div>
       <button class="example-list mat-elevation-z1" (click)="addTaskList()" mat-raised-button>Add TaskList</button>

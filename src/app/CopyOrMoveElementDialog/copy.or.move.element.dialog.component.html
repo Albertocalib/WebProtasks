@@ -1,0 +1,17 @@
+<h1 mat-dialog-title *ngIf="data.type=='task' && data.mode=='copy'">Elige un tablero y una lista donde copiar la tarea {{data.title}}</h1>
+<h1 mat-dialog-title *ngIf="data.type=='task' && data.mode=='move'">Elige un tablero y una lista donde mover la tarea {{data.title}}</h1>
+<h1 mat-dialog-title *ngIf="data.type=='list' && data.mode=='copy'">Elige un tablero donde copiar la lista {{data.title}}</h1>
+<h1 mat-dialog-title *ngIf="data.type=='list' && data.mode=='move'">Elige un tablero donde mover la lista {{data.title}}</h1>
+
+<mat-form-field appearance="fill">
+  <mat-label>Elige un tablero</mat-label>
+  <mat-select required (selectionChange)="select($event.value)">
+    <mat-option *ngFor="let board of boards" [value]="board">
+      {{board.name}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<div mat-dialog-actions class="example-full-width">
+  <button color="primary" mat-raised-button [mat-dialog-close]="boardSelected">Confirmar</button>
+  <button mat-button (click)="onNoClick()">Cerrar</button>
+</div>
