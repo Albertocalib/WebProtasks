@@ -39,7 +39,7 @@ export class TaskListService {
 
   private handleError(error: any) {
     console.error(error);
-    return throwError("Server error (" + error.status + "): " + error.text());
+    return throwError("Server error (" + error.status + "): " + error.toString());
   }
 
   createList(list:TaskList,boardId: number) {
@@ -52,4 +52,38 @@ export class TaskListService {
       catchError(error => this.handleError(error))
     );
   }
+
+  delete(listdId: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${listdId}`
+    return this.http.delete<boolean>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  copy(listId: number,boardDestId: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${listId}&boardDestId=${boardDestId}`
+    return this.http.post<TaskList>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  move(listId: number,boardDestId: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${listId}&boardDestId=${boardDestId}`
+    return this.http.put<TaskList>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
 }

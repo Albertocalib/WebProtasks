@@ -35,6 +35,11 @@
   background: white;
   font-size: 14px;
 }
+.spacer {
+  flex: 1;
+}
+
+.list-header{ display: flex}
 
 .cdk-drag-preview {
   box-sizing: border-box;

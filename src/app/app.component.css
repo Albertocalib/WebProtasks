@@ -40,7 +40,7 @@ p {
 }
 
 .toolbar {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   z-index: 2;
@@ -49,9 +49,7 @@ p {
   height: 60px;
   font-weight: 1000;
 }
-.router-outlet-content{
-  padding-top: 60px;
-}
+
 .toolbar img {
   margin: 0 16px;
 }
