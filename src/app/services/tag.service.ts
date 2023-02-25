@@ -4,31 +4,30 @@ import {catchError, map} from 'rxjs/operators';
 import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
 import {environment} from "../../environments/environment";
-import {Board} from "../board.model";
 
-const BASE_URL = environment.apiEndpoint + "/board/";
+const BASE_URL = environment.apiEndpoint + "/tag/";
 
 @Injectable()
-export class BoardService {
+export class TagService {
   user:User
   constructor(private http: HttpClient) {
     this.user = JSON.parse(<string>localStorage.getItem('currentUser'));
   }
 
-  getBoards(): Observable<Board[]> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
-
-    return this.http.get<Board[]>(`${BASE_URL}username=${this.user.username}`, {headers})
-      .pipe(
-        map(response => response),
-        catchError(error => this.handleError(error))
-      );
-  }
-
-  private handleError(error: HttpErrorResponse) {
+  private static handleError(error: HttpErrorResponse) {
     console.error(error);
     return throwError("Server error (" + error.status + "): " + error.message);
   }
+
+  delete(tagId: number,taskId:number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${tagId}/task=${taskId}`
+    return this.http.delete<boolean>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => TagService.handleError(error))
+    );
+  }
+
 }

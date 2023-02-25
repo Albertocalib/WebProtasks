@@ -65,3 +65,8 @@
   flex-shrink: 0;
   margin-top: 10px;
 }
+.card-list-content {
+  overflow: auto;
+  overflow-x: hidden;
+  flex-grow: 1;
+}

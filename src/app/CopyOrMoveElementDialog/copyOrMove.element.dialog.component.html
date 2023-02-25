@@ -3,7 +3,7 @@
 <h1 mat-dialog-title *ngIf="data.type=='list' && data.mode=='copy'">Elige un tablero donde copiar la lista {{data.title}}</h1>
 <h1 mat-dialog-title *ngIf="data.type=='list' && data.mode=='move'">Elige un tablero donde mover la lista {{data.title}}</h1>
 
-<mat-form-field appearance="fill">
+<mat-form-field appearance="fill" class="example-full-width">
   <mat-label>Elige un tablero</mat-label>
   <mat-select required (selectionChange)="select($event.value)">
     <mat-option *ngFor="let board of boards" [value]="board">
@@ -11,7 +11,15 @@
     </mat-option>
   </mat-select>
 </mat-form-field>
+<mat-form-field appearance="fill" *ngIf="data.type=='task'" class="example-full-width">
+  <mat-label>Elige una lista</mat-label>
+  <mat-select required (selectionChange)="selectList($event.value)">
+    <mat-option *ngFor="let list of lists" [value]="list">
+      {{list.title}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
 <div mat-dialog-actions class="example-full-width">
-  <button color="primary" mat-raised-button [mat-dialog-close]="boardSelected">Confirmar</button>
+  <button color="primary" mat-raised-button (click)="submit()">Confirmar</button>
   <button mat-button (click)="onNoClick()">Cerrar</button>
 </div>

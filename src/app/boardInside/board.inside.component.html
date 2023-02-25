@@ -29,9 +29,8 @@
           </mat-menu>
         </div>
         <div class="card-list-content" cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
-          <div *ngFor="let task of list.tasks" cdkDrag class="example-box">
-            <p>{{task.title}}</p>
-          </div>
+          <task-card  *ngFor="let task of list.tasks" cdkDrag  [task]="task" (deleteTask)="deleteTask(task,list)"
+                      (copyTask)="copyTask(task)" (moveTask)="moveTask(task,list)"></task-card>
         </div>
         <div fxLayout="row" fxLayoutAlign="baseline baseline">
           <button style="width: fit-content;" class="add-task" (click)="addTask(list)" color="primary"
