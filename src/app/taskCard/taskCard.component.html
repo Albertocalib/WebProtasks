@@ -1,0 +1,36 @@
+<mat-card class="card">
+  <img *ngIf="image" mat-card-image [src]="image" draggable="false">
+  <mat-card-content>
+    <div class="card-header">
+      <span class="mat-h3">{{title}}</span>
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon class="icon">menu</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="deleteTask.next()">
+          <mat-icon>delete</mat-icon>
+          <span>Eliminar</span>
+        </button>
+        <button mat-menu-item (click)="copyTask.next()">
+          <mat-icon>content_copy</mat-icon>
+          <span>Copiar</span>
+        </button>
+        <button mat-menu-item (click)="moveTask.next()">
+          <mat-icon>drive_file_move_outline</mat-icon>
+          <span>Mover</span>
+        </button>
+      </mat-menu>
+    </div>
+    <div *ngIf="tags">
+      <mat-chip-list>
+        <mat-chip [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of tags" selectable="false"
+                  [removable]="removable"
+                  (removed)="removeTag(tag)">{{tag?.name}}
+          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+
+  </mat-card-content>
+</mat-card>

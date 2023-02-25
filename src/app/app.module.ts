@@ -29,9 +29,12 @@ import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
 import {DeleteElementDialogComponent} from "./DeleteElementDialog/delete.element.dialog.component";
-import {CopyOrMoveElementDialogComponent} from "./CopyOrMoveElementDialog/copy.or.move.element.dialog.component";
+import {CopyOrMoveElementDialogComponent} from "./CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
 import {MatOptionModule} from "@angular/material/core";
 import {MatSelectModule} from "@angular/material/select";
+import {TaskCardComponent} from "./taskCard/taskCard.component";
+import {MatChipsModule} from "@angular/material/chips";
+import {TagService} from "./services/tag.service";
 
 @NgModule({
   declarations: [
@@ -42,7 +45,8 @@ import {MatSelectModule} from "@angular/material/select";
     BoardInsideComponent,
     AddElementDialogComponent,
     DeleteElementDialogComponent,
-    CopyOrMoveElementDialogComponent
+    CopyOrMoveElementDialogComponent,
+    TaskCardComponent
   ],
   imports: [
     BrowserModule,
@@ -64,9 +68,10 @@ import {MatSelectModule} from "@angular/material/select";
     MatListModule,
     MatMenuModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule,
+    MatChipsModule
   ],
-  providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService],
+  providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

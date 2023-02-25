@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
 import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
@@ -67,8 +67,8 @@ export class LoginService {
       );
   }
 
-  private handleError(error: any) {
+  private handleError(error: HttpErrorResponse) {
     console.error(error);
-    return throwError("Server error (" + error.status + "): " + error.text());
+    return throwError("Server error (" + error.status + "): " + error.message);
   }
 }

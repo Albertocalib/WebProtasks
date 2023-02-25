@@ -8,7 +8,7 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag
 import {MatDialog} from "@angular/material/dialog";
 import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
 import {DeleteElementDialogComponent} from "../DeleteElementDialog/delete.element.dialog.component";
-import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copy.or.move.element.dialog.component";
+import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -39,7 +39,6 @@ export class BoardInsideComponent implements OnInit {
     });
     this.taskListService.getTaskLists(this.boardId!!).subscribe(
       (lists: TaskList[]) => {
-        console.log("Actualizar lista")
         this.taskLists = lists
       }, error => console.log(error)
     );
@@ -79,22 +78,28 @@ export class BoardInsideComponent implements OnInit {
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     }
   }
-  addTask(list:TaskList){
+
+  addTask(list: TaskList) {
     let dialogAddTask = this._dialog.open(AddElementDialogComponent, {
-      data:{'title':'','description':'','type':'task'}
+      data: {'title': '', 'description': '', 'type': 'task'}
     });
     dialogAddTask.afterClosed().subscribe(result => {
-      let position = 1
-      if (list.tasks){
-        position = list.tasks.length + 1
+      if (result) {
+        let position = 1
+        if (list.tasks) {
+          position = list.tasks.length + 1
+        }
+        let t: Task = {
+          title: result.title,
+          description: result.description,
+          position: position
+        }
+        this.taskService.createTask(t, list.id!!)
+          .subscribe(task => {
+            list.tasks.push(task)
+          });
       }
-      let t: Task = {
-        title: result.title,
-        description: result.description,
-        position: position
-      }
-      this.taskService.createTask(t, list.id!!)
-        .subscribe(task => {list.tasks.push(task)});
+
     })
 
   }
@@ -103,17 +108,21 @@ export class BoardInsideComponent implements OnInit {
       data:{'title':'','type':'list'}
     });
     dialogAddTaskList.afterClosed().subscribe(result => {
-      let position = 1
-      if (this.taskLists){
-        position = this.taskLists.length + 1
+      if (result) {
+        let position = 1
+        if (this.taskLists) {
+          position = this.taskLists.length + 1
+        }
+        let list: TaskList = {
+          title: result.title,
+          position: position,
+          tasks: Array<Task>()
+        }
+        this.taskListService.createList(list, +this.boardId!!)
+          .subscribe(list => {
+            this.taskLists.push(list)
+          });
       }
-      let list: TaskList = {
-        title: result.title,
-        position: position,
-        tasks: Array<Task>()
-      }
-      this.taskListService.createList(list,+this.boardId!!)
-        .subscribe(list => {this.taskLists.push(list)});
     })
   }
 
@@ -121,16 +130,18 @@ export class BoardInsideComponent implements OnInit {
     let dialogDeleteTaskList = this._dialog.open(DeleteElementDialogComponent, {
       data: {'title': list.title, 'type': 'list'}
     });
-    dialogDeleteTaskList.afterClosed().subscribe(_ => {
-      this.taskListService.delete(list.id!!)
-        .subscribe(listResponse => {
-          if (listResponse) {
-            let index = this.taskLists.indexOf(list)
-            if (index !== -1) {
-              this.taskLists.splice(index, 1);
+    dialogDeleteTaskList.afterClosed().subscribe(result => {
+      if (result) {
+        this.taskListService.delete(list.id!!)
+          .subscribe(listResponse => {
+            if (listResponse) {
+              let index = this.taskLists.indexOf(list)
+              if (index !== -1) {
+                this.taskLists.splice(index, 1);
+              }
             }
-          }
-        });
+          });
+      }
     })
   }
   copyList(list:TaskList){
@@ -138,12 +149,14 @@ export class BoardInsideComponent implements OnInit {
       data: {'title': list.title, 'type': 'list', 'mode': 'copy'}
     });
     dialogCopyTaskList.afterClosed().subscribe(boardSelected => {
-      this.taskListService.copy(list.id!!,boardSelected.id)
-        .subscribe(listResponse => {
-          if (listResponse && list.board!!.id==listResponse.board!!.id) {
-            this.taskLists.push(listResponse)
-          }
-        });
+      if (boardSelected) {
+        this.taskListService.copy(list.id!!, boardSelected.board.id)
+          .subscribe(listResponse => {
+            if (listResponse && list.board!!.id == listResponse.board!!.id) {
+              this.taskLists.push(listResponse)
+            }
+          });
+      }
     })
   }
   moveList(list:TaskList){
@@ -151,15 +164,78 @@ export class BoardInsideComponent implements OnInit {
       data: {'title': list.title, 'type': 'list','mode': 'move'}
     });
     dialogMoveTaskList.afterClosed().subscribe(boardSelected => {
-      this.taskListService.move(list.id!!,boardSelected.id)
-        .subscribe(listResponse => {
-          if (listResponse && list.board!!.id!=listResponse.board!!.id) {
-            let index = this.taskLists.indexOf(list)
-            if (index !== -1) {
-              this.taskLists.splice(index, 1);
+      if (boardSelected) {
+        this.taskListService.move(list.id!!, boardSelected.board.id)
+          .subscribe(listResponse => {
+            if (listResponse && list.board!!.id != listResponse.board!!.id) {
+              let index = this.taskLists.indexOf(list)
+              if (index !== -1) {
+                this.taskLists.splice(index, 1);
+              }
             }
-          }
-        });
+          });
+      }
+    })
+  }
+
+  deleteTask(task: Task, taskList: TaskList) {
+    let dialogDeleteTask = this._dialog.open(DeleteElementDialogComponent, {
+      data: {'title': task.title, 'type': 'task'}
+    });
+    dialogDeleteTask.afterClosed().subscribe(result => {
+      if (result) {
+        this.taskService.delete(task.id!!)
+          .subscribe(taskResponse => {
+            if (taskResponse) {
+              let index = taskList.tasks.indexOf(task)
+              if (index !== -1) {
+                taskList.tasks.splice(index!!, 1);
+              }
+            }
+          });
+      }
+    })
+
+  }
+  moveTask(task: Task, oldTaskList: TaskList){
+    let dialogMoveTask = this._dialog.open(CopyOrMoveElementDialogComponent, {
+      data: {'title': task.title, 'type': 'task', 'mode': 'move'}
+    });
+    dialogMoveTask.afterClosed().subscribe(data => {
+      if (data) {
+        this.taskService.move(task.id!!, data.list.id)
+          .subscribe(taskResponse => {
+            let index = oldTaskList.tasks.indexOf(task)
+            if (index !== -1) {
+              oldTaskList.tasks.splice(index!!, 1);
+            }
+            if (taskResponse && Number(this.boardId) == taskResponse.taskList!!.board!!.id) {
+              let newList: TaskList[] = this.taskLists.filter(list => list.id == data.list.id)
+              if (newList) {
+                newList[0].tasks.push(task);
+              }
+            }
+          });
+      }
+    })
+
+  }
+  copyTask(task:Task){
+    let dialogCopyTask = this._dialog.open(CopyOrMoveElementDialogComponent, {
+      data: {'title': task.title, 'type': 'task', 'mode': 'copy'}
+    });
+    dialogCopyTask.afterClosed().subscribe(data => {
+      if (data) {
+        this.taskService.copy(task.id!!,data.list.id)
+          .subscribe(taskResponse => {
+            if (taskResponse && Number(this.boardId) == taskResponse.taskList!!.board!!.id) {
+              let newList: TaskList[] = this.taskLists.filter(list => list.id == data.list.id)
+              if (newList) {
+                newList[0].tasks.push(task);
+              }
+            }
+          });
+      }
     })
   }
 

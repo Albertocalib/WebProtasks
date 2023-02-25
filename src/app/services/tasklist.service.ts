@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
 import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
@@ -22,10 +22,10 @@ export class TaskListService {
       'Content-Type': 'application/json',
     });
 
-    return this.http.get<TaskList[]>(`${BASE_URL}board=${boardId}`, {headers})
+    return this.http.get<TaskList[]>(`${BASE_URL}boardId=${boardId}`, {headers})
       .pipe(
         map(response => response),
-        catchError(error => this.handleError(error))
+        catchError(error => TaskListService.handleError(error))
       );
   }
   updatePosition(id:Number,position:Number):Observable<TaskList> {
@@ -34,12 +34,12 @@ export class TaskListService {
       'Content-Type': 'application/json',
     });
     return this.http.put<{tl:TaskList}>(`${BASE_URL}id=${id}&position=${position}`,{},{headers})
-      .pipe(map(response => response.tl),catchError(error => this.handleError(error)));
+      .pipe(map(response => response.tl),catchError(error => TaskListService.handleError(error)));
   }
 
-  private handleError(error: any) {
+  private static handleError(error: HttpErrorResponse) {
     console.error(error);
-    return throwError("Server error (" + error.status + "): " + error.toString());
+    return throwError("Server error (" + error.status + "): " + error.message);
   }
 
   createList(list:TaskList,boardId: number) {
@@ -49,7 +49,7 @@ export class TaskListService {
     let url=`${BASE_URL}newList/boardId=${boardId}`
     return this.http.post<TaskList>(url, list, {headers}).pipe(
       map(response => response),
-      catchError(error => this.handleError(error))
+      catchError(error => TaskListService.handleError(error))
     );
   }
 
@@ -60,7 +60,7 @@ export class TaskListService {
     let url=`${BASE_URL}id=${listdId}`
     return this.http.delete<boolean>(url, {headers}).pipe(
       map(response => response),
-      catchError(error => this.handleError(error))
+      catchError(error => TaskListService.handleError(error))
     );
   }
 
@@ -71,7 +71,7 @@ export class TaskListService {
     let url=`${BASE_URL}id=${listId}&boardDestId=${boardDestId}`
     return this.http.post<TaskList>(url, {headers}).pipe(
       map(response => response),
-      catchError(error => this.handleError(error))
+      catchError(error => TaskListService.handleError(error))
     );
   }
 
@@ -82,7 +82,7 @@ export class TaskListService {
     let url=`${BASE_URL}id=${listId}&boardDestId=${boardDestId}`
     return this.http.put<TaskList>(url, {headers}).pipe(
       map(response => response),
-      catchError(error => this.handleError(error))
+      catchError(error => TaskListService.handleError(error))
     );
   }
 
