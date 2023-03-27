@@ -39,7 +39,7 @@ p {
   flex: 1;
 }
 
-.toolbar {
+.mat-toolbar-row {
   position: sticky;
   top: 0;
   left: 0;
@@ -48,6 +48,16 @@ p {
   color: white;
   height: 60px;
   font-weight: 1000;
+}
+.secondary-row{
+  border-top: 2px solid ;
+  border-radius: 5px;
+  background-color: #e58800;
+  padding-top: 5px;
+}
+
+.search-icon{
+  margin-left: -25px;
 }
 
 .toolbar img {

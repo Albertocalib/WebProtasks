@@ -17,7 +17,6 @@ export class LoginService {
   constructor(private http: HttpClient) {
     let user = JSON.parse(<string>localStorage.getItem('currentUser'));
     if (user) {
-      console.log('Logged user');
       this.setCurrentUser(user);
     }
   }
@@ -59,7 +58,6 @@ export class LoginService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
-    console.log(body)
     return this.http.post<User>(BASE_URL + "register/newUser", body, {headers})
       .pipe(
         map(response => response),

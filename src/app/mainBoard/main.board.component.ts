@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {BoardService} from "../services/board.service";
 import {Board} from "../board.model";
+import {AppComponent} from "../app.component";
 
 
 @Component({
@@ -12,7 +13,8 @@ export class MainBoardComponent implements OnInit{
   boards : Board[]
   constructor(
     public router: Router,
-    public boardService: BoardService
+    public boardService: BoardService,
+    private appComponent: AppComponent
   )
   {
     this.boards = []
@@ -23,11 +25,13 @@ export class MainBoardComponent implements OnInit{
 
     this.boardService.getBoards().subscribe(
       (boards: Board[]) => {
-        console.log(boards)
-
         this.boards = boards
+        this.appComponent.boards = boards
       },error => console.log(error)
     );
+  }
+  openBoard(board:Board){
+    this.appComponent.openBoard(board)
   }
 }
 

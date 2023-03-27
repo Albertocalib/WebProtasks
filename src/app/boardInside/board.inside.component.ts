@@ -9,6 +9,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
 import {DeleteElementDialogComponent} from "../DeleteElementDialog/delete.element.dialog.component";
 import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
+import {SharedService} from "../shared.service";
+import {Subscription} from "rxjs";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -18,20 +20,34 @@ export class BoardInsideComponent implements OnInit {
   taskLists: TaskList[]
 
   boardId: string | null
+  mode:String
+  subscriptionOnChangeViewMode:Subscription |undefined
+  subscriptionOnOpenStats:Subscription |undefined
+  userData:Array<any>
 
   constructor(
     public router: Router,
     public taskListService: TaskListService,
     private activateRoute: ActivatedRoute,
     public taskService: TaskService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private sharedService:SharedService,
   ) {
     this.taskLists = []
     this.boardId = ""
+    this.mode=localStorage.getItem("viewMode") || "board"
+    //TODO Hacer que cuando cambie la ruta se reinicialice
+    /*activateRoute.params.subscribe(_ => {
+      this.initialization()
+    });*/
+    this.userData=new Array<any>()
   }
 
 
   ngOnInit(): void {
+    this.initialization()
+  }
+  initialization(){
     this.activateRoute.paramMap.subscribe((obs) => {
       if (obs.get('id') != null) {
         this.boardId = obs.get('id')
@@ -42,6 +58,24 @@ export class BoardInsideComponent implements OnInit {
         this.taskLists = lists
       }, error => console.log(error)
     );
+    this.subscriptionOnChangeViewMode = this.sharedService.buttonClickChangeView$.subscribe((clicked) => {
+      if (clicked) {
+        console.log("entro change")
+        this.changeMode()
+      }
+    });
+    this.subscriptionOnOpenStats = this.sharedService.buttonClickStats$.subscribe((clicked) => {
+      if (clicked) {
+        console.log("entro stats")
+
+        this.openStats()
+      }
+    });
+  }
+  ngOnDestroy(): void {
+    this.subscriptionOnChangeViewMode?.unsubscribe()
+    this.subscriptionOnOpenStats?.unsubscribe()
+
   }
 
   updatePositionTask(id: Number, position: Number, listId: Number) {
@@ -239,6 +273,52 @@ export class BoardInsideComponent implements OnInit {
     })
   }
 
+  changeMode(){
+    let mode = localStorage.getItem("viewMode") || "board"
+    console.log(mode)
+    if (mode=='board') {
+      localStorage.setItem('viewMode', 'list');
+      this.mode = 'list'
+    }else{
+      localStorage.setItem('viewMode', 'board');
+      this.mode = 'board'
+    }
+  }
+
+
+  private openStats() {
+    this.mode = 'stats'
+    let taskDict: { [user: string]: { [state: string]: number } } = {};
+    let noUser = "No asignado"
+    for (let list of this.taskLists) {
+      let title = list.title;
+      for (let task of list.tasks) {
+        let users = task.users ? task.users : [];
+        if (users.length===0){
+          taskDict[noUser] ??= {};
+          taskDict[noUser][title] ??= 0;
+          taskDict[noUser][title]++;
+        }
+        for (const user of users) {
+          let name = user.name;
+          taskDict[name] ??= {};
+          taskDict[name][title] ??= 0;
+          taskDict[name][title]++;
+        }
+      }
+    }
+    this.userData = [];
+    for (let user in taskDict) {
+      let userStatuses = [];
+      let userTotal = 0;
+      for (let state in taskDict[user]) {
+        userStatuses.push({name: state, value: taskDict[user][state]});
+        userTotal += taskDict[user][state];
+      }
+      this.userData.push({name: user, statuses: userStatuses, total: userTotal});
+    }
+
+  }
 }
 
 

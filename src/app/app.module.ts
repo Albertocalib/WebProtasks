@@ -35,6 +35,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {TaskCardComponent} from "./taskCard/taskCard.component";
 import {MatChipsModule} from "@angular/material/chips";
 import {TagService} from "./services/tag.service";
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import {TagService} from "./services/tag.service";
     MatMenuModule,
     MatOptionModule,
     MatSelectModule,
-    MatChipsModule
+    MatChipsModule,
+    NgxChartsModule
   ],
   providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService],
   bootstrap: [AppComponent]

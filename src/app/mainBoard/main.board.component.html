@@ -1,5 +1,5 @@
 <div class="flex-me">
-  <mat-card *ngFor="let board of boards" [routerLink]="'/board/'+board.id">
+  <mat-card *ngFor="let board of boards" (click)="openBoard(board)">
     <mat-card-content>
       <h2>{{board.name}}</h2>
       <img mat-card-image class="board-img-card" src="data:image/png;base64,{{board.photo}}" alt="Photo of a Board">

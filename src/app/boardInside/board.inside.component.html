@@ -1,5 +1,5 @@
 <div cdkDropListGroup>
-  <div cdkDropList [cdkDropListData]="taskLists" (cdkDropListDropped)="drop($event,'list')"
+  <div *ngIf="mode==='board'" cdkDropList [cdkDropListData]="taskLists" (cdkDropListDropped)="drop($event,'list')"
        cdkDropListOrientation="horizontal">
     <div cdkDropListGroup class="example-container">
       <div cdkDrag *ngFor="let list of taskLists" class="example-list mat-elevation-z1">
@@ -40,6 +40,32 @@
       </div>
       <button class="example-list mat-elevation-z1" (click)="addTaskList()" mat-raised-button>Add TaskList</button>
 
+    </div>
+  </div>
+
+
+  <div *ngIf="mode==='list'" cdkDropList [cdkDropListData]="taskLists" (cdkDropListDropped)="drop($event,'list')">
+    <ul cdkDrag *ngFor="let list of taskLists" cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
+      <h2>{{ list.title }}</h2>
+      <li *ngFor="let task of list.tasks" cdkDrag>
+        <span class="task-title">{{ task.title }}</span>
+        <span> {{ task.description }}</span>
+      </li>
+    </ul>
+  </div>
+  <div class="pie-charts-container" *ngIf="mode==='stats'">
+    <div *ngFor="let userD of userData" class="pie-chart-container">
+      <ngx-charts-pie-chart
+        [view]="[500, 300]"
+        [results]="userD.statuses"
+        [gradient]="false"
+        [labels]="false"
+        [legend]="true"
+        [explodeSlices]="false"
+        [doughnut]="true"
+        [arcWidth]="0.5">
+      </ngx-charts-pie-chart>
+      <div class="pie-chart-label">{{ userD.name }}</div>
     </div>
   </div>
 </div>
