@@ -60,7 +60,9 @@ export class BoardInsideComponent implements OnInit {
     });
     try {
       this.taskLists = await lastValueFrom(this.taskListService.getTaskLists(this.boardId!!));
-      this.appComponent.board = this.taskLists[0].board
+      if (this.taskLists.length > 0) {
+        this.appComponent.board = this.taskLists[0].board
+      }
     } catch (error) {
       console.log(error);
     }
@@ -141,6 +143,9 @@ export class BoardInsideComponent implements OnInit {
         }
         this.taskService.createTask(t, list.id!!)
           .subscribe(task => {
+            if (!list.tasks){
+              list.tasks = []
+            }
             list.tasks.push(task)
           });
       }
