@@ -4,7 +4,6 @@
       <h1>Tableros</h1>
       <a *ngFor="let board of boards" mat-list-item (click)="openBoard(board)"> {{board.name}} </a>
       <a mat-list-item (click)="sidenav.toggle()" href="">Close</a>
-
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -43,7 +42,7 @@
               <mat-icon>view_list</mat-icon>
               <span class="button-text">Cambiar vista</span>
             </button>
-            <button style="margin-left: 70px" mat-icon-button class="example-icon favorite-icon"
+            <button style="margin-left: 140px" mat-icon-button class="example-icon favorite-icon"
                     (click)="openStats()">
               <mat-icon>bar_chart</mat-icon>
               <span class="button-text">Gráficos</span>

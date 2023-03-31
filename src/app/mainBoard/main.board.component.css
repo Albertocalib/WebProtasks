@@ -15,3 +15,14 @@ mat-card {
   height: 200px;
   margin: auto;
 }
+.mat-form-field{
+  width: 98%;
+  margin: 0 auto;
+}
+.search-field {
+  display: block;
+  border-radius: 25px;
+}
+.search-box {
+  width: 100%;
+}

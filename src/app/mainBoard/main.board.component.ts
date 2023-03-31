@@ -11,6 +11,7 @@ import {AppComponent} from "../app.component";
 })
 export class MainBoardComponent implements OnInit{
   boards : Board[]
+  filteredBoards: Board[];
   constructor(
     public router: Router,
     public boardService: BoardService,
@@ -18,20 +19,27 @@ export class MainBoardComponent implements OnInit{
   )
   {
     this.boards = []
+    this.filteredBoards = []
   }
 
 
   ngOnInit(): void {
-
     this.boardService.getBoards().subscribe(
       (boards: Board[]) => {
         this.boards = boards
+        this.filteredBoards = boards
         this.appComponent.boards = boards
       },error => console.log(error)
     );
   }
   openBoard(board:Board){
     this.appComponent.openBoard(board)
+  }
+
+  onInputChange(searchText: string){
+    this.filteredBoards = this.boards.filter(board =>
+      board.name.toLowerCase().includes(searchText.toLowerCase())
+    );
   }
 }
 

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import {Board} from "./board.model";
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +16,12 @@ export class SharedService {
 
   notifyOpenStats(value: boolean) {
     this.buttonClickStatsSource.next(value);
+  }
+
+  resetObservers(){
+    this.buttonClickSource = new BehaviorSubject<boolean>(false)
+    this.buttonClickStatsSource = new BehaviorSubject<boolean>(false)
+    this.buttonClickChangeView$ = this.buttonClickSource.asObservable();
+    this.buttonClickStats$ = this.buttonClickStatsSource.asObservable();
   }
 }

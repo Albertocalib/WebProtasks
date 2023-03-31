@@ -10,7 +10,10 @@ import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.
 import {DeleteElementDialogComponent} from "../DeleteElementDialog/delete.element.dialog.component";
 import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
 import {SharedService} from "../shared.service";
-import {Subscription} from "rxjs";
+import {Subscription, lastValueFrom} from "rxjs";
+import {AppComponent} from "../app.component";
+import {Board} from "../board.model";
+import {BoardService} from "../services/board.service";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -20,10 +23,11 @@ export class BoardInsideComponent implements OnInit {
   taskLists: TaskList[]
 
   boardId: string | null
-  mode:String
-  subscriptionOnChangeViewMode:Subscription |undefined
-  subscriptionOnOpenStats:Subscription |undefined
-  userData:Array<any>
+  mode: String
+  subscriptionOnChangeViewMode: Subscription | undefined
+  subscriptionOnOpenStats: Subscription | undefined
+  subscription: Subscription | undefined
+  userData: Array<any>
 
   constructor(
     public router: Router,
@@ -31,51 +35,58 @@ export class BoardInsideComponent implements OnInit {
     private activateRoute: ActivatedRoute,
     public taskService: TaskService,
     private _dialog: MatDialog,
-    private sharedService:SharedService,
+    private sharedService: SharedService,
+    private appComponent: AppComponent,
+    public boardService: BoardService,
   ) {
     this.taskLists = []
     this.boardId = ""
-    this.mode=localStorage.getItem("viewMode") || "board"
-    //TODO Hacer que cuando cambie la ruta se reinicialice
-    /*activateRoute.params.subscribe(_ => {
-      this.initialization()
-    });*/
-    this.userData=new Array<any>()
+    this.mode = localStorage.getItem("viewMode") || "board"
+    this.userData = new Array<any>()
   }
 
 
   ngOnInit(): void {
-    this.initialization()
+    this.subscription = this.activateRoute.params.subscribe(_ => {
+      this.initialization()
+    });
   }
-  initialization(){
+
+  async initialization() {
     this.activateRoute.paramMap.subscribe((obs) => {
       if (obs.get('id') != null) {
         this.boardId = obs.get('id')
       }
     });
-    this.taskListService.getTaskLists(this.boardId!!).subscribe(
-      (lists: TaskList[]) => {
-        this.taskLists = lists
-      }, error => console.log(error)
-    );
+    try {
+      this.taskLists = await lastValueFrom(this.taskListService.getTaskLists(this.boardId!!));
+      this.appComponent.board = this.taskLists[0].board
+    } catch (error) {
+      console.log(error);
+    }
+    if (this.appComponent.boards === undefined) {
+      try {
+        this.appComponent.boards = await lastValueFrom(this.boardService.getBoards());
+      } catch (error) {
+        console.log(error);
+      }
+    }
     this.subscriptionOnChangeViewMode = this.sharedService.buttonClickChangeView$.subscribe((clicked) => {
       if (clicked) {
-        console.log("entro change")
         this.changeMode()
       }
     });
     this.subscriptionOnOpenStats = this.sharedService.buttonClickStats$.subscribe((clicked) => {
       if (clicked) {
-        console.log("entro stats")
-
         this.openStats()
       }
     });
   }
+
   ngOnDestroy(): void {
     this.subscriptionOnChangeViewMode?.unsubscribe()
     this.subscriptionOnOpenStats?.unsubscribe()
-
+    this.subscription?.unsubscribe()
   }
 
   updatePositionTask(id: Number, position: Number, listId: Number) {
@@ -137,9 +148,10 @@ export class BoardInsideComponent implements OnInit {
     })
 
   }
-  addTaskList(){
+
+  addTaskList() {
     let dialogAddTaskList = this._dialog.open(AddElementDialogComponent, {
-      data:{'title':'','type':'list'}
+      data: {'title': '', 'type': 'list'}
     });
     dialogAddTaskList.afterClosed().subscribe(result => {
       if (result) {
@@ -178,7 +190,8 @@ export class BoardInsideComponent implements OnInit {
       }
     })
   }
-  copyList(list:TaskList){
+
+  copyList(list: TaskList) {
     let dialogCopyTaskList = this._dialog.open(CopyOrMoveElementDialogComponent, {
       data: {'title': list.title, 'type': 'list', 'mode': 'copy'}
     });
@@ -193,9 +206,10 @@ export class BoardInsideComponent implements OnInit {
       }
     })
   }
-  moveList(list:TaskList){
+
+  moveList(list: TaskList) {
     let dialogMoveTaskList = this._dialog.open(CopyOrMoveElementDialogComponent, {
-      data: {'title': list.title, 'type': 'list','mode': 'move'}
+      data: {'title': list.title, 'type': 'list', 'mode': 'move'}
     });
     dialogMoveTaskList.afterClosed().subscribe(boardSelected => {
       if (boardSelected) {
@@ -231,7 +245,8 @@ export class BoardInsideComponent implements OnInit {
     })
 
   }
-  moveTask(task: Task, oldTaskList: TaskList){
+
+  moveTask(task: Task, oldTaskList: TaskList) {
     let dialogMoveTask = this._dialog.open(CopyOrMoveElementDialogComponent, {
       data: {'title': task.title, 'type': 'task', 'mode': 'move'}
     });
@@ -254,13 +269,14 @@ export class BoardInsideComponent implements OnInit {
     })
 
   }
-  copyTask(task:Task){
+
+  copyTask(task: Task) {
     let dialogCopyTask = this._dialog.open(CopyOrMoveElementDialogComponent, {
       data: {'title': task.title, 'type': 'task', 'mode': 'copy'}
     });
     dialogCopyTask.afterClosed().subscribe(data => {
       if (data) {
-        this.taskService.copy(task.id!!,data.list.id)
+        this.taskService.copy(task.id!!, data.list.id)
           .subscribe(taskResponse => {
             if (taskResponse && Number(this.boardId) == taskResponse.taskList!!.board!!.id) {
               let newList: TaskList[] = this.taskLists.filter(list => list.id == data.list.id)
@@ -273,13 +289,12 @@ export class BoardInsideComponent implements OnInit {
     })
   }
 
-  changeMode(){
+  changeMode() {
     let mode = localStorage.getItem("viewMode") || "board"
-    console.log(mode)
-    if (mode=='board') {
+    if (mode == 'board') {
       localStorage.setItem('viewMode', 'list');
       this.mode = 'list'
-    }else{
+    } else {
       localStorage.setItem('viewMode', 'board');
       this.mode = 'board'
     }
@@ -294,7 +309,7 @@ export class BoardInsideComponent implements OnInit {
       let title = list.title;
       for (let task of list.tasks) {
         let users = task.users ? task.users : [];
-        if (users.length===0){
+        if (users.length === 0) {
           taskDict[noUser] ??= {};
           taskDict[noUser][title] ??= 0;
           taskDict[noUser][title]++;

@@ -35,11 +35,11 @@ export class AppComponent{
   }
   goToHome(){
     this.board=undefined
-    this.sharedService.notifyButtonClickChangeView(false)
     this.router.navigate(["/"])
   }
   openBoard(board:Board){
     this.board=board
+    this.sharedService.resetObservers()
     this.router.navigate(['/board/'+board.id]);
   }
 }
