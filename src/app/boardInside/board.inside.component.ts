@@ -204,7 +204,7 @@ export class BoardInsideComponent implements OnInit {
       if (boardSelected) {
         this.taskListService.copy(list.id!!, boardSelected.board.id)
           .subscribe(listResponse => {
-            if (listResponse && list.board!!.id == listResponse.board!!.id) {
+            if (list?.board?.id === listResponse?.board?.id) {
               this.taskLists.push(listResponse)
             }
           });
