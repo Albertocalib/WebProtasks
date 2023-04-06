@@ -1,0 +1,90 @@
+<div class="task-header">
+  <h2>{{task.title}}</h2>
+  <span class="spacer"></span>
+
+  <button mat-icon-button (click)="copy()">
+    <mat-icon>content_copy</mat-icon>
+  </button>
+  <button mat-icon-button (click)="move()">
+    <mat-icon>drive_file_move_outline</mat-icon>
+  </button>
+  <button mat-icon-button (click)="delete()">
+    <mat-icon>delete</mat-icon>
+  </button>
+  <button mat-icon-button (click)="onNoClick()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div class="task-body">
+  <div class="task-details-header">
+    <div class="task-header">
+      <h2>{{ task.title }}</h2>
+      <p>{{ task.taskList?.title }}</p>
+
+      <div class="task-info-section">
+        <h3>Assigned to</h3>
+        <p>PEPE</p>
+      </div>
+      <div class="task-info-section">
+        <h3>Due date</h3>
+        <p>{{ task.date_end }}</p>
+      </div>
+      <div class="task-info-section">
+        <h3>Tags</h3>
+        <div class="tags">
+          <span *ngFor="let tag of task.tag_ids" [style.backgroundColor]="tag.color">{{ tag.name }}</span>
+        </div>
+      </div>
+      <div class="task-buttons">
+        <button mat-icon-button>
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="task-info">
+      <div class="task-info-section">
+        <h3>Description</h3>
+        <p>{{ task.description }}</p>
+      </div>
+      <div class="task-info-section">
+        <h3>Checklists</h3>
+        <ul>
+          <!--<li *ngFor="let checklist of task.subtasks">{{ checklist.name }}</li>-->
+        </ul>
+      </div>
+      <div class="task-info-section">
+        <h3>Subtasks</h3>
+        <ul>
+          <li *ngFor="let subtask of task.subTasks">{{ subtask.title }}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="task-footer">
+      <div class="task-info-section">
+        <h3>Status</h3>
+        <p>{{ task.taskList?.title }}</p>
+      </div>
+      <div class="task-info-section">
+        <h3>Assigned to</h3>
+        <p>PEPE</p>
+      </div>
+      <div class="task-info-section">
+        <h3>Due date</h3>
+        <p>2022-02-02</p>
+        <!--<p>{{ task.dueDate | date: 'MMM d, y' }}</p>-->
+      </div>
+      <div class="task-info-section">
+        <h3>Tags</h3>
+        <div class="tags">
+          <span *ngFor="let tag of task.tag_ids" [style.backgroundColor]="tag.color">{{ tag.name }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

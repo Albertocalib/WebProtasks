@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild} from '@angular/core';
 import {Tag} from "../tag.model";
 import {File} from "../file.model";
 import {Task} from "../task.model";
@@ -8,6 +8,8 @@ import {DeleteElementDialogComponent} from "../DeleteElementDialog/delete.elemen
 import {TaskService} from "../services/task.service";
 import {TaskList} from "../tasklist.model";
 import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
+import {MatMenuTrigger} from "@angular/material/menu";
+import {User} from "../user.model";
 
 const EXTENSIONS_IMAGES:Set<String> = new Set(["jpg","jpeg","png","svg","img","heic"]);
 
@@ -22,11 +24,13 @@ export class TaskCardComponent implements OnInit {
   tags: Array<Tag>;
   image: string;
   attachments: Array<File>;
+  users:Array<User>;
   removable:boolean;
   @Input() task: Task | undefined;
   @Output() deleteTask = new EventEmitter<void>();
   @Output() copyTask = new EventEmitter<void>();
   @Output() moveTask = new EventEmitter<void>();
+  @ViewChild("menuTrigger") matMenuTrigger!:MatMenuTrigger
 
   constructor(public tagService: TagService, public taskService: TaskService,
               private _dialog: MatDialog
@@ -36,12 +40,15 @@ export class TaskCardComponent implements OnInit {
     this.image='';
     this.attachments = [];
     this.removable=true;
+    this.users = [];
   }
 
   ngOnInit() {
     this.attachments = this.task?.attachments!!
     this.title = this.task?.title!!
     this.tags = this.task?.tag_ids!!
+    this.users = this.task?.users!!
+    console.log(this.users)
     for (let attachment of this.attachments) {
       if (EXTENSIONS_IMAGES.has(attachment.type.toLowerCase())){
         this.image = `data:image/png;base64,${attachment.content}`
@@ -53,7 +60,6 @@ export class TaskCardComponent implements OnInit {
   removeTag(t: Tag) {
     this.tagService.delete(t.id!!, this.task?.id!!)
       .subscribe(response => {
-          let index = this.tags.indexOf(t)
           if (response) {
             let index = this.tags.indexOf(t)
             if (index !== -1) {
@@ -65,6 +71,18 @@ export class TaskCardComponent implements OnInit {
   }
 
 
+  removeUser(user:User) {
+    this.taskService.removeAssigment(user.id!!, this.task?.id!!)
+      .subscribe(response => {
+          if (response) {
+            let index = this.users.indexOf(user)
+            if (index !== -1) {
+              this.users.splice(index, 1);
+            }
+          }
+        }
+      )
+  }
 }
 
 

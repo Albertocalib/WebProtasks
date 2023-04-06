@@ -3,6 +3,8 @@ import {Router} from "@angular/router";
 import {BoardService} from "../services/board.service";
 import {Board} from "../board.model";
 import {AppComponent} from "../app.component";
+import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 
 @Component({
@@ -15,7 +17,8 @@ export class MainBoardComponent implements OnInit{
   constructor(
     public router: Router,
     public boardService: BoardService,
-    private appComponent: AppComponent
+    private appComponent: AppComponent,
+    private _dialog:MatDialog
   )
   {
     this.boards = []
@@ -40,6 +43,16 @@ export class MainBoardComponent implements OnInit{
     this.filteredBoards = this.boards.filter(board =>
       board.name.toLowerCase().includes(searchText.toLowerCase())
     );
+  }
+  createBoard(){
+    let dialogAddTask = this._dialog.open(AddElementDialogComponent, {
+      data: {'title': '', 'description': '', 'type': 'board'}
+    });
+    dialogAddTask.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(result)
+      }
+      })
   }
 }
 

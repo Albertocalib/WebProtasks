@@ -5,5 +5,6 @@ export interface User {
     password?:string;
     surname?:string;
     username?:string;
-    email?:string
+    email?:string;
+    photo?:string;
 }

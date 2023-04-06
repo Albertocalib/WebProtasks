@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {TaskList} from "../tasklist.model";
 import {Task} from "../task.model";
@@ -12,8 +12,9 @@ import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copyO
 import {SharedService} from "../shared.service";
 import {Subscription, lastValueFrom} from "rxjs";
 import {AppComponent} from "../app.component";
-import {Board} from "../board.model";
 import {BoardService} from "../services/board.service";
+import {TaskDetailsDialog} from "../TaskDetailsDIalog/task.details.dialog.component";
+import {TaskCardComponent} from "../taskCard/taskCard.component";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -28,6 +29,7 @@ export class BoardInsideComponent implements OnInit {
   subscriptionOnOpenStats: Subscription | undefined
   subscription: Subscription | undefined
   userData: Array<any>
+  @ViewChild("taskCard") taskCard!:TaskCardComponent;
 
   constructor(
     public router: Router,
@@ -143,7 +145,7 @@ export class BoardInsideComponent implements OnInit {
         }
         this.taskService.createTask(t, list.id!!)
           .subscribe(task => {
-            if (!list.tasks){
+            if (!list.tasks) {
               list.tasks = []
             }
             list.tasks.push(task)
@@ -266,7 +268,7 @@ export class BoardInsideComponent implements OnInit {
             if (taskResponse && Number(this.boardId) == taskResponse.taskList!!.board!!.id) {
               let newList: TaskList[] = this.taskLists.filter(list => list.id == data.list.id)
               if (newList) {
-                newList[0].tasks.push(task);
+                newList[0].tasks.push(taskResponse);
               }
             }
           });
@@ -283,10 +285,11 @@ export class BoardInsideComponent implements OnInit {
       if (data) {
         this.taskService.copy(task.id!!, data.list.id)
           .subscribe(taskResponse => {
+            console.log(taskResponse)
             if (taskResponse && Number(this.boardId) == taskResponse.taskList!!.board!!.id) {
               let newList: TaskList[] = this.taskLists.filter(list => list.id == data.list.id)
               if (newList) {
-                newList[0].tasks.push(task);
+                newList[0].tasks.push(taskResponse);
               }
             }
           });
@@ -305,6 +308,11 @@ export class BoardInsideComponent implements OnInit {
     }
   }
 
+  private getTaskList(task: Task) {
+    return this.taskLists.find((taskList: TaskList) => {
+      return taskList.tasks.some((t: Task) => t.id === task.id);
+    });
+  }
 
   private openStats() {
     this.mode = 'stats'
@@ -339,6 +347,31 @@ export class BoardInsideComponent implements OnInit {
     }
 
   }
+
+  openTask(task: Task) {
+    if (!this.taskCard.matMenuTrigger.menuOpen) {
+      let dialogTaskDetails = this._dialog.open(TaskDetailsDialog, {
+        width: '70%',
+        data: task,
+        panelClass: 'my-dialog-container'
+      });
+      dialogTaskDetails.afterClosed().subscribe(data => {
+
+      })
+      dialogTaskDetails.componentInstance.copyClicked.subscribe((task: Task) => {
+        this.copyTask(task)
+      });
+      dialogTaskDetails.componentInstance.moveClicked.subscribe((task: Task) => {
+        let tasklist = this.getTaskList(task)!!
+        this.moveTask(task, tasklist)
+      });
+      dialogTaskDetails.componentInstance.deleteClicked.subscribe((task: Task) => {
+        let tasklist = this.getTaskList(task)!!
+        this.deleteTask(task, tasklist)
+      });
+    }
+  }
+
 }
 
 

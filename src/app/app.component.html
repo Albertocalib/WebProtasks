@@ -1,10 +1,15 @@
 <mat-sidenav-container fullscreen>
   <mat-sidenav #sidenav mode="side">
-    <mat-nav-list>
-      <h1>Tableros</h1>
-      <a *ngFor="let board of boards" mat-list-item (click)="openBoard(board)"> {{board.name}} </a>
-      <a mat-list-item (click)="sidenav.toggle()" href="">Close</a>
-    </mat-nav-list>
+    <div class="sidenav-content">
+      <div class="profile-pic">
+        <img src="../assets/user-default.png" alt="Foto de perfil">
+      </div>
+      <mat-nav-list>
+        <h1>Tableros</h1>
+        <a *ngFor="let board of boards" mat-list-item (click)="openBoard(board)"> {{board.name}} </a>
+        <a mat-list-item (click)="sidenav.toggle()" href="">Close</a>
+      </mat-nav-list>
+    </div>
   </mat-sidenav>
   <mat-sidenav-content>
       <mat-toolbar color="primary" class="toolbar">

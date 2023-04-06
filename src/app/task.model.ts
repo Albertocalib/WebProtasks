@@ -11,6 +11,9 @@ export interface Task {
     taskList?: TaskList;
     tag_ids?: Array<Tag>;
     attachments?: Array<File>,
-    users?: Array<User>
+    users?: Array<User>,
+    subTasks?: Array<Task>;
+    date_end?:Date;
+
 }
 

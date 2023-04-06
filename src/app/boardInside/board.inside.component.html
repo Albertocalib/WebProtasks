@@ -29,8 +29,8 @@
           </mat-menu>
         </div>
         <div class="card-list-content" cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
-          <task-card  *ngFor="let task of list.tasks" cdkDrag  [task]="task" (deleteTask)="deleteTask(task,list)"
-                      (copyTask)="copyTask(task)" (moveTask)="moveTask(task,list)"></task-card>
+          <task-card #taskCard *ngFor="let task of list.tasks" cdkDrag  [task]="task" (deleteTask)="deleteTask(task,list)"
+                      (copyTask)="copyTask(task)" (moveTask)="moveTask(task,list)" (click)="openTask(task)"></task-card>
         </div>
         <div fxLayout="row" fxLayoutAlign="baseline baseline">
           <button style="width: fit-content;" class="add-task" (click)="addTask(list)" color="primary"
@@ -47,7 +47,7 @@
   <div *ngIf="mode==='list'" cdkDropList [cdkDropListData]="taskLists" (cdkDropListDropped)="drop($event,'list')">
     <ul cdkDrag *ngFor="let list of taskLists" cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
       <h2>{{ list.title }}</h2>
-      <li *ngFor="let task of list.tasks" cdkDrag>
+      <li *ngFor="let task of list.tasks" cdkDrag (click)="openTask(task)">
         <span class="task-title">{{ task.title }}</span>
         <span> {{ task.description }}</span>
       </li>
