@@ -4,11 +4,11 @@
 <div mat-dialog-content>
   <mat-form-field appearance="fill" class="example-full-width">
     <mat-label>Título</mat-label>
-    <input matInput #title [ngModel]="data.title" required/>
+    <input matInput [(ngModel)]="data.title" required/>
   </mat-form-field>
   <mat-form-field appearance="fill" class="example-full-width" *ngIf="data.type=='task'">
     <mat-label>Descripción</mat-label>
-    <textarea matInput [ngModel]="data.description"></textarea>
+    <textarea matInput [(ngModel)]="data.description"></textarea>
   </mat-form-field>
   <mat-form-field class="example-full-width" *ngIf="data.type=='board'">
     <mat-label>Seleccione una imagen</mat-label>
@@ -26,7 +26,7 @@
     />
     <mat-error>this field is required</mat-error>
   </mat-form-field>
-  <mat-form-field>
+  <mat-form-field *ngIf="data.type=='board'">
     <mat-label>Elige color</mat-label>
     <input [colorPicker]="selectedColor" [style.background]="selectedColor" (colorPickerChange)="onColorChange($event)" />
   </mat-form-field>
