@@ -5,6 +5,7 @@ import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
 import {environment} from "../../environments/environment";
 import {Board} from "../board.model";
+import {Task} from "../task.model";
 
 const BASE_URL = environment.apiEndpoint + "/board/";
 
@@ -27,6 +28,17 @@ export class BoardService {
       );
   }
 
+  createBoard(board:Board):Observable<Board> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}newBoard/username=${this.user.username}`
+    console.log(url)
+    return this.http.post<Board>(url, board, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
   private handleError(error: HttpErrorResponse) {
     console.error(error);
     return throwError("Server error (" + error.status + "): " + error.message);

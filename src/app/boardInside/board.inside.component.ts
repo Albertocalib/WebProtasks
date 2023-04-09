@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {TaskList} from "../tasklist.model";
 import {Task} from "../task.model";
@@ -30,6 +30,7 @@ export class BoardInsideComponent implements OnInit {
   subscription: Subscription | undefined
   userData: Array<any>
   @ViewChild("taskCard") taskCard!:TaskCardComponent;
+  taskDeleted = new EventEmitter<void>();
 
   constructor(
     public router: Router,
@@ -245,6 +246,7 @@ export class BoardInsideComponent implements OnInit {
               let index = taskList.tasks.indexOf(task)
               if (index !== -1) {
                 taskList.tasks.splice(index!!, 1);
+                this.taskDeleted.emit()
               }
             }
           });
@@ -368,6 +370,9 @@ export class BoardInsideComponent implements OnInit {
       dialogTaskDetails.componentInstance.deleteClicked.subscribe((task: Task) => {
         let tasklist = this.getTaskList(task)!!
         this.deleteTask(task, tasklist)
+        this.taskDeleted.subscribe(() => {
+          dialogTaskDetails.close()
+        });
       });
     }
   }

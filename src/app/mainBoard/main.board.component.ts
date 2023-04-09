@@ -50,7 +50,17 @@ export class MainBoardComponent implements OnInit{
     });
     dialogAddTask.afterClosed().subscribe(result => {
       if (result) {
-        console.log(result)
+
+        let b: Board = {
+          name: result.title,
+          photo: result.photo
+        }
+        this.boardService.createBoard(b).subscribe(board => {
+          if (!this.boards) {
+            this.boards = []
+          }
+          this.boards.push(board)
+        });
       }
       })
   }

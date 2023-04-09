@@ -1,6 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FormControl, Validators} from "@angular/forms";
+import { createCanvas } from 'canvas';
 
 export interface AddElementDialogData {
   title: string;
@@ -22,6 +23,7 @@ export class AddElementDialogComponent{
   }
   display: FormControl = new FormControl("", Validators.required);
   selectedColor = ''
+  mode = ''
   areRequiredFieldsFilled:boolean = false;
   onNoClick(): void {
     this.dialogRef.close(false);
@@ -46,8 +48,43 @@ export class AddElementDialogComponent{
     }
   }
 
-  onColorChange($event: any) {
-    
+  onColorChange(color: string) {
+    this.selectedColor = color;
+    const width = 400;
+    const height = 400;
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Fill the canvas with the background color
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, width, height);
+
+    // Set the text style for the name
+    const fontSize = 48;
+    ctx.font = `${fontSize}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'white';
+
+    // Draw the name in the center of the canvas
+    const x = width / 2;
+    const y = height / 2 + fontSize / 2;
+    let title = this.data.title.split(" ")
+    let initials = ""
+    title.map(word => {
+      initials += word.charAt(0).toUpperCase();
+    });
+    ctx.fillText(initials, x, y);
+
+    // Convert the canvas to a base64-encoded PNG image
+    const dataUrl = canvas.toDataURL('image/png');
+    this.data.photo = dataUrl.split(',')[1];
+
+  }
+
+  selectMode(value:string) {
+    this.mode=value
+
+
   }
 }
 
