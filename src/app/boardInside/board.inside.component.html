@@ -30,7 +30,7 @@
         </div>
         <div class="card-list-content" cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
           <task-card #taskCard *ngFor="let task of list.tasks" cdkDrag  [task]="task" (deleteTask)="deleteTask(task,list)"
-                      (copyTask)="copyTask(task)" (moveTask)="moveTask(task,list)" (click)="openTask(task)"></task-card>
+                      (copyTask)="copyTask(task)" (moveTask)="moveTask(task,list)" (openTask)="openTask(task)"></task-card>
         </div>
         <div fxLayout="row" fxLayoutAlign="baseline baseline">
           <button style="width: fit-content;" class="add-task" (click)="addTask(list)" color="primary"

@@ -35,3 +35,8 @@ mat-card {
 .add-icon {
   color: #fff;
 }
+.spacer {
+  flex: 1;
+}
+
+.board-header{ display: flex}

@@ -1,10 +1,10 @@
-<mat-card class="card">
+<mat-card class="card" (click)="openTask.next()">
   <img *ngIf="image" mat-card-image [src]="image" draggable="false">
   <mat-card-content>
     <div class="card-header">
       <span class="mat-h3">{{title}}</span>
       <span class="spacer"></span>
-      <button mat-icon-button [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger">
+      <button mat-icon-button [matMenuTriggerFor]="menu" matMenuTrigger>
         <mat-icon class="icon">menu</mat-icon>
       </button>
       <mat-menu #menu="matMenu">

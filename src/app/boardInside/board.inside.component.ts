@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnInit, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {TaskList} from "../tasklist.model";
 import {Task} from "../task.model";
@@ -29,7 +29,7 @@ export class BoardInsideComponent implements OnInit {
   subscriptionOnOpenStats: Subscription | undefined
   subscription: Subscription | undefined
   userData: Array<any>
-  @ViewChild("taskCard") taskCard!:TaskCardComponent;
+  @ViewChildren(TaskCardComponent) taskCards!:TaskCardComponent[];
   taskDeleted = new EventEmitter<void>();
 
   constructor(
@@ -351,7 +351,7 @@ export class BoardInsideComponent implements OnInit {
   }
 
   openTask(task: Task) {
-    if (!this.taskCard.matMenuTrigger.menuOpen) {
+    if (!this.taskCards.some(card=>card.matMenuTrigger.menuOpen)) {
       let dialogTaskDetails = this._dialog.open(TaskDetailsDialog, {
         width: '70%',
         data: task,

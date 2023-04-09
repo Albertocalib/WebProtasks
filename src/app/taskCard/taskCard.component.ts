@@ -4,10 +4,7 @@ import {File} from "../file.model";
 import {Task} from "../task.model";
 import {TagService} from "../services/tag.service";
 import {MatDialog} from "@angular/material/dialog";
-import {DeleteElementDialogComponent} from "../DeleteElementDialog/delete.element.dialog.component";
 import {TaskService} from "../services/task.service";
-import {TaskList} from "../tasklist.model";
-import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
 import {MatMenuTrigger} from "@angular/material/menu";
 import {User} from "../user.model";
 
@@ -30,7 +27,8 @@ export class TaskCardComponent implements OnInit {
   @Output() deleteTask = new EventEmitter<void>();
   @Output() copyTask = new EventEmitter<void>();
   @Output() moveTask = new EventEmitter<void>();
-  @ViewChild("menuTrigger") matMenuTrigger!:MatMenuTrigger
+  @Output() openTask = new EventEmitter<void>();
+  @ViewChild(MatMenuTrigger) matMenuTrigger!:MatMenuTrigger
 
   constructor(public tagService: TagService, public taskService: TaskService,
               private _dialog: MatDialog
@@ -48,7 +46,6 @@ export class TaskCardComponent implements OnInit {
     this.title = this.task?.title!!
     this.tags = this.task?.tag_ids!!
     this.users = this.task?.users!!
-    console.log(this.users)
     for (let attachment of this.attachments) {
       if (EXTENSIONS_IMAGES.has(attachment.type.toLowerCase())){
         this.image = `data:image/png;base64,${attachment.content}`

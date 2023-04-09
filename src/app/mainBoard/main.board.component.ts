@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChildren} from '@angular/core';
 import {Router} from "@angular/router";
 import {BoardService} from "../services/board.service";
 import {Board} from "../board.model";
 import {AppComponent} from "../app.component";
 import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {MatMenuTrigger} from "@angular/material/menu";
 
 
 @Component({
@@ -14,6 +15,7 @@ import {MatDialog} from "@angular/material/dialog";
 export class MainBoardComponent implements OnInit{
   boards : Board[]
   filteredBoards: Board[];
+  @ViewChildren(MatMenuTrigger) menuTriggers!:MatMenuTrigger[];
   constructor(
     public router: Router,
     public boardService: BoardService,
@@ -36,7 +38,9 @@ export class MainBoardComponent implements OnInit{
     );
   }
   openBoard(board:Board){
-    this.appComponent.openBoard(board)
+    if (!this.menuTriggers.some(trigger => trigger.menuOpen)) {
+      this.appComponent.openBoard(board)
+    }
   }
 
   onInputChange(searchText: string){
@@ -63,6 +67,16 @@ export class MainBoardComponent implements OnInit{
         });
       }
       })
+  }
+
+  deleteBoard(board:Board) {
+
+  }
+  copyBoard(board:Board) {
+
+  }
+  editBoard(board:Board) {
+
   }
 }
 

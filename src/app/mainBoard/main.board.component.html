@@ -8,7 +8,27 @@
 <div class="flex-me">
   <mat-card *ngFor="let board of filteredBoards" (click)="openBoard(board)">
     <mat-card-content>
-      <h2>{{board.name}}</h2>
+      <div class="board-header">
+        <span class="mat-h2">{{board.name}}</span>
+        <span class="spacer"></span>
+        <button mat-icon-button [matMenuTriggerFor]="menu" matMenuTrigger>
+          <mat-icon>menu</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="deleteBoard(board)">
+            <mat-icon>delete</mat-icon>
+            <span>Eliminar</span>
+          </button>
+          <button mat-menu-item (click)="copyBoard(board)">
+            <mat-icon>content_copy</mat-icon>
+            <span>Copiar</span>
+          </button>
+          <button mat-menu-item (click)="editBoard(board)">
+            <mat-icon>edit</mat-icon>
+            <span>Editar</span>
+          </button>
+        </mat-menu>
+      </div>
       <img mat-card-image class="board-img-card" src="data:image/png;base64,{{board.photo}}" alt="Photo of a Board">
     </mat-card-content>
   </mat-card>
