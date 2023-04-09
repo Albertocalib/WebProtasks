@@ -51,6 +51,17 @@ export class BoardService {
     );
   }
 
+  copy(boardId: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}copyBoard/boardId=${boardId}`
+    return this.http.post<Board>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error(error);
     return throwError("Server error (" + error.status + "): " + error.message);

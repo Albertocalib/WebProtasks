@@ -78,6 +78,11 @@ export class MainBoardComponent implements OnInit{
     });
   }
   copyBoard(board:Board) {
+    this.boardService.copy(board.id!!)
+      .subscribe(boardResponse => {
+        this.boards.push(boardResponse)
+
+      });
 
   }
   editBoard(board:Board) {
