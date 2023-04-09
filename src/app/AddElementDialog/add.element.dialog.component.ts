@@ -41,7 +41,7 @@ export class AddElementDialogComponent{
       let reader = new FileReader();
       reader.readAsDataURL(f);
       reader.onload = () => {
-        this.data.photo = reader.result as string;
+        this.data.photo = (reader.result as string).split(',')[1];
       };
     } else {
       this.display.patchValue("");
