@@ -39,6 +39,18 @@ export class BoardService {
       catchError(error => this.handleError(error))
     );
   }
+
+  delete(boardId: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${boardId}`
+    return this.http.delete<boolean>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error(error);
     return throwError("Server error (" + error.status + "): " + error.message);

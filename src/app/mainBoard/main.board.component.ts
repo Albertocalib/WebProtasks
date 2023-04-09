@@ -70,7 +70,12 @@ export class MainBoardComponent implements OnInit{
   }
 
   deleteBoard(board:Board) {
-
+    this.boardService.delete(board.id!!).subscribe(result => {
+      let index = this.boards.indexOf(board)
+      if (index !== -1) {
+        this.boards.splice(index!!, 1);
+      }
+    });
   }
   copyBoard(board:Board) {
 
