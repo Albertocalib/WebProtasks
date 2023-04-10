@@ -131,7 +131,7 @@ export class BoardInsideComponent implements OnInit {
 
   addTask(list: TaskList) {
     let dialogAddTask = this._dialog.open(AddElementDialogComponent, {
-      data: {'title': '', 'description': '', 'type': 'task'}
+      data: {'title': '', 'description': '', 'type': 'task', 'editMode':false}
     });
     dialogAddTask.afterClosed().subscribe(result => {
       if (result) {
@@ -159,7 +159,7 @@ export class BoardInsideComponent implements OnInit {
 
   addTaskList() {
     let dialogAddTaskList = this._dialog.open(AddElementDialogComponent, {
-      data: {'title': '', 'type': 'list'}
+      data: {'title': '', 'type': 'list','editMode':false}
     });
     dialogAddTaskList.afterClosed().subscribe(result => {
       if (result) {

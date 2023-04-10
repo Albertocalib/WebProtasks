@@ -1,13 +1,17 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {Component, Inject, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {FormControl, Validators} from "@angular/forms";
 import { createCanvas } from 'canvas';
+import {MatSelect} from "@angular/material/select";
 
 export interface AddElementDialogData {
   title: string;
   description: string;
   type:string;
   photo?:string;
+  color?:string;
+  photo_name?:string;
+  editMode:boolean;
 }
 
 @Component({
@@ -15,16 +19,30 @@ export interface AddElementDialogData {
   styleUrls: ['./add.element.dialog.component.css']
 })
 export class AddElementDialogComponent{
+
+  display: FormControl = new FormControl("", Validators.required);
+  selectedColor = ''
+  mode = ''
+  areRequiredFieldsFilled:boolean = false;
+  @ViewChild("selector")
+  selectElement!: MatSelect;
   constructor(
     public dialogRef: MatDialogRef<AddElementDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddElementDialogData,
   ) {
     this.display.disable();
   }
-  display: FormControl = new FormControl("", Validators.required);
-  selectedColor = ''
-  mode = ''
-  areRequiredFieldsFilled:boolean = false;
+  ngAfterViewInit() {
+    if (this.data.color!=null){
+      this.selectedColor=this.data.color
+      this.mode = 'color'
+      this.selectElement.value = 'color';
+    }else if(this.data.photo_name!=null){
+      this.display.patchValue(`${this.data.photo_name}`);
+      this.mode = 'image';
+      this.selectElement.value = 'image';
+    }
+  }
   onNoClick(): void {
     this.dialogRef.close(false);
   }
@@ -38,6 +56,7 @@ export class AddElementDialogComponent{
         return;
       }
       this.display.patchValue(`${f.name}`);
+      this.data.photo_name = f.name
       let reader = new FileReader();
       reader.readAsDataURL(f);
       reader.onload = () => {
@@ -50,6 +69,7 @@ export class AddElementDialogComponent{
 
   onColorChange(color: string) {
     this.selectedColor = color;
+    this.data.color = color
     const width = 400;
     const height = 400;
     const canvas = createCanvas(width, height);
@@ -83,8 +103,6 @@ export class AddElementDialogComponent{
 
   selectMode(value:string) {
     this.mode=value
-
-
   }
 }
 
