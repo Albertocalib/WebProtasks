@@ -1,4 +1,5 @@
 import {Task} from "./task.model";
+import {Board} from "./board.model";
 
 export interface File {
     id?: number;
@@ -6,4 +7,5 @@ export interface File {
     type: string;
     content: string;
     task?:Task;
+    board_ids?:Board[]
 }

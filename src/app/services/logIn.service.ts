@@ -17,7 +17,6 @@ export class LoginService {
   constructor(private http: HttpClient) {
     let user = JSON.parse(<string>localStorage.getItem('currentUser'));
     if (user) {
-      console.log('Logged user');
       this.setCurrentUser(user);
     }
   }
@@ -34,7 +33,6 @@ export class LoginService {
 
         if (user) {
           this.setCurrentUser(user);
-          localStorage.setItem('currentUser', JSON.stringify(user));
         }
         return user;
       }));
@@ -44,14 +42,16 @@ export class LoginService {
     this.removeCurrentUser();
   }
 
-  private setCurrentUser(user: User) {
+  setCurrentUser(user: User) {
     this.isLogged = true;
     this.user = user;
+    localStorage.setItem('currentUser', JSON.stringify(user));
   }
 
   removeCurrentUser() {
     localStorage.removeItem('currentUser');
     this.isLogged = false;
+    this.user = undefined;
   }
 
   register(user: User): Observable<User> {
@@ -59,8 +59,20 @@ export class LoginService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
-    console.log(body)
     return this.http.post<User>(BASE_URL + "register/newUser", body, {headers})
+      .pipe(
+        map(response => response),
+        catchError(error => this.handleError(error))
+      );
+  }
+  updatePhoto(photo:string): Observable<User> {
+    const body = JSON.stringify(photo);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    debugger;
+    const url =`${BASE_URL}updatePhoto/${this.user?.username}`
+    return this.http.put<User>(url, body, {headers})
       .pipe(
         map(response => response),
         catchError(error => this.handleError(error))

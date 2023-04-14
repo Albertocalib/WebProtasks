@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {TaskList} from "../tasklist.model";
 import {Task} from "../task.model";
@@ -9,6 +9,12 @@ import {MatDialog} from "@angular/material/dialog";
 import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
 import {DeleteElementDialogComponent} from "../DeleteElementDialog/delete.element.dialog.component";
 import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
+import {SharedService} from "../shared.service";
+import {Subscription, lastValueFrom} from "rxjs";
+import {AppComponent} from "../app.component";
+import {BoardService} from "../services/board.service";
+import {TaskDetailsDialog} from "../TaskDetailsDIalog/task.details.dialog.component";
+import {TaskCardComponent} from "../taskCard/taskCard.component";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -18,30 +24,74 @@ export class BoardInsideComponent implements OnInit {
   taskLists: TaskList[]
 
   boardId: string | null
+  mode: String
+  subscriptionOnChangeViewMode: Subscription | undefined
+  subscriptionOnOpenStats: Subscription | undefined
+  subscription: Subscription | undefined
+  userData: Array<any>
+  @ViewChildren(TaskCardComponent) taskCards!:TaskCardComponent[];
+  taskDeleted = new EventEmitter<void>();
 
   constructor(
     public router: Router,
     public taskListService: TaskListService,
     private activateRoute: ActivatedRoute,
     public taskService: TaskService,
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
+    private sharedService: SharedService,
+    private appComponent: AppComponent,
+    public boardService: BoardService,
   ) {
     this.taskLists = []
     this.boardId = ""
+    this.mode = localStorage.getItem("viewMode") || "board"
+    this.userData = new Array<any>()
   }
 
 
   ngOnInit(): void {
+    this.subscription = this.activateRoute.params.subscribe(_ => {
+      this.initialization()
+    });
+  }
+
+  async initialization() {
     this.activateRoute.paramMap.subscribe((obs) => {
       if (obs.get('id') != null) {
         this.boardId = obs.get('id')
       }
     });
-    this.taskListService.getTaskLists(this.boardId!!).subscribe(
-      (lists: TaskList[]) => {
-        this.taskLists = lists
-      }, error => console.log(error)
-    );
+    try {
+      this.taskLists = await lastValueFrom(this.taskListService.getTaskLists(this.boardId!!));
+      if (this.taskLists.length > 0) {
+        this.appComponent.board = this.taskLists[0].board
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    if (this.appComponent.boards === undefined) {
+      try {
+        this.appComponent.boards = await lastValueFrom(this.boardService.getBoards());
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    this.subscriptionOnChangeViewMode = this.sharedService.buttonClickChangeView$.subscribe((clicked) => {
+      if (clicked) {
+        this.changeMode()
+      }
+    });
+    this.subscriptionOnOpenStats = this.sharedService.buttonClickStats$.subscribe((clicked) => {
+      if (clicked) {
+        this.openStats()
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptionOnChangeViewMode?.unsubscribe()
+    this.subscriptionOnOpenStats?.unsubscribe()
+    this.subscription?.unsubscribe()
   }
 
   updatePositionTask(id: Number, position: Number, listId: Number) {
@@ -81,7 +131,7 @@ export class BoardInsideComponent implements OnInit {
 
   addTask(list: TaskList) {
     let dialogAddTask = this._dialog.open(AddElementDialogComponent, {
-      data: {'title': '', 'description': '', 'type': 'task'}
+      data: {'title': '', 'description': '', 'type': 'task', 'editMode':false}
     });
     dialogAddTask.afterClosed().subscribe(result => {
       if (result) {
@@ -96,6 +146,9 @@ export class BoardInsideComponent implements OnInit {
         }
         this.taskService.createTask(t, list.id!!)
           .subscribe(task => {
+            if (!list.tasks) {
+              list.tasks = []
+            }
             list.tasks.push(task)
           });
       }
@@ -103,9 +156,10 @@ export class BoardInsideComponent implements OnInit {
     })
 
   }
-  addTaskList(){
+
+  addTaskList() {
     let dialogAddTaskList = this._dialog.open(AddElementDialogComponent, {
-      data:{'title':'','type':'list'}
+      data: {'title': '', 'type': 'list','editMode':false}
     });
     dialogAddTaskList.afterClosed().subscribe(result => {
       if (result) {
@@ -144,7 +198,8 @@ export class BoardInsideComponent implements OnInit {
       }
     })
   }
-  copyList(list:TaskList){
+
+  copyList(list: TaskList) {
     let dialogCopyTaskList = this._dialog.open(CopyOrMoveElementDialogComponent, {
       data: {'title': list.title, 'type': 'list', 'mode': 'copy'}
     });
@@ -152,16 +207,17 @@ export class BoardInsideComponent implements OnInit {
       if (boardSelected) {
         this.taskListService.copy(list.id!!, boardSelected.board.id)
           .subscribe(listResponse => {
-            if (listResponse && list.board!!.id == listResponse.board!!.id) {
+            if (list?.board?.id === listResponse?.board?.id) {
               this.taskLists.push(listResponse)
             }
           });
       }
     })
   }
-  moveList(list:TaskList){
+
+  moveList(list: TaskList) {
     let dialogMoveTaskList = this._dialog.open(CopyOrMoveElementDialogComponent, {
-      data: {'title': list.title, 'type': 'list','mode': 'move'}
+      data: {'title': list.title, 'type': 'list', 'mode': 'move'}
     });
     dialogMoveTaskList.afterClosed().subscribe(boardSelected => {
       if (boardSelected) {
@@ -190,6 +246,7 @@ export class BoardInsideComponent implements OnInit {
               let index = taskList.tasks.indexOf(task)
               if (index !== -1) {
                 taskList.tasks.splice(index!!, 1);
+                this.taskDeleted.emit()
               }
             }
           });
@@ -197,7 +254,8 @@ export class BoardInsideComponent implements OnInit {
     })
 
   }
-  moveTask(task: Task, oldTaskList: TaskList){
+
+  moveTask(task: Task, oldTaskList: TaskList) {
     let dialogMoveTask = this._dialog.open(CopyOrMoveElementDialogComponent, {
       data: {'title': task.title, 'type': 'task', 'mode': 'move'}
     });
@@ -212,7 +270,7 @@ export class BoardInsideComponent implements OnInit {
             if (taskResponse && Number(this.boardId) == taskResponse.taskList!!.board!!.id) {
               let newList: TaskList[] = this.taskLists.filter(list => list.id == data.list.id)
               if (newList) {
-                newList[0].tasks.push(task);
+                newList[0].tasks.push(taskResponse);
               }
             }
           });
@@ -220,23 +278,103 @@ export class BoardInsideComponent implements OnInit {
     })
 
   }
-  copyTask(task:Task){
+
+  copyTask(task: Task) {
     let dialogCopyTask = this._dialog.open(CopyOrMoveElementDialogComponent, {
       data: {'title': task.title, 'type': 'task', 'mode': 'copy'}
     });
     dialogCopyTask.afterClosed().subscribe(data => {
       if (data) {
-        this.taskService.copy(task.id!!,data.list.id)
+        this.taskService.copy(task.id!!, data.list.id)
           .subscribe(taskResponse => {
+            console.log(taskResponse)
             if (taskResponse && Number(this.boardId) == taskResponse.taskList!!.board!!.id) {
               let newList: TaskList[] = this.taskLists.filter(list => list.id == data.list.id)
               if (newList) {
-                newList[0].tasks.push(task);
+                newList[0].tasks.push(taskResponse);
               }
             }
           });
       }
     })
+  }
+
+  changeMode() {
+    let mode = localStorage.getItem("viewMode") || "board"
+    if (mode == 'board') {
+      localStorage.setItem('viewMode', 'list');
+      this.mode = 'list'
+    } else {
+      localStorage.setItem('viewMode', 'board');
+      this.mode = 'board'
+    }
+  }
+
+  private getTaskList(task: Task) {
+    return this.taskLists.find((taskList: TaskList) => {
+      return taskList.tasks.some((t: Task) => t.id === task.id);
+    });
+  }
+
+  private openStats() {
+    this.mode = 'stats'
+    let taskDict: { [user: string]: { [state: string]: number } } = {};
+    let noUser = "No asignado"
+    for (let list of this.taskLists) {
+      let title = list.title;
+      for (let task of list.tasks) {
+        let users = task.users ? task.users : [];
+        if (users.length === 0) {
+          taskDict[noUser] ??= {};
+          taskDict[noUser][title] ??= 0;
+          taskDict[noUser][title]++;
+        }
+        for (const user of users) {
+          let name = user.name;
+          taskDict[name] ??= {};
+          taskDict[name][title] ??= 0;
+          taskDict[name][title]++;
+        }
+      }
+    }
+    this.userData = [];
+    for (let user in taskDict) {
+      let userStatuses = [];
+      let userTotal = 0;
+      for (let state in taskDict[user]) {
+        userStatuses.push({name: state, value: taskDict[user][state]});
+        userTotal += taskDict[user][state];
+      }
+      this.userData.push({name: user, statuses: userStatuses, total: userTotal});
+    }
+
+  }
+
+  openTask(task: Task) {
+    if (!this.taskCards.some(card=>card.matMenuTrigger.menuOpen)) {
+      let dialogTaskDetails = this._dialog.open(TaskDetailsDialog, {
+        width: '70%',
+        data: task,
+        panelClass: 'my-dialog-container'
+      });
+      dialogTaskDetails.afterClosed().subscribe(data => {
+
+      })
+      dialogTaskDetails.componentInstance.copyClicked.subscribe((task: Task) => {
+        this.copyTask(task)
+      });
+      dialogTaskDetails.componentInstance.moveClicked.subscribe((task: Task) => {
+        let tasklist = this.getTaskList(task)!!
+        this.moveTask(task, tasklist)
+      });
+      dialogTaskDetails.componentInstance.deleteClicked.subscribe((task: Task) => {
+        let tasklist = this.getTaskList(task)!!
+        this.deleteTask(task, tasklist)
+        this.taskDeleted.subscribe(() => {
+          dialogTaskDetails.close()
+        });
+      });
+    }
   }
 
 }

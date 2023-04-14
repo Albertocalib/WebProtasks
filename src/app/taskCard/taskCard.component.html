@@ -1,10 +1,10 @@
-<mat-card class="card">
+<mat-card class="card" (click)="openTask.next()">
   <img *ngIf="image" mat-card-image [src]="image" draggable="false">
   <mat-card-content>
     <div class="card-header">
       <span class="mat-h3">{{title}}</span>
       <span class="spacer"></span>
-      <button mat-icon-button [matMenuTriggerFor]="menu">
+      <button mat-icon-button [matMenuTriggerFor]="menu" matMenuTrigger>
         <mat-icon class="icon">menu</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
@@ -21,6 +21,17 @@
           <span>Mover</span>
         </button>
       </mat-menu>
+    </div>
+    <div *ngIf="users">
+      <mat-chip-list>
+        <mat-chip *ngFor="let user of users" class="no-padding-right" matTooltip="{{ user.name }} {{user.surname}}"
+                  [removable]="removable"
+                  (removed)="removeUser(user)">
+          <img matChipAvatar *ngIf="user.photo" src="data:image/png;base64,{{user.photo.substring(1, user.photo.length - 1)}}" alt="Avatar de {{ user.name }}" class="assigment-avatar">
+          <img matChipAvatar *ngIf="!user.photo" src="../../assets/user-default.png" alt="Avatar de {{ user.name }}"  class="assigment-avatar">
+          <mat-icon matChipRemove *ngIf="removable" class="remove-assigment" >cancel</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
     </div>
     <div *ngIf="tags">
       <mat-chip-list>

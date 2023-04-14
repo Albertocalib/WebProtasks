@@ -1,6 +1,7 @@
 import {TaskList} from "./tasklist.model";
 import {Tag} from "./tag.model";
 import {File} from "./file.model";
+import {User} from "./user.model";
 
 export interface Task {
     id?: number;
@@ -9,6 +10,10 @@ export interface Task {
     position?: number;
     taskList?: TaskList;
     tag_ids?: Array<Tag>;
-    attachments?: Array<File>
+    attachments?: Array<File>,
+    users?: Array<User>,
+    subTasks?: Array<Task>;
+    date_end?:Date;
+
 }
 

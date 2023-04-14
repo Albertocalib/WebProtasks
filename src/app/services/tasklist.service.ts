@@ -29,7 +29,6 @@ export class TaskListService {
       );
   }
   updatePosition(id:Number,position:Number):Observable<TaskList> {
-    console.log(`ID=${id} , position=${position}`)
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });

@@ -1,16 +1,46 @@
 <h1 mat-dialog-title *ngIf="data.type=='task'">Añade una nueva Tarea</h1>
 <h1 mat-dialog-title *ngIf="data.type=='list'">Añade una nueva Lista</h1>
+<h1 mat-dialog-title *ngIf="data.type=='board' && !data.editMode">Añade un nuevo Tablero</h1>
+<h1 mat-dialog-title *ngIf="data.type=='board' && data.editMode">Edita el tablero</h1>
 <div mat-dialog-content>
   <mat-form-field appearance="fill" class="example-full-width">
     <mat-label>Título</mat-label>
-    <input matInput [(ngModel)]="data.title" required>
+    <input matInput [(ngModel)]="data.title" required/>
   </mat-form-field>
   <mat-form-field appearance="fill" class="example-full-width" *ngIf="data.type=='task'">
     <mat-label>Descripción</mat-label>
     <textarea matInput [(ngModel)]="data.description"></textarea>
   </mat-form-field>
+  <mat-form-field appearance="fill" class="example-full-width" *ngIf="data.type=='board'">
+    <mat-label>Elige Portada</mat-label>
+    <mat-select #selector required (selectionChange)="selectMode($event.value)">
+      <mat-option [value]="'image'">Imagen</mat-option>
+      <mat-option [value]="'color'">Color</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="example-full-width" *ngIf="data.type=='board' && mode=='image'" (click)="f_input.click()">
+    <mat-label>Seleccione una imagen</mat-label>
+    <button mat-icon-button matPrefix >
+      <mat-icon>attach_file</mat-icon>
+    </button>
+    <input type="text" matInput [formControl]="display" />
+    <input
+      type="file"
+      hidden
+      [multiple]="false"
+      accept="image/*"
+      #f_input
+      (change)="onImgSelected(f_input.files)"
+    />
+    <mat-error>this field is required</mat-error>
+  </mat-form-field>
+  <mat-form-field *ngIf="data.type=='board' && mode=='color'" floatLabel="always" class="example-full-width">
+    <mat-label>Elige color</mat-label>
+    <input matInput [colorPicker]="selectedColor" [style.background]="selectedColor" (colorPickerChange)="onColorChange($event)" readonly />
+  </mat-form-field>
 </div>
 <div mat-dialog-actions class="example-full-width">
-  <button color="primary" mat-raised-button [mat-dialog-close]="data">Crear</button>
+  <button *ngIf="!data.editMode" color="primary" mat-raised-button  [mat-dialog-close]="data">Crear</button>
+  <button *ngIf="data.editMode" color="primary" mat-raised-button  [mat-dialog-close]="data">Modificar</button>
   <button mat-button (click)="onNoClick()">Cerrar</button>
 </div>

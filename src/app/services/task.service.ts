@@ -66,6 +66,16 @@ export class TaskService {
       catchError(error => TaskService.handleError(error))
     );
   }
+  removeAssigment(userId:number,taskId:number){
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${taskId}/user=${userId}`
+    return this.http.delete<boolean>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => TaskService.handleError(error))
+    );
+  }
 
 
   private static handleError(error: HttpErrorResponse) {
