@@ -1,5 +1,5 @@
 <mat-card class="card" (click)="openTask.next()">
-  <img *ngIf="image" mat-card-image [src]="image" draggable="false">
+  <img *ngIf="image" mat-card-image [src]="image" draggable="false" alt="Foto de {{ title }}">
   <mat-card-content>
     <div class="card-header">
       <span class="mat-h3">{{title}}</span>
