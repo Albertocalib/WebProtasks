@@ -5,7 +5,6 @@ import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
 import {environment} from "../../environments/environment";
 import {Task} from "../task.model";
-import {TaskList} from "../tasklist.model";
 
 const BASE_URL = environment.apiEndpoint + "/task/";
 
@@ -16,14 +15,14 @@ export class TaskService {
     this.user = JSON.parse(<string>localStorage.getItem('currentUser'));
   }
 
-  updatePosition(id:Number,position:Number,newTaskListId:Number):Observable<Task> {
+  updatePosition(id:number,position:number,newTaskListId:number):Observable<Task> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
     return this.http.put<Task>(`${BASE_URL}id=${id}&newPosition=${position}&newTaskList=${newTaskListId}`,{},{headers})
       .pipe(map(response => response),catchError(error => TaskService.handleError(error)));
   }
-  createTask(task:Task, listId:Number):Observable<Task> {
+  createTask(task:Task, listId:number):Observable<Task> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });

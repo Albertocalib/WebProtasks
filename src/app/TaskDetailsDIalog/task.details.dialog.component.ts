@@ -2,8 +2,6 @@ import {Component, EventEmitter, Inject, Output} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {TaskService} from "../services/task.service";
 import {Task} from "../task.model";
-import {TaskList} from "../tasklist.model";
-import {CopyOrMoveElementDialogComponent} from "../CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
 import {User} from "../user.model";
 import {Tag} from "../tag.model";
 import {TagService} from "../services/tag.service";
@@ -54,7 +52,7 @@ export class TaskDetailsDialog {
           if (response) {
             let index = this.task.users?.indexOf(user)
             if (index!=null && index !== -1) {
-              this.task.users?.splice(index!!, 1);
+              this.task.users?.splice(index, 1);
             }
           }
         }

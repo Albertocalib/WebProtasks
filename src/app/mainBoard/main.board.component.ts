@@ -79,7 +79,7 @@ export class MainBoardComponent implements OnInit{
     this.boardService.delete(board.id!!).subscribe(result => {
       let index = this.boards.indexOf(board)
       if (index !== -1) {
-        this.boards.splice(index!!, 1);
+        this.boards.splice(index, 1);
       }
     });
   }
@@ -91,37 +91,38 @@ export class MainBoardComponent implements OnInit{
       });
 
   }
-  editBoard(board:Board) {
-    let config:AddElementDialogData = {
-        title: board.name,
-        description: '',
-        type: 'board',
-        editMode: true,
-        photo: board.photo
+  createBoardDialogConfig(board: Board): AddElementDialogData {
+    return {
+      title: board.name,
+      description: '',
+      type: 'board',
+      editMode: true,
+      photo: board.photo,
+      color: board.file_id?.type === 'color' ? board.file_id?.name : undefined,
+      photo_name: board.file_id?.type === 'img' ? board.file_id?.name : undefined
     };
-    if (board.file_id?.type === 'color') {
-      config.color = board.file_id.name;
-    } else {
-      config.photo_name = board.file_id?.name;
-    }
-    let dialogAddTask = this._dialog.open(AddElementDialogComponent, {data:config});
+  }
+
+  editBoard(board: Board) {
+    let config: AddElementDialogData = this.createBoardDialogConfig(board);
+    let dialogAddTask = this._dialog.open(AddElementDialogComponent, { data: config });
     dialogAddTask.afterClosed().subscribe(result => {
       if (result) {
         if (board.file_id) {
-          board.file_id.name = result.color ? result.color : result.photo_name;
+          board.file_id.name = result.color ?? result.photo_name;
           board.file_id.content = result.photo;
           board.file_id.type = result.color ? 'color' : 'img';
         }
         board.name = result.title;
         this.boardService.updateBoard(board).subscribe(updatedBoard => {
-          if (board) {
+          if (updatedBoard) {
             board.name = updatedBoard.name;
             board.photo = updatedBoard.photo;
             board.file_id = updatedBoard.file_id;
           }
         });
       }
-    })
+    });
   }
 }
 

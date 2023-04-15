@@ -8,7 +8,7 @@ import {User} from "../user.model";
   templateUrl: 'signUp.component.html',
   styleUrls: ['signUp.component.css']
 })
-export class signUpComponent {
+export class SignUpComponent {
   hide = true;
   title = "WebProtasks"
   username: string | undefined;

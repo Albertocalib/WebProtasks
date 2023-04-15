@@ -7,7 +7,7 @@ import {Router} from "@angular/router";
   templateUrl: 'logIn.component.html',
   styleUrls: ['logIn.component.css']
 })
-export class logInComponent{
+export class LogInComponent{
   hide = true;
   title = "WebProtasks"
   username: string | undefined;

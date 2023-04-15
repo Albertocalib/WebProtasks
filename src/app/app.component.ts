@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {Router} from "@angular/router";
 import {LoginService} from "./services/logIn.service";
 import {Board} from "./board.model";
@@ -51,7 +51,7 @@ export class AppComponent{
     const link = document.createElement('a');
     const photo = this.loginService.user?.photo
     if (photo != null) {
-      link.href = `data:image/png;base64,${photo?.substring(1, photo?.length!! - 1)}`;
+      link.href = `data:image/png;base64,${photo?.substring(1, photo.length - 1)}`;
     } else {
       link.href = await this.fileToBase64('../assets/user-default.png');
     }
