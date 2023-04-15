@@ -12,10 +12,10 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {LoginService} from "./services/logIn.service";
-import {signUpComponent} from "./SignUp/signUp.component";
-import {logInComponent} from "./logIn/logIn.component";
+import {SignUpComponent} from "./SignUp/signUp.component";
+import {LogInComponent} from "./logIn/logIn.component";
 import {AuthGuard} from "./AuthGuard";
-import {MatCard, MatCardModule} from "@angular/material/card";
+import {MatCardModule} from "@angular/material/card";
 import {BoardService} from "./services/board.service";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MainBoardComponent} from "./mainBoard/main.board.component";
@@ -42,8 +42,8 @@ import {ColorPickerModule} from "ngx-color-picker";
 @NgModule({
   declarations: [
     AppComponent,
-    signUpComponent,
-    logInComponent,
+    SignUpComponent,
+    LogInComponent,
     MainBoardComponent,
     BoardInsideComponent,
     AddElementDialogComponent,

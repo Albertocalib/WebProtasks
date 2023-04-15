@@ -24,7 +24,7 @@ export class BoardInsideComponent implements OnInit {
   taskLists: TaskList[]
 
   boardId: string | null
-  mode: String
+  mode: string
   subscriptionOnChangeViewMode: Subscription | undefined
   subscriptionOnOpenStats: Subscription | undefined
   subscription: Subscription | undefined
@@ -94,14 +94,14 @@ export class BoardInsideComponent implements OnInit {
     this.subscription?.unsubscribe()
   }
 
-  updatePositionTask(id: Number, position: Number, listId: Number) {
+  updatePositionTask(id: number, position: number, listId: number) {
     this.taskService.updatePosition(id, position, listId).subscribe(
       (_: Task) => {
       }, error => console.log(error)
     );
   }
 
-  updatePositionTaskList(id: Number, position: Number) {
+  updatePositionTaskList(id: number, position: number) {
     this.taskListService.updatePosition(id, position).subscribe(
       (_: TaskList) => {
 
@@ -114,7 +114,7 @@ export class BoardInsideComponent implements OnInit {
       event.previousContainer.data[event.previousIndex].id
   }
 
-  drop(event: CdkDragDrop<any[]>, type: String, list?: TaskList) {
+  drop(event: CdkDragDrop<any[]>, type: string, list?: TaskList) {
     if (type === "task") {
       let taskId = event.previousContainer.data[event.previousIndex].id;
       this.updatePositionTask(taskId, event.currentIndex + 1, list!!.id!!);
@@ -245,7 +245,7 @@ export class BoardInsideComponent implements OnInit {
             if (taskResponse) {
               let index = taskList.tasks.indexOf(task)
               if (index !== -1) {
-                taskList.tasks.splice(index!!, 1);
+                taskList.tasks.splice(index, 1);
                 this.taskDeleted.emit()
               }
             }
@@ -265,7 +265,7 @@ export class BoardInsideComponent implements OnInit {
           .subscribe(taskResponse => {
             let index = oldTaskList.tasks.indexOf(task)
             if (index !== -1) {
-              oldTaskList.tasks.splice(index!!, 1);
+              oldTaskList.tasks.splice(index, 1);
             }
             if (taskResponse && Number(this.boardId) == taskResponse.taskList!!.board!!.id) {
               let newList: TaskList[] = this.taskLists.filter(list => list.id == data.list.id)

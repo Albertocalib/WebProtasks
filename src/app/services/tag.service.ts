@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
 import {User} from "../user.model";
-import {Observable, throwError} from "rxjs";
+import {throwError} from "rxjs";
 import {environment} from "../../environments/environment";
 
 const BASE_URL = environment.apiEndpoint + "/tag/";

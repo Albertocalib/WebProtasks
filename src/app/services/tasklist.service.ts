@@ -4,9 +4,7 @@ import {catchError, map} from 'rxjs/operators';
 import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
 import {environment} from "../../environments/environment";
-import {Board} from "../board.model";
 import {TaskList} from "../tasklist.model";
-import {Task} from "../task.model";
 
 const BASE_URL = environment.apiEndpoint + "/list/";
 
@@ -17,7 +15,7 @@ export class TaskListService {
     this.user = JSON.parse(<string>localStorage.getItem('currentUser'));
   }
 
-  getTaskLists(boardId:String): Observable<TaskList[]> {
+  getTaskLists(boardId:string): Observable<TaskList[]> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
@@ -28,7 +26,7 @@ export class TaskListService {
         catchError(error => TaskListService.handleError(error))
       );
   }
-  updatePosition(id:Number,position:Number):Observable<TaskList> {
+  updatePosition(id:number,position:number):Observable<TaskList> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });

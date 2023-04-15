@@ -8,7 +8,7 @@ import {TaskService} from "../services/task.service";
 import {MatMenuTrigger} from "@angular/material/menu";
 import {User} from "../user.model";
 
-const EXTENSIONS_IMAGES:Set<String> = new Set(["jpg","jpeg","png","svg","img","heic"]);
+const EXTENSIONS_IMAGES:Set<string> = new Set(["jpg","jpeg","png","svg","img","heic"]);
 
 @Component({
   selector: 'task-card',

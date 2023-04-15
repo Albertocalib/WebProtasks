@@ -5,8 +5,6 @@ import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
 import {environment} from "../../environments/environment";
 import {Board} from "../board.model";
-import {Task} from "../task.model";
-import {TaskList} from "../tasklist.model";
 
 const BASE_URL = environment.apiEndpoint + "/board/";
 
