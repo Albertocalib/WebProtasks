@@ -90,7 +90,7 @@ export class AddElementDialogComponent{
     const y = height / 2 + fontSize / 2;
     let title = this.data.title.split(" ")
     let initials = ""
-    title.map(word => {
+    title.forEach(word => {
       initials += word.charAt(0).toUpperCase();
     });
     ctx.fillText(initials, x, y);
