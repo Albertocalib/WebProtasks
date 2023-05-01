@@ -1,20 +1,26 @@
-import {Component, EventEmitter, Inject, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Output,OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {TaskService} from "../services/task.service";
 import {Task} from "../task.model";
 import {User} from "../user.model";
 import {Tag} from "../tag.model";
 import {TagService} from "../services/tag.service";
+import {getPriorityColor, Priority, getPriorityPrintableName} from "../priority.model";
+import {MatDatepickerInputEvent} from "@angular/material/datepicker";
 
 @Component({
   templateUrl: './task.details.dialog.component.html',
   styleUrls: ['./task.details.dialog.component.css']
 })
-export class TaskDetailsDialog {
+export class TaskDetailsDialog implements OnInit{
   @Output() deleteClicked = new EventEmitter<Task>();
   @Output() copyClicked = new EventEmitter<Task>();
   @Output() moveClicked = new EventEmitter<Task>();
   removable:boolean;
+  selectedPriority: Priority;
+  priorities = Object.values(Priority);
+
+
   constructor(
     public dialogRef: MatDialogRef<TaskDetailsDialog>,
     private _dialog: MatDialog,
@@ -24,8 +30,19 @@ export class TaskDetailsDialog {
   ) {
     dialogRef.disableClose = true;
     this.removable=true;
+    this.selectedPriority= task.priority ? task.priority : Priority.NO_PRIORITY
   }
 
+  ngOnInit(): void {
+    this.selectedPriority= this.task.priority ? this.task.priority : Priority.NO_PRIORITY
+  }
+  getPriorityPrintableName(priority:Priority){
+    return getPriorityPrintableName(priority)
+  }
+
+  getPriorityFlagColor(priority:Priority){
+    return getPriorityColor(priority)
+  }
   onNoClick(): void {
     this.dialogRef.close(false);
   }
@@ -70,6 +87,10 @@ export class TaskDetailsDialog {
           }
         }
       )
+  }
+
+  onChangeDate(event: MatDatepickerInputEvent<Date>) {
+    this.task.date_end = event.value!!;
   }
 }
 

@@ -16,7 +16,29 @@
   </div>
   <div class="task-info-section">
     <h3>Fecha de vencimiento:</h3>
-    <p>{{task.date_end ? task.date_end : 'Sin Definir'}}</p>
+    <mat-form-field appearance="fill">
+      <mat-label>Elige una fecha</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="task.date_end" (dateChange)="onChangeDate($event)">
+      <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+  <div class="task-info-section">
+    <h3>Prioridad:</h3>
+    <mat-form-field appearance="fill">
+      <mat-label>Elige Prioridad</mat-label>
+      <mat-select [(ngModel)]="selectedPriority">
+        <mat-select-trigger>
+          <mat-icon [ngStyle]="{'color':getPriorityFlagColor(selectedPriority)}">flag</mat-icon>&nbsp;{{getPriorityPrintableName(selectedPriority)}}
+        </mat-select-trigger>
+        <mat-option *ngFor="let priority of priorities" [value]="priority">
+          <span>
+            <mat-icon class="priority-icon" [ngStyle]="{'color':getPriorityFlagColor(priority)}">flag</mat-icon>
+            {{ getPriorityPrintableName(priority) }}
+            </span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
   <div class="task-info-section">
     <h3>Etiquetas</h3>
@@ -47,14 +69,13 @@
 </div>
 
 <div class="task-body">
-  <div class="task-header">
-    <div class="task-header">
+    <div class="example-full-width add-padding-right">
       <mat-form-field appearance="fill" class="example-full-width">
         <mat-label>Descripción</mat-label>
         <textarea matInput [(ngModel)]="task.description"></textarea>
       </mat-form-field>
     </div>
-    <div class="task-header">
+    <div class="example-full-width">
         <h2>{{ task.title }}</h2>
         <p>{{ task.taskList?.title }}</p>
 
@@ -84,5 +105,4 @@
           </button>
         </div>
       </div>
-  </div>
 </div>

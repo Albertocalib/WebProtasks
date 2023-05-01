@@ -39,6 +39,10 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import {TaskDetailsDialog} from "./TaskDetailsDIalog/task.details.dialog.component";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {ColorPickerModule} from "ngx-color-picker";
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,6 +83,8 @@ import {ColorPickerModule} from "ngx-color-picker";
     MatIconModule,
     MatInputModule,
     ColorPickerModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService],
   bootstrap: [AppComponent]
