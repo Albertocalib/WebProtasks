@@ -9,7 +9,6 @@ import {getPriorityColor, Priority, getPriorityPrintableName} from "../priority.
 import {MatDatepickerInputEvent} from "@angular/material/datepicker";
 import {Message} from "../message.model";
 import {MessageService} from "../services/message.service";
-import {ActivatedRoute} from "@angular/router";
 import {MatChipInputEvent} from "@angular/material/chips";
 import {COMMA, ENTER, SEMICOLON} from "@angular/cdk/keycodes";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
@@ -31,7 +30,8 @@ export class TaskDetailsDialog implements OnInit{
   newMessage?:string
   boardTags?:Array<Tag>
   filteredTags?:Array<Tag>
-  separatorKeysCodes: number[] = [ENTER, COMMA, SEMICOLON];
+  separatorKeysCodes: number[] = [ENTER];
+  createTag:Tag = {name:'Crear nueva Etiqueta'}
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement> | undefined;
   task:Task
   boardId:string
@@ -70,6 +70,7 @@ export class TaskDetailsDialog implements OnInit{
     }else{
       this.filteredTags = this.boardTags?.filter(tag => this.task.tag_ids?.filter(t=>tag.id===t.id).length==0);
     }
+    this.filteredTags?.push(this.createTag)
   }
 
   ngOnInit(): void {
@@ -149,9 +150,16 @@ export class TaskDetailsDialog implements OnInit{
 
   }
 
-  addTag(event: MatChipInputEvent) {
+  async addTag(event: MatChipInputEvent) {
+    await this.createTagDialog(event.value || '')
+    event.chipInput!.clear();
+
+    this.tagCtrl.setValue(null);
+
+  }
+  private createTagDialog(title:string){
     let dialogAddTask = this._dialog.open(AddElementDialogComponent, {
-      data: {'title': event.value || '', 'type': 'tag'}
+      data: {'title': title, 'type': 'tag'}
     });
     dialogAddTask.afterClosed().subscribe(result => {
       if (result) {
@@ -168,12 +176,7 @@ export class TaskDetailsDialog implements OnInit{
         })
       }
     });
-    event.chipInput!.clear();
-
-    this.tagCtrl.setValue(null);
-
   }
-
   addAssigment() {
 
   }
@@ -182,6 +185,9 @@ export class TaskDetailsDialog implements OnInit{
 
   selected(event: MatAutocompleteSelectedEvent): void {
     let tag = event.option.value
+    if (tag==this.createTag){
+      this.createTagDialog(this.tagInput!!.nativeElement.value || '')
+    }
     this.tagService.addTagToTask(tag.id,this.task.id!!).subscribe(response=>{
       if (response){
         this.task.tag_ids?.push(event.option.value);
