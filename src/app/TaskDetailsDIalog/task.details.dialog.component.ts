@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Output,OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Output, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {TaskService} from "../services/task.service";
 import {Task} from "../task.model";
@@ -7,6 +7,14 @@ import {Tag} from "../tag.model";
 import {TagService} from "../services/tag.service";
 import {getPriorityColor, Priority, getPriorityPrintableName} from "../priority.model";
 import {MatDatepickerInputEvent} from "@angular/material/datepicker";
+import {Message} from "../message.model";
+import {MessageService} from "../services/message.service";
+import {ActivatedRoute} from "@angular/router";
+import {MatChipInputEvent} from "@angular/material/chips";
+import {COMMA, ENTER, SEMICOLON} from "@angular/cdk/keycodes";
+import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
+import {FormControl} from "@angular/forms";
+import {startWith} from "rxjs";
 
 @Component({
   templateUrl: './task.details.dialog.component.html',
@@ -19,18 +27,49 @@ export class TaskDetailsDialog implements OnInit{
   removable:boolean;
   selectedPriority: Priority;
   priorities = Object.values(Priority);
-
+  currentUser:User
+  newMessage?:string
+  boardTags?:Array<Tag>
+  filteredTags?:Array<Tag>
+  separatorKeysCodes: number[] = [ENTER, COMMA, SEMICOLON];
+  @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement> | undefined;
+  task:Task
+  boardId:string
+  tagCtrl = new FormControl('');
 
   constructor(
     public dialogRef: MatDialogRef<TaskDetailsDialog>,
     private _dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public task: Task,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     public taskService:TaskService,
-    public tagService:TagService
+    public tagService:TagService,
+    public messageService:MessageService
   ) {
     dialogRef.disableClose = true;
     this.removable=true;
-    this.selectedPriority= task.priority ? task.priority : Priority.NO_PRIORITY
+    this.task=data.task
+    this.boardId=data.boardId
+    this.selectedPriority= this.task.priority ? this.task.priority : Priority.NO_PRIORITY
+    this.currentUser = JSON.parse(<string>localStorage.getItem('currentUser'));
+    this.tagService.getTagsInBoard(+this.boardId!!).subscribe(response =>{
+      if (response){
+        this.boardTags=response
+        this._filterTags(null)
+      }
+    })
+
+    this.tagCtrl.valueChanges.subscribe(value=>{
+      this._filterTags(value)
+    });
+    this.tagCtrl.setValue(null);
+
+  }
+  private _filterTags(value:string| null){
+    if (value!=null){
+      this.filteredTags = this.boardTags?.filter(tag => tag.name.toLowerCase().includes(value) && this.task.tag_ids?.filter(t=>tag.id===t.id).length==0);
+    }else{
+      this.filteredTags = this.boardTags?.filter(tag => this.task.tag_ids?.filter(t=>tag.id===t.id).length==0);
+    }
   }
 
   ngOnInit(): void {
@@ -83,6 +122,7 @@ export class TaskDetailsDialog implements OnInit{
             let index = this.task.tag_ids?.indexOf(t)
             if (index!=null && index !== -1) {
               this.task.tag_ids?.splice(index, 1);
+              this._filterTags(null)
             }
           }
         }
@@ -92,6 +132,47 @@ export class TaskDetailsDialog implements OnInit{
   onChangeDate(event: MatDatepickerInputEvent<Date>) {
     this.task.date_end = event.value!!;
   }
+
+  addMessage() {
+    let newMessageCons = {body:this.newMessage,user:this.currentUser,task:this.task} as Message
+    this.messageService.create(newMessageCons).subscribe(response => {
+        if (response) {
+          this.task.messages?.push(response)
+          this.newMessage=undefined
+        }
+      }
+    )
+
+  }
+
+  openSubTask(task: Task) {
+
+  }
+
+  addTag() {
+
+
+  }
+
+  addAssigment() {
+
+  }
+
+
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    let tag = event.option.value
+    this.tagService.addTagToTask(tag.id,this.task.id!!).subscribe(response=>{
+      if (response){
+        this.task.tag_ids?.push(event.option.value);
+        this._filterTags(null)
+      }
+    })
+    this.tagInput!!.nativeElement.value = '';
+
+    this.tagCtrl.setValue(null);
+  }
+
 }
 
 

@@ -41,6 +41,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {ColorPickerModule} from "ngx-color-picker";
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import {MessageService} from "./services/message.service";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 
 @NgModule({
@@ -84,9 +86,10 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatInputModule,
     ColorPickerModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule
   ],
-  providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService],
+  providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService,MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

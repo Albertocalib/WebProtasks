@@ -11,46 +11,35 @@
           <img matChipAvatar *ngIf="!user.photo" src="../../assets/user-default.png" alt="Avatar de {{ user.name }}"  class="assigment-avatar">
           <mat-icon matChipRemove *ngIf="removable" class="remove-assigment" >cancel</mat-icon>
         </mat-chip>
-      </mat-chip-list>
-    </div>
-  </div>
-  <div class="task-info-section">
-    <h3>Fecha de vencimiento:</h3>
-    <mat-form-field appearance="fill">
-      <mat-label>Elige una fecha</mat-label>
-      <input matInput [matDatepicker]="picker" [(ngModel)]="task.date_end" (dateChange)="onChangeDate($event)">
-      <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-  </div>
-  <div class="task-info-section">
-    <h3>Prioridad:</h3>
-    <mat-form-field appearance="fill">
-      <mat-label>Elige Prioridad</mat-label>
-      <mat-select [(ngModel)]="selectedPriority">
-        <mat-select-trigger>
-          <mat-icon [ngStyle]="{'color':getPriorityFlagColor(selectedPriority)}">flag</mat-icon>&nbsp;{{getPriorityPrintableName(selectedPriority)}}
-        </mat-select-trigger>
-        <mat-option *ngFor="let priority of priorities" [value]="priority">
-          <span>
-            <mat-icon class="priority-icon" [ngStyle]="{'color':getPriorityFlagColor(priority)}">flag</mat-icon>
-            {{ getPriorityPrintableName(priority) }}
-            </span>
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <div class="task-info-section">
-    <h3>Etiquetas</h3>
-    <div *ngIf="task.tag_ids">
-      <mat-chip-list>
-        <mat-chip [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of task.tag_ids" selectable="false"
-                  [removable]="removable"
-                  (removed)="removeTag(tag)">{{tag?.name}}
-          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+        <mat-chip [removable]="false" (click)="addAssigment()">
+          <span>Asignar persona</span>
         </mat-chip>
       </mat-chip-list>
     </div>
+  </div>
+  <div class="task-info-section min-width-30">
+    <h3>Etiquetas</h3>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Etiquetas</mat-label>
+        <mat-chip-list #chipGrid aria-label="Elección de etiquetas">
+          <mat-chip [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of task.tag_ids" selectable="false"
+                        [removable]="removable"
+                        (removed)="removeTag(tag)">{{tag?.name}}
+            <button matChipRemove [attr.aria-label]="'remove ' + tag?.name">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+        </mat-chip-list>
+        <input placeholder="Añade una etiqueta..." #tagInput
+               [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               [formControl]="tagCtrl"/>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+          <mat-option [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of filteredTags" [value]="tag">
+            {{tag.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
   </div>
   <div class="task-buttons">
     <button mat-icon-button (click)="copy()">
@@ -69,40 +58,92 @@
 </div>
 
 <div class="task-body">
-    <div class="example-full-width add-padding-right">
+    <div class="task-details-section example-full-width add-padding-right">
       <mat-form-field appearance="fill" class="example-full-width">
         <mat-label>Descripción</mat-label>
         <textarea matInput [(ngModel)]="task.description"></textarea>
       </mat-form-field>
-    </div>
-    <div class="example-full-width">
-        <h2>{{ task.title }}</h2>
-        <p>{{ task.taskList?.title }}</p>
 
-        <div class="task-info-section">
-          <h3>Assigned to</h3>
-          <p>PEPE</p>
-        </div>
-        <div class="task-info-section">
-          <h3>Due date</h3>
-          <p>{{ task.date_end }}</p>
-        </div>
-        <div class="task-info-section">
-          <h3>Tags</h3>
-          <div class="tags">
-            <span *ngFor="let tag of task.tag_ids" [style.backgroundColor]="tag.color">{{ tag.name }}</span>
+      <div class="task-info-section">
+        <h3>Fecha de vencimiento:</h3>
+        <mat-form-field appearance="fill">
+          <mat-label>Elige una fecha</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="task.date_end" (dateChange)="onChangeDate($event)">
+          <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="task-info-section">
+        <h3>Prioridad:</h3>
+        <mat-form-field appearance="fill">
+          <mat-label>Elige Prioridad</mat-label>
+          <mat-select [(ngModel)]="selectedPriority">
+            <mat-select-trigger>
+              <mat-icon [ngStyle]="{'color':getPriorityFlagColor(selectedPriority)}">flag</mat-icon>&nbsp;{{getPriorityPrintableName(selectedPriority)}}
+            </mat-select-trigger>
+            <mat-option *ngFor="let priority of priorities" [value]="priority">
+          <span>
+            <mat-icon class="priority-icon" [ngStyle]="{'color':getPriorityFlagColor(priority)}">flag</mat-icon>
+            {{ getPriorityPrintableName(priority) }}
+            </span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="substasks-section">
+        <h3>Subtareas:</h3>
+        <hr>
+        <ul>
+          <li *ngFor="let subtask of task.subTasks" (click)="openSubTask(task)">
+            <span class="task-title">{{ subtask.title }}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="attachments-section">
+        <h3>Adjuntos:</h3>
+        <hr>
+      </div>
+    </div>
+  <div class="task-messages-section example-full-width">
+    <div *ngFor="let message of task.messages">
+      <div *ngIf="message.user.username !== currentUser.username" class="message-container">
+        <div class="message-content">
+          <div class="message-header">
+            <img *ngIf="!message.user.photo" src="../../assets/user-default.png" alt="Avatar de {{ message.user.name }}"
+                 class="user-avatar">
+            <img *ngIf="message.user.photo"
+                 src="data:image/png;base64,{{message.user.photo.substring(1, message.user.photo.length - 1)}}"
+                 class="user-avatar">
+            <span class="user-name">{{message.user.username}}</span>
+          </div>
+          <div class="message-bubble">
+            <p>{{ message.body }}</p>
           </div>
         </div>
-        <div class="task-buttons">
-          <button mat-icon-button>
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button>
-            <mat-icon>delete</mat-icon>
-          </button>
-          <button mat-icon-button>
-            <mat-icon>more_vert</mat-icon>
-          </button>
+      </div>
+      <div *ngIf="message.user.username === currentUser.username" class="message-container my-message">
+        <div class="message-content">
+          <div class="message-header">
+            <img *ngIf="!message.user.photo" src="../../assets/user-default.png" alt="Avatar de {{ message.user.name }}"
+                 class="user-avatar">
+            <img *ngIf="message.user.photo"
+                 src="data:image/png;base64,{{message.user.photo.substring(1, message.user.photo.length - 1)}}"
+                 class="user-avatar">
+            <span class="user-name">{{message.user.username}}</span>
+          </div>
+          <div class="message-bubble">
+            <p>{{ message.body }}</p>
+          </div>
         </div>
       </div>
+    </div>
+    <form (ngSubmit)="addMessage()" #newMessageForm="ngForm" class="new-message-form">
+      <div class="form-group">
+        <label for="message">Nuevo comentario:</label>
+        <textarea id="message" name="message" [(ngModel)]="newMessage" required class="new-message-field"></textarea>
+      </div>
+
+      <button type="submit" [disabled]="newMessageForm.invalid" class="submit-button">Enviar</button>
+    </form>
+  </div>
 </div>

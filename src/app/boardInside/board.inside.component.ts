@@ -354,7 +354,7 @@ export class BoardInsideComponent implements OnInit {
     if (!this.taskCards.some(card=>card.matMenuTrigger.menuOpen)) {
       let dialogTaskDetails = this._dialog.open(TaskDetailsDialog, {
         width: '70%',
-        data: task,
+        data: {task:task,boardId:this.boardId},
         panelClass: 'my-dialog-container'
       });
       dialogTaskDetails.afterClosed().subscribe(data => {
