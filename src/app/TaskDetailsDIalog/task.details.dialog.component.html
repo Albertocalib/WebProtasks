@@ -2,8 +2,9 @@
   <h2>{{ task.title }}</h2>
   <div class="task-info-section">
     <h3>Personas asignadas:</h3>
-    <div *ngIf="task.users">
-      <mat-chip-list>
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>Personas asignadas</mat-label>
+      <mat-chip-list #chipGridAssigments aria-label="Elección de etiquetas">
         <mat-chip *ngFor="let user of task.users" class="no-padding-right" matTooltip="{{ user.name }} {{user.surname}}"
                   [removable]="removable"
                   (removed)="removeUser(user)">
@@ -11,11 +12,16 @@
           <img matChipAvatar *ngIf="!user.photo" src="../../assets/user-default.png" alt="Avatar de {{ user.name }}"  class="assigment-avatar">
           <mat-icon matChipRemove *ngIf="removable" class="remove-assigment" >cancel</mat-icon>
         </mat-chip>
-        <mat-chip [removable]="false" (click)="addAssigment()">
-          <span>Asignar persona</span>
-        </mat-chip>
       </mat-chip-list>
-    </div>
+      <input placeholder="Añade una persona..." #assigmentInput
+             [matChipInputFor]="chipGridAssigments" [matAutocomplete]="autoAssigment"
+             [formControl]="assigmentCtrl"/>
+      <mat-autocomplete #autoAssigment="matAutocomplete" (optionSelected)="selectedAssigment($event)">
+        <mat-option *ngFor="let assigment of filteredUsers" [value]="assigment">
+          <span>{{assigment.name}} {{assigment.surname}}</span>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
   </div>
   <div class="task-info-section min-width-30">
     <h3>Etiquetas</h3>

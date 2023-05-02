@@ -75,6 +75,16 @@ export class TaskService {
       catchError(error => TaskService.handleError(error))
     );
   }
+  addAssigment(taskId:number,userId:number){
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${taskId}/user=${userId}`
+    return this.http.post<boolean>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => TaskService.handleError(error))
+    );
+  }
 
 
   private static handleError(error: HttpErrorResponse) {

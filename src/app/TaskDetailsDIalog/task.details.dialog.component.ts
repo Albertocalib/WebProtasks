@@ -14,6 +14,7 @@ import {COMMA, ENTER, SEMICOLON} from "@angular/cdk/keycodes";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {FormControl} from "@angular/forms";
 import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
+import {LoginService} from "../services/logIn.service";
 
 @Component({
   templateUrl: './task.details.dialog.component.html',
@@ -29,13 +30,17 @@ export class TaskDetailsDialog implements OnInit{
   currentUser:User
   newMessage?:string
   boardTags?:Array<Tag>
+  boardUsers?:Array<User>
+  filteredUsers?:Array<User>
   filteredTags?:Array<Tag>
   separatorKeysCodes: number[] = [ENTER];
   createTag:Tag = {name:'Crear nueva Etiqueta'}
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement> | undefined;
+  @ViewChild('assigmentInput') assigmentInput: ElementRef<HTMLInputElement> | undefined;
   task:Task
   boardId:string
   tagCtrl = new FormControl('');
+  assigmentCtrl = new FormControl('');
 
   constructor(
     public dialogRef: MatDialogRef<TaskDetailsDialog>,
@@ -43,7 +48,8 @@ export class TaskDetailsDialog implements OnInit{
     @Inject(MAT_DIALOG_DATA) public data: any,
     public taskService:TaskService,
     public tagService:TagService,
-    public messageService:MessageService
+    public messageService:MessageService,
+    public loginService:LoginService,
   ) {
     dialogRef.disableClose = true;
     this.removable=true;
@@ -57,6 +63,16 @@ export class TaskDetailsDialog implements OnInit{
         this._filterTags(null)
       }
     })
+    this.loginService.getUsersInBoard(+this.boardId!!).subscribe(response =>{
+      if (response){
+        this.boardUsers=response
+        this._filterAssigments(null)
+      }
+    })
+    this.assigmentCtrl.valueChanges.subscribe(value=>{
+      this._filterAssigments(value)
+    });
+    this.assigmentCtrl.setValue(null);
 
     this.tagCtrl.valueChanges.subscribe(value=>{
       this._filterTags(value)
@@ -66,11 +82,22 @@ export class TaskDetailsDialog implements OnInit{
   }
   private _filterTags(value:string| null){
     if (value!=null){
-      this.filteredTags = this.boardTags?.filter(tag => tag.name.toLowerCase().includes(value) && this.task.tag_ids?.filter(t=>tag.id===t.id).length==0);
+      const valueF = value.toLowerCase()
+      this.filteredTags = this.boardTags?.filter(tag => tag.name.toLowerCase().includes(valueF) && this.task.tag_ids?.filter(t=>tag.id===t.id).length==0);
     }else{
       this.filteredTags = this.boardTags?.filter(tag => this.task.tag_ids?.filter(t=>tag.id===t.id).length==0);
     }
     this.filteredTags?.push(this.createTag)
+  }
+  private _filterAssigments(value:string| null){
+    if (value!=null){
+      const valueF = value.toLowerCase()
+      this.filteredUsers = this.boardUsers?.filter(user => (user.name.toLowerCase().includes(valueF) ||
+        user.surname?.toLowerCase().includes(valueF) || user.username?.toLowerCase().includes(valueF) ||
+        user.email?.toLowerCase().includes(valueF)) && this.task.users?.filter(u=>user.id===u.id).length==0);
+    }else{
+      this.filteredUsers = this.boardUsers?.filter(user => this.task.users?.filter(u=>user.id===u.id).length==0);
+    }
   }
 
   ngOnInit(): void {
@@ -177,9 +204,6 @@ export class TaskDetailsDialog implements OnInit{
       }
     });
   }
-  addAssigment() {
-
-  }
 
 
 
@@ -199,6 +223,17 @@ export class TaskDetailsDialog implements OnInit{
     this.tagCtrl.setValue(null);
   }
 
+  selectedAssigment(event: MatAutocompleteSelectedEvent) {
+    this.taskService.addAssigment(this.task.id!!,event.option.value.id!!).subscribe(response=>{
+      if (response){
+        this.task.users?.push(event.option.value);
+        this._filterAssigments(null)
+      }
+    })
+    this.assigmentInput!!.nativeElement.value = '';
+
+    this.assigmentCtrl.setValue(null);
+  }
 }
 
 
