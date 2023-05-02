@@ -50,5 +50,14 @@ export class TagService {
       catchError(error => TagService.handleError(error))
     );
   }
-
+  create(tag:Tag, boardId:number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}newTag/boardId=${boardId}`
+    return this.http.post<Tag>(url, tag,{headers}).pipe(
+      map(response => response),
+      catchError(error => TagService.handleError(error))
+    );
+  }
 }

@@ -14,7 +14,7 @@ import {MatChipInputEvent} from "@angular/material/chips";
 import {COMMA, ENTER, SEMICOLON} from "@angular/cdk/keycodes";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {FormControl} from "@angular/forms";
-import {startWith} from "rxjs";
+import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
 
 @Component({
   templateUrl: './task.details.dialog.component.html',
@@ -149,8 +149,28 @@ export class TaskDetailsDialog implements OnInit{
 
   }
 
-  addTag() {
+  addTag(event: MatChipInputEvent) {
+    let dialogAddTask = this._dialog.open(AddElementDialogComponent, {
+      data: {'title': event.value || '', 'type': 'tag'}
+    });
+    dialogAddTask.afterClosed().subscribe(result => {
+      if (result) {
+        let tag: Tag = {name:result.title, color:result.color}
+        this.tagService.create(tag, +this.boardId).subscribe(result=>{
+          if (result){
+            this.tagService.addTagToTask(result.id!!,this.task.id!!).subscribe(response=>{
+              if (response){
+                this.task.tag_ids?.push(result);
+                this._filterTags(null)
+              }
+            })
+          }
+        })
+      }
+    });
+    event.chipInput!.clear();
 
+    this.tagCtrl.setValue(null);
 
   }
 

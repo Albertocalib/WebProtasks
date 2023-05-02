@@ -33,6 +33,7 @@
         <input placeholder="Añade una etiqueta..." #tagInput
                [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               (matChipInputTokenEnd)="addTag($event)"
                [formControl]="tagCtrl"/>
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
           <mat-option [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of filteredTags" [value]="tag">
