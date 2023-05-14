@@ -1,10 +1,9 @@
 <div class="task-header">
-  <h2>{{ task.title }}</h2>
-  <div class="task-info-section">
+  <h2 contenteditable (blur)="onTitleChange($event)">{{ task.title }}</h2>
+  <div class="task-info-section" >
     <h3>Personas asignadas:</h3>
-    <mat-form-field class="example-full-width" appearance="fill">
-      <mat-label>Personas asignadas</mat-label>
-      <mat-chip-list #chipGridAssigments aria-label="Elección de etiquetas">
+    <div class="example-full-width">
+      <mat-chip-list #chipGridAssigments aria-label="Elección de Asignaciones">
         <mat-chip *ngFor="let user of task.users" class="no-padding-right" matTooltip="{{ user.name }} {{user.surname}}"
                   [removable]="removable"
                   (removed)="removeUser(user)">
@@ -16,18 +15,21 @@
       <input placeholder="Añade una persona..." #assigmentInput
              [matChipInputFor]="chipGridAssigments" [matAutocomplete]="autoAssigment"
              [formControl]="assigmentCtrl"/>
-      <mat-autocomplete #autoAssigment="matAutocomplete" (optionSelected)="selectedAssigment($event)">
+      <mat-autocomplete #autoAssigment="matAutocomplete" (optionSelected)="selectedAssigment($event)" panelWidth="auto">
         <mat-option *ngFor="let assigment of filteredUsers" [value]="assigment">
-          <span>{{assigment.name}} {{assigment.surname}}</span>
+          <span>
+            <img *ngIf="assigment.photo" src="data:image/png;base64,{{assigment.photo.substring(1, assigment.photo.length - 1)}}" alt="Avatar de {{ assigment.name }}" class="assigment-avatar">
+            <img *ngIf="!assigment.photo" src="../../assets/user-default.png" alt="Avatar de {{ assigment.name }}"  class="assigment-avatar">
+            {{assigment.name}} {{assigment.surname}}
+          </span>
         </mat-option>
       </mat-autocomplete>
-    </mat-form-field>
+    </div>
   </div>
   <div class="task-info-section min-width-30">
     <h3>Etiquetas</h3>
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Etiquetas</mat-label>
-        <mat-chip-list #chipGrid aria-label="Elección de etiquetas">
+    <div class="example-full-width">
+    <mat-chip-list #chipGrid aria-label="Elección de etiquetas">
           <mat-chip [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of task.tag_ids" selectable="false"
                         [removable]="removable"
                         (removed)="removeTag(tag)">{{tag?.name}}
@@ -41,18 +43,18 @@
                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                (matChipInputTokenEnd)="addTag($event)"
                [formControl]="tagCtrl"/>
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)" panelWidth="auto">
           <mat-option [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of filteredTags" [value]="tag">
             {{tag.name}}
           </mat-option>
         </mat-autocomplete>
-      </mat-form-field>
+    </div>
   </div>
   <div class="task-buttons">
-    <button mat-icon-button (click)="copy()">
+    <button mat-icon-button *ngIf="!data.subTaskMode" (click)="copy()">
       <mat-icon>content_copy</mat-icon>
     </button>
-    <button mat-icon-button (click)="move()">
+    <button mat-icon-button *ngIf="!data.subTaskMode" (click)="move()">
       <mat-icon>drive_file_move_outline</mat-icon>
     </button>
     <button mat-icon-button (click)="delete()">
@@ -68,7 +70,7 @@
     <div class="task-details-section example-full-width add-padding-right">
       <mat-form-field appearance="fill" class="example-full-width">
         <mat-label>Descripción</mat-label>
-        <textarea matInput [(ngModel)]="task.description"></textarea>
+        <textarea matInput [(ngModel)]="task.description" (change)="descriptionChange()" ></textarea>
       </mat-form-field>
 
       <div class="task-info-section">
@@ -84,7 +86,7 @@
         <h3>Prioridad:</h3>
         <mat-form-field appearance="fill">
           <mat-label>Elige Prioridad</mat-label>
-          <mat-select [(ngModel)]="selectedPriority">
+          <mat-select [(ngModel)]="selectedPriority" (selectionChange)="selectPriority($event.value)">
             <mat-select-trigger>
               <mat-icon [ngStyle]="{'color':getPriorityFlagColor(selectedPriority)}">flag</mat-icon>&nbsp;{{getPriorityPrintableName(selectedPriority)}}
             </mat-select-trigger>
@@ -101,14 +103,43 @@
         <h3>Subtareas:</h3>
         <hr>
         <ul>
-          <li *ngFor="let subtask of task.subTasks" (click)="openSubTask(task)">
+          <li *ngFor="let subtask of task.subTasks" (click)="openSubTask(subtask)">
             <span class="task-title">{{ subtask.title }}</span>
+          </li>
+          <li (click)="createSubTask()" class="createSubTaskButton">
+            <span class="task-title">Crear nueva Subtarea</span>
           </li>
         </ul>
       </div>
       <div class="attachments-section">
         <h3>Adjuntos:</h3>
         <hr>
+        <div class="flex-me">
+          <mat-card *ngFor="let attachment of task.attachments" (click)="downloadAttachment(attachment)">
+            <img mat-card-image [src]="_getImageExtensionFromAttachment(attachment)" alt="Placeholder image">
+            <mat-card-content>
+              <div class="card-title">
+                <span class="attachment-name">{{attachment.name}}</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card (click)="f_input.click()" >
+            <input
+              type="file"
+              hidden
+              [multiple]="true"
+              #f_input
+              (change)="addAttachments(f_input.files)"
+            />
+            <mat-card-content>
+              <div class="board-header">
+                <span class="mat-h2">Añadir adjunto</span>
+                <span class="spacer"></span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </div>
     </div>
   <div class="task-messages-section example-full-width">

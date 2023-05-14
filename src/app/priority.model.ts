@@ -1,7 +1,7 @@
 import {Serializer} from "@angular/compiler";
 
 export enum Priority {
-  NO_PRIORITY = "NO PRIORITY",
+  NO_PRIORITY = "NO_PRIORITY",
   LOW = "LOW",
   NORMAL = "NORMAL",
   HIGH = "HIGH",

@@ -10,11 +10,12 @@ import {MatDatepickerInputEvent} from "@angular/material/datepicker";
 import {Message} from "../message.model";
 import {MessageService} from "../services/message.service";
 import {MatChipInputEvent} from "@angular/material/chips";
-import {COMMA, ENTER, SEMICOLON} from "@angular/cdk/keycodes";
+import {ENTER} from "@angular/cdk/keycodes";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {FormControl} from "@angular/forms";
 import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
 import {LoginService} from "../services/logIn.service";
+import {File as FileModel, FileExtensions} from "../file.model"
 
 @Component({
   templateUrl: './task.details.dialog.component.html',
@@ -24,6 +25,7 @@ export class TaskDetailsDialog implements OnInit{
   @Output() deleteClicked = new EventEmitter<Task>();
   @Output() copyClicked = new EventEmitter<Task>();
   @Output() moveClicked = new EventEmitter<Task>();
+  @Output() openSubTaskClicked = new EventEmitter<Task>();
   removable:boolean;
   selectedPriority: Priority;
   priorities = Object.values(Priority);
@@ -50,6 +52,7 @@ export class TaskDetailsDialog implements OnInit{
     public tagService:TagService,
     public messageService:MessageService,
     public loginService:LoginService,
+    private fileExtensions:FileExtensions
   ) {
     dialogRef.disableClose = true;
     this.removable=true;
@@ -78,6 +81,7 @@ export class TaskDetailsDialog implements OnInit{
       this._filterTags(value)
     });
     this.tagCtrl.setValue(null);
+    this._formatTaskDateEnd()
 
   }
   private _filterTags(value:string| null){
@@ -158,7 +162,12 @@ export class TaskDetailsDialog implements OnInit{
   }
 
   onChangeDate(event: MatDatepickerInputEvent<Date>) {
-    this.task.date_end = event.value!!;
+    this.taskService.updateDateEnd(this.task.id!!,event.value!!).subscribe(response=>{
+      if (response){
+        this.task=response
+        this._formatTaskDateEnd()
+      }
+    })
   }
 
   addMessage() {
@@ -174,7 +183,7 @@ export class TaskDetailsDialog implements OnInit{
   }
 
   openSubTask(task: Task) {
-
+    this.openSubTaskClicked.emit(task)
   }
 
   async addTag(event: MatChipInputEvent) {
@@ -233,6 +242,136 @@ export class TaskDetailsDialog implements OnInit{
     this.assigmentInput!!.nativeElement.value = '';
 
     this.assigmentCtrl.setValue(null);
+  }
+
+  selectPriority(priority:Priority) {
+    this.taskService.updatePriority(this.task.id!!,priority).subscribe(response=>{
+      if (response){
+        this.task=response
+        this._formatTaskDateEnd()
+      }
+    })
+  }
+
+  descriptionChange() {
+    this.taskService.updateDescription(this.task.id!!,this.task.description!!).subscribe(response=>{
+      if (response){
+        this.task=response
+        this._formatTaskDateEnd()
+      }
+    })
+
+  }
+
+  onTitleChange(event: Event) {
+    const newValue = (event.target as HTMLElement).innerText;
+    this.taskService.updateTitle(this.task.id!!,newValue).subscribe(response=>{
+      if (response){
+        this.task=response
+        this._formatTaskDateEnd()
+      }
+    })
+  }
+  private _formatTaskDateEnd(){
+    if (this.task.date_end)
+      this.task.date_end=new Date(this.task.date_end)
+  }
+
+  createSubTask() {
+    let dialogAddTask = this._dialog.open(AddElementDialogComponent, {
+      data: {'title': '', 'description': '', 'type': 'subtask', 'editMode':false}
+    });
+    dialogAddTask.afterClosed().subscribe(result => {
+      if (result) {
+        let t: Task = {
+          title: result.title,
+          description: result.description,
+        }
+        this.taskService.createSubtask(t, this.task.id!!).subscribe(task => {
+          if (task){
+            this.task=task
+            this._formatTaskDateEnd()
+          }
+        })
+      }
+    })
+  }
+  _getImageExtensionFromAttachment(attachment:FileModel){
+    let type = ""
+    if (attachment.type) {
+      type = attachment.type.toLowerCase()
+    }
+    let image="../../unknown_icon.png"
+    if (type=="pdf"){
+      image = "../../assets/pdf_logo.png"
+    }else if (type=="zip" || type=="rar") {
+      image = "../../assets/zip_logo.png"
+    }else if (this.fileExtensions.EXTENSIONS_WORD.has(type)){
+      image = "../../assets/word_logo.png"
+    }else if (this.fileExtensions.EXTENSIONS_EXCEL.has(type)){
+      image = "../../assets/excel_logo.png"
+    }else if (this.fileExtensions.EXTENSIONS_IMAGES.has(type)){
+      image = `data:image/png;base64,${attachment.content}`
+    }
+    return image
+  }
+
+  downloadAttachment(attachment:FileModel) {
+    let content = `data:application/octet-stream;base64,${attachment.content}`
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = content
+    downloadLink.download = attachment.name;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  }
+
+  addAttachments(files: FileList|null) {
+    if (!files){
+      return
+    }
+    let setFiles = new Set<FileModel>();
+    let filePromises: Promise<void>[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file: File = files[i];
+      let reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      const promise = new Promise<void>((resolve, reject) => {
+        reader.onload = () => {
+          const base64file = (reader.result as string).split(',')[1];
+          const typeList = file.name.split('.')
+          const extension = typeList[typeList.length - 1]
+          let newFile: FileModel = {
+            name: file.name,
+            type: extension,
+            content: base64file
+          }
+          setFiles.add(newFile);
+          resolve();
+        };
+
+        reader.onerror = () => {
+          reject(reader.error);
+        };
+      });
+
+      filePromises.push(promise);
+    }
+    Promise.all(filePromises)
+      .then(() => {
+        this.taskService.addAttachments(this.task.id!!,setFiles).subscribe(result=>{
+          if (result){
+            this.task=result
+            this._formatTaskDateEnd()
+          }
+        })
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 }
 

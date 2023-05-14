@@ -1,4 +1,5 @@
 <h1 mat-dialog-title *ngIf="data.type=='task'">Añade una nueva Tarea</h1>
+<h1 mat-dialog-title *ngIf="data.type=='subtask'">Añade una nueva Subtarea</h1>
 <h1 mat-dialog-title *ngIf="data.type=='list'">Añade una nueva Lista</h1>
 <h1 mat-dialog-title *ngIf="data.type=='tag'">Crea una nueva etiqueta</h1>
 <h1 mat-dialog-title *ngIf="data.type=='board' && !data.editMode">Añade un nuevo Tablero</h1>
@@ -18,7 +19,7 @@
     <mat-label>Título</mat-label>
     <input matInput [(ngModel)]="data.title" required/>
   </mat-form-field>
-  <mat-form-field appearance="fill" class="example-full-width" *ngIf="data.type=='task'">
+  <mat-form-field appearance="fill" class="example-full-width" *ngIf="data.type=='task' || data.type=='subtask'">
     <mat-label>Descripción</mat-label>
     <textarea matInput [(ngModel)]="data.description"></textarea>
   </mat-form-field>

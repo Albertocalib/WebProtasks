@@ -234,22 +234,36 @@ export class BoardInsideComponent implements OnInit {
     })
   }
 
-  deleteTask(task: Task, taskList: TaskList) {
+  deleteTask(task: Task, taskList: TaskList, subtaskMode:boolean) {
     let dialogDeleteTask = this._dialog.open(DeleteElementDialogComponent, {
       data: {'title': task.title, 'type': 'task'}
     });
     dialogDeleteTask.afterClosed().subscribe(result => {
       if (result) {
-        this.taskService.delete(task.id!!)
-          .subscribe(taskResponse => {
-            if (taskResponse) {
-              let index = taskList.tasks.indexOf(task)
-              if (index !== -1) {
-                taskList.tasks.splice(index, 1);
-                this.taskDeleted.emit()
+          if (subtaskMode){
+            this.taskService.deleteSubTask(task.id!!).subscribe(taskResponse => {
+              if (taskResponse) {
+                taskList = this.getTaskList(taskResponse)!!
+                let taskF = taskList.tasks.filter(task=>task.id===taskResponse.id)
+                let index = taskList.tasks.indexOf(taskF[0])
+                if (index !== -1) {
+                  taskList.tasks[index] = taskResponse
+                  this.taskDeleted.emit()
+                }
               }
-            }
-          });
+            });
+          }else {
+            this.taskService.delete(task.id!!)
+              .subscribe(taskResponse => {
+                if (taskResponse) {
+                  let index = taskList.tasks.indexOf(task)
+                  if (index !== -1) {
+                    taskList.tasks.splice(index, 1);
+                    this.taskDeleted.emit()
+                  }
+                }
+              });
+          }
       }
     })
 
@@ -350,12 +364,13 @@ export class BoardInsideComponent implements OnInit {
 
   }
 
-  openTask(task: Task) {
+  openTask(task: Task, subTaskMode:boolean) {
     if (!this.taskCards.some(card=>card.matMenuTrigger.menuOpen)) {
       let dialogTaskDetails = this._dialog.open(TaskDetailsDialog, {
-        width: '70%',
-        data: {task:task,boardId:this.boardId},
-        panelClass: 'my-dialog-container'
+        width: '80%',
+        data: {task:task,boardId:this.boardId, subTaskMode:subTaskMode},
+        panelClass: 'my-dialog-container',
+        autoFocus: false
       });
       dialogTaskDetails.afterClosed().subscribe(data => {
 
@@ -369,10 +384,14 @@ export class BoardInsideComponent implements OnInit {
       });
       dialogTaskDetails.componentInstance.deleteClicked.subscribe((task: Task) => {
         let tasklist = this.getTaskList(task)!!
-        this.deleteTask(task, tasklist)
+        this.deleteTask(task, tasklist,subTaskMode)
         this.taskDeleted.subscribe(() => {
+          debugger;
           dialogTaskDetails.close()
         });
+      });
+      dialogTaskDetails.componentInstance.openSubTaskClicked.subscribe((task: Task) => {
+        this.openTask(task,true)
       });
     }
   }

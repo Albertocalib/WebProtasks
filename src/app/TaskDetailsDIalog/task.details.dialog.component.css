@@ -139,10 +139,60 @@ li {
   border-radius: 5px;
   margin-bottom: 10px;
   padding: 10px;
+  cursor: pointer;
 }
 
 .min-width-30{
     min-width: 30%;
+
+}
+.createSubTaskButton{
+  cursor: pointer;
+  background-color: orange;
+  font-size: 14px;
+  color: #FFFFFF;
+}
+
+.flex-me {
+  flex-flow: row wrap;
+  display: flex;
+  align-items: center;
+}
+
+mat-card {
+  height: 110px;
+  width: 110px;
+  margin: 7px;
+}
+
+.board-img-card{
+  width: 80px;
+  height: 80px;
+  margin: auto;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.board-header{ display: flex}
+
+mat-card {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+mat-card img{
+  height: 130px;
+}
+
+.card-title {
+  margin-bottom: 5px;
+}
+.attachment-name{
+  font-size: 12px;
 }
 
 
