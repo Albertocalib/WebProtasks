@@ -53,6 +53,9 @@
           </button>
         </mat-toolbar-row>
         <mat-toolbar-row class="secondary-row" *ngIf="board" style="display: flex; align-items: center;">
+          <button mat-icon-button (click)="openSettings()">
+            <mat-icon>settings</mat-icon>
+          </button>
           <div>
             <span>{{board.name}}</span>
           </div>

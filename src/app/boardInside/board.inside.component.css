@@ -115,3 +115,7 @@ li {
   color: #333;
   text-align: center;
 }
+.elements-list-task{
+  display: flex;
+  align-items: center;
+}

@@ -5,6 +5,7 @@ import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
 import {environment} from "../../environments/environment";
 import {Board} from "../board.model";
+import {Rol} from "../rol.model";
 
 const BASE_URL = environment.apiEndpoint + "/board/";
 
@@ -66,6 +67,61 @@ export class BoardService {
       'Content-Type': 'application/json',
     });
     let url=`${BASE_URL}updateBoard/${board.id}`
+    return this.http.put<Board>(url, board, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  updateWip(board:Board, wipActivated:boolean, wipLimit:number, wipList:string):Observable<Board> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${board.id}/wipActivated=${wipActivated}&wipLimit=${wipLimit}&wipList=${wipList}`
+    return this.http.put<Board>(url, board, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  addUserToBoard(board:Board, rol:Rol, username:string):Observable<Board> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${board.id}/username=${username}&rol${rol}`
+    return this.http.put<Board>(url, board, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  updateRol(board:Board, userId:number, role:Rol):Observable<Board> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${board.id}/userId=${userId}&role=${role}`
+    return this.http.put<Board>(url, board, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  deleteUserFromBoard(board:Board, userId:number):Observable<Board> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}id=${board.id}/userId=${userId}`
+    return this.http.delete<Board>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  updateTime(board: Board, timeActivated: boolean, cycleStart: string, cycleEnd: string, leadStart: string, leadEnd: string): Observable<Board> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url = `${BASE_URL}id=${board.id}/timeActivated=${timeActivated}&cycleStart=${cycleStart}&cycleEnd=${cycleEnd}&leadStart=${leadStart}&leadEnd=${leadEnd}`
     return this.http.put<Board>(url, board, {headers}).pipe(
       map(response => response),
       catchError(error => this.handleError(error))

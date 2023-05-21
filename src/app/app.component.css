@@ -109,6 +109,8 @@ mat-sidenav {
 }
 .sidenav-content {
   text-align: center;
+  background-color: #e58800;
+  height: 100%;
 }
 
 

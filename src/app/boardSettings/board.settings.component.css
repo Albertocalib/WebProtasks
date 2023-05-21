@@ -1,0 +1,52 @@
+.settings-page{
+  margin: 0;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  display: grid;
+}
+.section {
+  padding-bottom: 10px;
+  border-bottom: 1px solid orange;
+  display: block;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+.mat-checkbox{
+  white-space: normal;
+  display: block;
+  padding-bottom: 20px;
+}
+.td-title{
+  font-weight: bold;
+}
+.elements-list-user{
+  display: flex;
+  align-items: center;
+}
+.user-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 40px 0 0;
+  width: auto;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E2E2;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.icon-right{
+  margin-left: auto;
+}

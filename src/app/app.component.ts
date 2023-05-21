@@ -94,6 +94,10 @@ export class AppComponent{
       reader.readAsDataURL(blob);
     });
   }
+
+  openSettings() {
+    this.router.navigate([`/board/${this.board?.id}/settings`]);
+  }
 }
 
 

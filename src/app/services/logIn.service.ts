@@ -89,6 +89,17 @@ export class LoginService {
     );
   }
 
+  getAllUsers() {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}users`
+    return this.http.get<Array<User>>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error(error);
     return throwError("Server error (" + error.status + "): " + error.message);

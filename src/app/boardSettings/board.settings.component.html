@@ -1,0 +1,115 @@
+<div class="settings-page">
+  <div class="section">
+    <h2 class="section-title">Cycle y Lead time</h2>
+    <mat-checkbox  color="primary" [(ngModel)]="enableCycleLeadTimeCalculation" (change)="timeChanged()">Activar cálculo del ciclo y lead time</mat-checkbox>
+    <table *ngIf="enableCycleLeadTimeCalculation">
+      <thead>
+      <tr>
+        <th>Inicio</th>
+        <th>Fin</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td colspan="2" class="td-title">Cycle time</td>
+      </tr>
+      <tr>
+        <td>
+          <mat-form-field>
+            <mat-label>Lista inicio cycle time</mat-label>
+            <mat-select [(ngModel)]="cycleTimeStartField" (selectionChange)="timeChanged()">
+              <mat-option *ngFor="let list of  taskLists" [value]="list">{{list.title}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field>
+            <mat-label>Lista fin cycle time</mat-label>
+            <mat-select [(ngModel)]="cycleTimeEndField" (selectionChange)="timeChanged()">
+              <mat-option *ngFor="let list of  taskLists" [value]="list">{{list.title}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2" class="td-title">Lead time</td>
+      </tr>
+      <tr>
+        <td>
+          <mat-form-field>
+            <mat-label>Lista inicio lead time</mat-label>
+            <mat-select [(ngModel)]="leadTimeStartField" (selectionChange)="timeChanged()">
+              <mat-option *ngFor="let list of  taskLists" [value]="list">{{list.title}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field>
+            <mat-label>Lista fin lead time</mat-label>
+            <mat-select [(ngModel)]="leadTimeEndField" (selectionChange)="timeChanged()">
+              <mat-option *ngFor="let list of  taskLists" [value]="list">{{list.title}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="section">
+    <h2 class="section-title">WIP</h2>
+    <mat-checkbox color="primary" [(ngModel)]="enableWipCalculation" (change)="wipChanged()">Activar cálculo del WIP</mat-checkbox>
+    <mat-form-field *ngIf="enableWipCalculation" class="example-full-width">
+      <mat-label>Introduce el valor para el WIP</mat-label>
+      <input matInput [(ngModel)]="wipValue" type="number" (blur)="wipChanged()">
+    </mat-form-field>
+    <mat-form-field *ngIf="enableWipCalculation" class="example-full-width">
+      <mat-label>Lista WIP</mat-label>
+      <mat-select [(ngModel)]="wipListField" (selectionChange)="wipChanged()">
+        <mat-option *ngFor="let list of  taskLists" [value]="list">{{list.title}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Usuarios</h2>
+    <ul *ngIf="board">
+      <li *ngFor="let user of board.users">
+        <div class="elements-list-user">
+          <img matChipAvatar *ngIf="user.user.photo" src="data:image/png;base64,{{user.user.photo.substring(1, user.user.photo.length - 1)}}" alt="Avatar de {{ user.user.name }}" class="assigment-avatar">
+          <img matChipAvatar *ngIf="!user.user.photo" src="../../assets/user-default.png" alt="Avatar de {{ user.user.name }}"  class="assigment-avatar">
+          <span class="user-title">{{ user.user.name }} {{ user.user.surname }}</span>
+          <mat-select class="user-title" [(ngModel)]="user.rol" (selectionChange)="rolChanged(user.user,$event.value)">
+            <mat-option *ngFor="let rol of roles" [value]="rol">{{rol}}</mat-option>
+          </mat-select>
+          <mat-icon (click)="deleteUser(user.user)" color="primary" class="icon-right">delete</mat-icon>
+        </div>
+      </li>
+    </ul>
+    <mat-form-field>
+      <mat-label>Emails</mat-label>
+      <input matInput type="text" placeholder="Añade una persona..." #userInput
+             [matAutocomplete]="autoAddUser"
+             [formControl]="userCtrl" [(ngModel)]="emailInput"/>
+      <mat-autocomplete #autoAddUser="matAutocomplete" (optionSelected)="addUser($event)" panelWidth="auto">
+        <mat-option *ngFor="let user of filteredUsers" [value]="user.email">
+          <span>
+            <img *ngIf="user.photo" src="data:image/png;base64,{{user.photo.substring(1, user.photo.length - 1)}}" alt="Avatar de {{ user.name }}" class="assigment-avatar">
+            <img *ngIf="!user.photo" src="../../assets/user-default.png" alt="Avatar de {{ user.name }}"  class="assigment-avatar">
+            {{user.name}} {{user.surname}}
+          </span>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <mat-form-field *ngIf="!inviteUsersDisabled">
+      <mat-label>Elige Rol</mat-label>
+      <mat-select [(ngModel)]="rolSelected">
+        <mat-option *ngFor="let rol of roles" [value]="rol">{{rol}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="inviteUsers()" [disabled]="inviteUsersDisabled">Invitar usuarios</button>
+
+  </div>
+</div>
