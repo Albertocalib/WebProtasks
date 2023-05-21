@@ -1,9 +1,9 @@
 .settings-page{
-  margin: 0;
   position: relative;
   justify-content: center;
   align-items: center;
   display: grid;
+  margin: 20px 0 0;
 }
 .section {
   padding-bottom: 10px;
@@ -45,8 +45,15 @@ li {
   margin-bottom: 10px;
   padding: 10px;
   cursor: pointer;
+  width: 28vw;
 }
 
 .icon-right{
   margin-left: auto;
+}
+.settings-content{
+  width: 50vw;
+}
+.margin-right{
+  margin: 0 40px 0 0;
 }
