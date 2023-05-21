@@ -4,6 +4,7 @@ import {catchError, map} from 'rxjs/operators';
 import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
 import {environment} from "../../environments/environment";
+import {Tag} from "../tag.model";
 
 const BASE_URL = environment.apiEndpoint + "/user/";
 
@@ -70,13 +71,22 @@ export class LoginService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
-    debugger;
     const url =`${BASE_URL}updatePhoto/${this.user?.username}`
     return this.http.put<User>(url, body, {headers})
       .pipe(
         map(response => response),
         catchError(error => this.handleError(error))
       );
+  }
+  getUsersInBoard(boardId: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    let url=`${BASE_URL}board_id=${boardId}`
+    return this.http.get<Array<User>>(url, {headers}).pipe(
+      map(response => response),
+      catchError(error => this.handleError(error))
+    );
   }
 
   private handleError(error: HttpErrorResponse) {

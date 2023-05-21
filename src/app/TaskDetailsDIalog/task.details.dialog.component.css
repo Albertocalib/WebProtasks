@@ -4,9 +4,75 @@
   align-items: center;
   background: rgba(0, 0, 0, 0.03);
   padding: 20px;
+  border-bottom: 0.2rem solid orange;
 }
 .task-body{
+  display: flex;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.03);
+}
+.substasks-section hr{
+  border-width: 0.1rem;
+  border-color: orange;
+  border-style: dotted;
+}
+.attachments-section hr{
+  border-width: 0.1rem;
+  border-color: orange;
+  border-style: dotted;
+}
+.task-details-section{
   padding: 20px;
+  border-right: 0.2rem solid orange;
+}
+.task-messages-section{
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+.message-container {
+  display: flex;
+  padding-bottom: 15px;
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+}
+.my-message{
+  justify-content: flex-end;
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.user-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  border: 1px solid black;
+}
+
+.user-name {
+  font-weight: bold;
+}
+
+.message-bubble {
+  padding: 0.5rem;
+  border-radius: 1rem;
+  background-color: orange;
+}
+
+.my-message .message-content .message-bubble {
+  background-color: cornflowerblue;
+}
+.add-padding-right{
+  padding-right: 20px;
 }
 
 .task-header h2 {
@@ -22,99 +88,112 @@
   font-size: 24px;
   color: #666;
   cursor: pointer;
-}
 
-.task-details-header button:focus {
-  outline: none;
-}
-
-.task-details-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.task-details-section {
-  margin-bottom: 16px;
-}
-
-.task-details-section h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.task-details-section p {
-  margin: 0;
-  font-size: 16px;
-  color: #666;
-}
-
-.task-details-section ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.task-details-section li {
-  margin: 0;
-  font-size: 16px;
-  color: #666;
-}
-
-.task-details-section li:before {
-  content: "- ";
-}
-
-.task-details-section-label {
-  display: inline-block;
-  margin-right: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-}
-
-.task-details-section-label + p {
-  display: inline-block;
-  margin: 0;
-  font-size: 16px;
-  color: #666;
-}
-
-.task-details-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.task-details-footer-item {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  color: #666;
-}
-
-.task-details-footer-item + .task-details-footer-item {
-  margin-left: 16px;
-}
-
-.task-details-footer-item i {
-  margin-right: 8px;
-  font-size: 24px;
-}
-
-.task-details-footer-item span {
-  font-weight: 600;
-}
-
-.task-details-footer-item span + span {
-  margin-left: 8px;
 }
 .spacer {
   flex: 1;
 }
+.new-message-form {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 5px;
+}
 
+.new-message-field {
+  width: 100%;
+  min-height: 50px;
+  resize: vertical;
+  font-size: 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.new-message-field:focus {
+  outline: none !important;
+  border:2px solid orange;
+}
+
+.submit-button {
+  background-color: orange;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E2E2;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.min-width-30{
+    min-width: 30%;
+
+}
+.createSubTaskButton{
+  cursor: pointer;
+  background-color: orange;
+  font-size: 14px;
+  color: #FFFFFF;
+}
+
+.flex-me {
+  flex-flow: row wrap;
+  display: flex;
+  align-items: center;
+}
+
+mat-card {
+  height: 110px;
+  width: 110px;
+  margin: 7px;
+}
+
+.board-img-card{
+  width: 80px;
+  height: 80px;
+  margin: auto;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.board-header{ display: flex}
+
+mat-card {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+mat-card img{
+  height: 130px;
+}
+
+.card-title {
+  margin-bottom: 5px;
+}
+.attachment-name{
+  font-size: 12px;
+}
 
 
 

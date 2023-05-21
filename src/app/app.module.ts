@@ -30,7 +30,7 @@ import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
 import {DeleteElementDialogComponent} from "./DeleteElementDialog/delete.element.dialog.component";
 import {CopyOrMoveElementDialogComponent} from "./CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
-import {MatOptionModule} from "@angular/material/core";
+import {MAT_DATE_LOCALE, MatOptionModule} from "@angular/material/core";
 import {MatSelectModule} from "@angular/material/select";
 import {TaskCardComponent} from "./taskCard/taskCard.component";
 import {MatChipsModule} from "@angular/material/chips";
@@ -39,6 +39,13 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import {TaskDetailsDialog} from "./TaskDetailsDIalog/task.details.dialog.component";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {ColorPickerModule} from "ngx-color-picker";
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import {MessageService} from "./services/message.service";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {FileExtensions} from "./file.model";
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,8 +86,12 @@ import {ColorPickerModule} from "ngx-color-picker";
     MatIconModule,
     MatInputModule,
     ColorPickerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatAutocompleteModule
   ],
-  providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService],
+  providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService,MessageService,FileExtensions,
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
