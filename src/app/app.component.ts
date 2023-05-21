@@ -34,8 +34,8 @@ export class AppComponent{
   openStats(){
     this.sharedService.notifyOpenStats(true)
   }
-  changeVIewMode(){
-    this.sharedService.notifyButtonClickChangeView(true)
+  changeVIewMode(mode:string){
+    this.sharedService.notifyButtonClickChangeView(mode)
   }
   goToHome(){
     this.board=undefined
