@@ -147,7 +147,8 @@
         </div>
       </div>
     <div class="task-messages-section example-full-width">
-      <div *ngFor="let message of task.messages">
+      <div class="chatter-form">
+        <div  *ngFor="let message of task.messages">
         <div *ngIf="message.user.username !== currentUser.username" class="message-container">
           <div class="message-content">
             <div class="message-header">
@@ -178,6 +179,7 @@
             </div>
           </div>
         </div>
+      </div>
       </div>
       <form (ngSubmit)="addMessage()" #newMessageForm="ngForm" class="new-message-form">
         <div class="form-group">

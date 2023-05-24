@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
 }
 
 .task-header{
@@ -41,10 +42,10 @@
   overflow-y: auto;
 }
 .task-messages-section{
-  padding: 20px;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  position: relative;
+  padding: 10px;
 }
 .message-container {
   display: flex;
@@ -108,14 +109,21 @@
 .spacer {
   flex: 1;
 }
+.chatter-form {
+  overflow-y: auto;
+  max-height: calc(100vh - 50px);
+}
+
 .new-message-form {
+  position: sticky;
+  bottom: 0;
   background-color: #f5f5f5;
   padding: 10px;
   border-radius: 5px;
 }
 
 .new-message-field {
-  width: 100%;
+  width: 97%;
   min-height: 50px;
   resize: vertical;
   font-size: 16px;

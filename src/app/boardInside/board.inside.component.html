@@ -73,38 +73,53 @@
     </div>
   </div>
 
-
-  <div class="pie-charts-container" *ngIf="mode==='stats'">
-    <div *ngFor="let userD of userData" class="pie-chart-container">
-      <ngx-charts-pie-chart
-        [view]="[500, 300]"
-        [results]="userD.statuses"
+  <div class="stats-section" *ngIf="mode==='stats'">
+    <h2>Gráfico Tareas por persona</h2>
+    <div class="pie-charts-container" >
+      <div *ngFor="let userD of userData" class="pie-chart-container">
+        <ngx-charts-pie-chart
+          [view]="[500, 300]"
+          [results]="userD.statuses"
+          [gradient]="false"
+          [labels]="false"
+          [legend]="true"
+          [explodeSlices]="false"
+          [doughnut]="true"
+          [arcWidth]="0.5">
+        </ngx-charts-pie-chart>
+        <div class="pie-chart-label">{{ userD.name }}</div>
+      </div>
+    </div>
+    <div *ngIf="board && board.timeActivated">
+      <h2>Gráfico Cycle y Lead time</h2>
+      <ngx-charts-bar-vertical-2d class="cycle-lead-graph"
+        [view]="[1400, 400]"
+        [animations]="true"
+        [results]="cycleGraphData"
         [gradient]="false"
-        [labels]="false"
+        [xAxis]="true"
+        [yAxis]="true"
         [legend]="true"
-        [explodeSlices]="false"
-        [doughnut]="true"
-        [arcWidth]="0.5">
-      </ngx-charts-pie-chart>
-      <div class="pie-chart-label">{{ userD.name }}</div>
+        [noBarWhenZero]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxisLabel]="'Tarea'"
+        [yAxisLabel]="'Dias'"
+        [roundEdges]="true"
+        [rotateXAxisTicks]="false"
+        [customColors]="colorSchema">
+        <ng-template #tooltipTemplate let-model="model">
+          <div class="tooltip-container">
+            <h4>{{ model.extra.nameTooltip }}</h4>
+            <div class="tooltip-value">Días: {{ model.value }}</div>
+            <div class="tooltip-date">Inicio: {{ model.extra.start }}</div>
+            <div class="tooltip-date" *ngIf="model.extra.start!=='Sin empezar'">Fin: {{ model.extra.end }}</div>
+          </div>
+        </ng-template>
+      </ngx-charts-bar-vertical-2d>
     </div>
   </div>
-  <div *ngIf="mode==='stats'">
 
-    <ngx-charts-bar-vertical-2d
-      [view]="[1500, 300]"
-      [animations]="true"
-      [results]="cycleGraphData"
-      [gradient]="false"
-      [xAxis]="true"
-      [yAxis]="true"
-      [legend]="true"
-      [showXAxisLabel]="true"
-      [showYAxisLabel]="true"
-      [xAxisLabel]="'Tarea'"
-      [yAxisLabel]="'Dias'"
-      [roundEdges]="true"
-      [rotateXAxisTicks]="false">
-    </ngx-charts-bar-vertical-2d>
-  </div>
 </div>
+
+

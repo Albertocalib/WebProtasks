@@ -119,3 +119,8 @@ li {
   display: flex;
   align-items: center;
 }
+.cycle-lead-graph {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -46,6 +46,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {FileExtensions} from "./file.model";
 import {BoardSettingsComponent} from "./boardSettings/board.settings.component";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {DatePipe} from "@angular/common";
 
 
 @NgModule({
@@ -96,7 +97,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 
   ],
   providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService,MessageService,FileExtensions,
-    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }],
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

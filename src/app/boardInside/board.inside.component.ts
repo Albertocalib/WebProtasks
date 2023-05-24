@@ -15,6 +15,8 @@ import {AppComponent} from "../app.component";
 import {BoardService} from "../services/board.service";
 import {TaskDetailsDialog} from "../TaskDetailsDIalog/task.details.dialog.component";
 import {TaskCardComponent} from "../taskCard/taskCard.component";
+import {DatePipe} from "@angular/common";
+import {Board} from "../board.model";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -24,14 +26,20 @@ export class BoardInsideComponent implements OnInit {
   taskLists: TaskList[]
 
   boardId: string | null
+  board?:Board
   mode: string
   subscriptionOnChangeViewMode: Subscription | undefined
   subscriptionOnOpenStats: Subscription | undefined
   subscription: Subscription | undefined
   userData: Array<any>
   cycleGraphData: Array<any>;
+  colorSchema: Array<any>;
   @ViewChildren(TaskCardComponent) taskCards!:TaskCardComponent[];
   taskDeleted = new EventEmitter<void>();
+  colors = {
+      cycle: '#7f2a91',
+      lead: '#07a5fa', // Colores personalizados
+    };
 
   constructor(
     public router: Router,
@@ -42,12 +50,14 @@ export class BoardInsideComponent implements OnInit {
     private sharedService: SharedService,
     private appComponent: AppComponent,
     public boardService: BoardService,
+    public datepipe: DatePipe
   ) {
     this.taskLists = []
     this.boardId = ""
     this.mode = localStorage.getItem("viewMode") || "board"
     this.userData = new Array<any>()
     this.cycleGraphData = new Array<any>()
+    this.colorSchema = new Array<any>()
   }
 
 
@@ -67,6 +77,7 @@ export class BoardInsideComponent implements OnInit {
       this.taskLists = await lastValueFrom(this.taskListService.getTaskLists(this.boardId!!));
       if (this.taskLists.length > 0) {
         this.appComponent.board = this.taskLists[0].board
+        this.board=this.taskLists[0].board
       }
     } catch (error) {
       console.log(error);
@@ -357,7 +368,7 @@ export class BoardInsideComponent implements OnInit {
           taskDict[noUser][title]++;
         }
         for (const user of users) {
-          let name = user.name;
+          let name = user.username!!;
           taskDict[name] ??= {};
           taskDict[name][title] ??= 0;
           taskDict[name][title]++;
@@ -374,51 +385,65 @@ export class BoardInsideComponent implements OnInit {
       }
       this.userData.push({name: user, statuses: userStatuses, total: userTotal});
     }
-
-    this.cycleGraphData = tasks.map(task => {
+    if (this.board && this.board.timeActivated) {
+      this.cycleGraphData = tasks.map(task => {
         let dateStartCycle = task.date_start_cycle_time;
         const dateStartLead = new Date(task.date_start_lead_time!!);
         let dateEndCycle = task.date_end_cycle_time
         let dateEndLead = task.date_end_lead_time
 
-        let nameCycle="Cycle time"
-        if (!dateEndCycle){
-          nameCycle+="* (En progreso)"
+        let nameCycle = "Cycle time"
+        let dateStartCycleString = "Sin empezar"
+        let dateEndCycleString = "In Progress"
+        let dateStartLeadString = this.datepipe.transform(dateStartLead, 'dd-MM-yyyy')!!
+        let dateEndLeadString = "In Progress"
+
+        if (!dateEndCycle) {
           dateEndCycle = new Date()
-        }else{
+        } else {
           dateEndCycle = new Date(dateEndCycle!!);
+          dateEndCycleString = this.datepipe.transform(dateEndCycle, 'dd-MM-yyyy')!!
 
         }
-        let nameLead="Lead time"
-        if (!dateEndLead){
-          nameLead+="* (En progreso)"
+        let nameLead = "Lead time"
+        if (!dateEndLead) {
           dateEndLead = new Date()
-        }else{
+        } else {
           dateEndLead = new Date(dateEndLead!!);
+          dateEndLeadString = this.datepipe.transform(dateEndLead, 'dd-MM-yyyy')!!
         }
-        let daysCycle=0
-        if (dateStartCycle){
+        let daysCycle = 0
+        if (dateStartCycle) {
           dateStartCycle = new Date(dateStartCycle!!)
-          daysCycle = this._calculateDaysBetweenDates(dateStartCycle!!,dateEndCycle!!)
-        }else{
-          nameCycle="Cycle time* (No iniciado)"
+          dateStartCycleString = this.datepipe.transform(dateStartCycle, 'dd-MM-yyyy')!!
+          daysCycle = this._calculateDaysBetweenDates(dateStartCycle!!, dateEndCycle!!)
         }
-        const daysLead = this._calculateDaysBetweenDates(dateStartLead!!,dateEndLead!!)
-
+        const daysLead = this._calculateDaysBetweenDates(dateStartLead!!, dateEndLead!!)
+        this.colorSchema.push({name: nameCycle, value: this.colors.cycle})
+        this.colorSchema.push({name: nameLead, value: this.colors.lead})
         return {
-            name: task.title,
-            series: [{name:nameCycle,
-                      value:daysCycle,
-                      extra: {start:task.date_start_cycle_time,
-                              end:task.date_end_cycle_time}
-                    },
-                    {name:nameLead,
-                      value:daysLead,
-                      extra: {start:task.date_start_lead_time,
-                              end:task.date_end_lead_time}
-                    }]
-          };
+          name: task.title,
+          series: [{
+            name: nameCycle,
+            value: daysCycle,
+            extra: {
+              start: dateStartCycleString,
+              end: dateEndCycleString,
+              nameTooltip: `${nameCycle} · ${task.title}`
+            }
+          },
+            {
+              name: nameLead,
+              value: daysLead,
+              extra: {
+                start: dateStartLeadString,
+                end: dateEndLeadString,
+                nameTooltip: `${nameLead} · ${task.title}`
+              }
+            }]
+        };
       });
+    }
   }
 
   openTask(task: Task, subTaskMode:boolean) {
