@@ -425,6 +425,7 @@ export class BoardInsideComponent implements OnInit {
     if (!this.taskCards.some(card=>card.matMenuTrigger.menuOpen)) {
       let dialogTaskDetails = this._dialog.open(TaskDetailsDialog, {
         width: '80%',
+        height: '85%',
         data: {task:task,boardId:this.boardId, subTaskMode:subTaskMode},
         panelClass: 'my-dialog-container',
         autoFocus: false

@@ -1,188 +1,192 @@
-<div class="task-header">
-  <h2 contenteditable (blur)="onTitleChange($event)">{{ task.title }}</h2>
-  <div class="task-info-section" >
-    <h3>Personas asignadas:</h3>
-    <div class="example-full-width">
-      <mat-chip-list #chipGridAssigments aria-label="Elección de Asignaciones">
-        <mat-chip *ngFor="let user of task.users" class="no-padding-right" matTooltip="{{ user.name }} {{user.surname}}"
-                  [removable]="removable"
-                  (removed)="removeUser(user)">
-          <img matChipAvatar *ngIf="user.photo" src="data:image/png;base64,{{user.photo.substring(1, user.photo.length - 1)}}" alt="Avatar de {{ user.name }}" class="assigment-avatar">
-          <img matChipAvatar *ngIf="!user.photo" src="../../assets/user-default.png" alt="Avatar de {{ user.name }}"  class="assigment-avatar">
-          <mat-icon matChipRemove *ngIf="removable" class="remove-assigment" >cancel</mat-icon>
-        </mat-chip>
-      </mat-chip-list>
-      <input placeholder="Añade una persona..." #assigmentInput
-             [matChipInputFor]="chipGridAssigments" [matAutocomplete]="autoAssigment"
-             [formControl]="assigmentCtrl"/>
-      <mat-autocomplete #autoAssigment="matAutocomplete" (optionSelected)="selectedAssigment($event)" panelWidth="auto">
-        <mat-option *ngFor="let assigment of filteredUsers" [value]="assigment">
-          <span>
-            <img *ngIf="assigment.photo" src="data:image/png;base64,{{assigment.photo.substring(1, assigment.photo.length - 1)}}" alt="Avatar de {{ assigment.name }}" class="assigment-avatar">
-            <img *ngIf="!assigment.photo" src="../../assets/user-default.png" alt="Avatar de {{ assigment.name }}"  class="assigment-avatar">
-            {{assigment.name}} {{assigment.surname}}
-          </span>
-        </mat-option>
-      </mat-autocomplete>
-    </div>
-  </div>
-  <div class="task-info-section min-width-30">
-    <h3>Etiquetas</h3>
-    <div class="example-full-width">
-      <mat-chip-list #chipGrid aria-label="Elección de etiquetas">
-            <mat-chip [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of task.tag_ids" selectable="false"
-                          [removable]="removable"
-                          (removed)="removeTag(tag)">{{tag?.name}}
-              <button matChipRemove [attr.aria-label]="'remove ' + tag?.name">
-                <mat-icon>cancel</mat-icon>
-              </button>
-            </mat-chip>
-      </mat-chip-list>
-      <input placeholder="Añade una etiqueta..." #tagInput
-                 [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
-                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                 (matChipInputTokenEnd)="addTag($event)"
-                 (input)="onInputChange($event)"
-                 [formControl]="tagCtrl"/>
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)" panelWidth="auto">
-        <mat-option [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of filteredTags" [value]="tag">
-              {{tag.name}}
-        </mat-option>
-      </mat-autocomplete>
-    </div>
-  </div>
-  <div class="task-buttons">
-    <button mat-icon-button *ngIf="!data.subTaskMode" (click)="copy()">
-      <mat-icon>content_copy</mat-icon>
-    </button>
-    <button mat-icon-button *ngIf="!data.subTaskMode" (click)="move()">
-      <mat-icon>drive_file_move_outline</mat-icon>
-    </button>
-    <button mat-icon-button (click)="delete()">
-      <mat-icon>delete</mat-icon>
-    </button>
-    <button mat-icon-button (click)="onNoClick()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
-</div>
+<div class="dialog-container">
 
-<div class="task-body">
-    <div class="task-details-section example-full-width add-padding-right">
-      <mat-form-field appearance="fill" class="example-full-width">
-        <mat-label>Descripción</mat-label>
-        <textarea matInput [(ngModel)]="task.description" (change)="descriptionChange()" ></textarea>
-      </mat-form-field>
-
-      <div class="task-info-section">
-        <h3>Fecha de vencimiento:</h3>
-        <mat-form-field appearance="fill">
-          <mat-label>Elige una fecha</mat-label>
-          <input matInput [matDatepicker]="picker" [(ngModel)]="task.date_end" (dateChange)="onChangeDate($event)">
-          <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-      </div>
-      <div class="task-info-section">
-        <h3>Prioridad:</h3>
-        <mat-form-field appearance="fill">
-          <mat-label>Elige Prioridad</mat-label>
-          <mat-select [(ngModel)]="selectedPriority" (selectionChange)="selectPriority($event.value)">
-            <mat-select-trigger>
-              <mat-icon [ngStyle]="{'color':getPriorityFlagColor(selectedPriority)}">flag</mat-icon>&nbsp;{{getPriorityPrintableName(selectedPriority)}}
-            </mat-select-trigger>
-            <mat-option *ngFor="let priority of priorities" [value]="priority">
-          <span>
-            <mat-icon class="priority-icon" [ngStyle]="{'color':getPriorityFlagColor(priority)}">flag</mat-icon>
-            {{ getPriorityPrintableName(priority) }}
+  <div class="task-header">
+    <h2 contenteditable (blur)="onTitleChange($event)">{{ task.title }}</h2>
+    <div class="task-info-section" >
+      <h3>Personas asignadas:</h3>
+      <div class="example-full-width">
+        <mat-chip-list #chipGridAssigments aria-label="Elección de Asignaciones">
+          <mat-chip *ngFor="let user of task.users" class="no-padding-right" matTooltip="{{ user.name }} {{user.surname}}"
+                    [removable]="removable"
+                    (removed)="removeUser(user)">
+            <img matChipAvatar *ngIf="user.photo" src="data:image/png;base64,{{user.photo.substring(1, user.photo.length - 1)}}" alt="Avatar de {{ user.name }}" class="assigment-avatar">
+            <img matChipAvatar *ngIf="!user.photo" src="../../assets/user-default.png" alt="Avatar de {{ user.name }}"  class="assigment-avatar">
+            <mat-icon matChipRemove *ngIf="removable" class="remove-assigment" >cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+        <input placeholder="Añade una persona..." #assigmentInput
+               [matChipInputFor]="chipGridAssigments" [matAutocomplete]="autoAssigment"
+               [formControl]="assigmentCtrl"/>
+        <mat-autocomplete #autoAssigment="matAutocomplete" (optionSelected)="selectedAssigment($event)" panelWidth="auto">
+          <mat-option *ngFor="let assigment of filteredUsers" [value]="assigment">
+            <span>
+              <img *ngIf="assigment.photo" src="data:image/png;base64,{{assigment.photo.substring(1, assigment.photo.length - 1)}}" alt="Avatar de {{ assigment.name }}" class="assigment-avatar">
+              <img *ngIf="!assigment.photo" src="../../assets/user-default.png" alt="Avatar de {{ assigment.name }}"  class="assigment-avatar">
+              {{assigment.name}} {{assigment.surname}}
             </span>
-            </mat-option>
-          </mat-select>
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+    </div>
+    <div class="task-info-section min-width-30">
+      <h3>Etiquetas</h3>
+      <div class="example-full-width">
+        <mat-chip-list #chipGrid aria-label="Elección de etiquetas">
+              <mat-chip [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of task.tag_ids" selectable="false"
+                            [removable]="removable"
+                            (removed)="removeTag(tag)">{{tag?.name}}
+                <button matChipRemove [attr.aria-label]="'remove ' + tag?.name">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+        </mat-chip-list>
+        <input placeholder="Añade una etiqueta..." #tagInput
+                   [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   (matChipInputTokenEnd)="addTag($event)"
+                   (input)="onInputChange($event)"
+                   [formControl]="tagCtrl"/>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)" panelWidth="auto">
+          <mat-option [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of filteredTags" [value]="tag">
+                {{tag.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+    </div>
+    <div class="task-buttons">
+      <button mat-icon-button *ngIf="!data.subTaskMode" (click)="copy()">
+        <mat-icon>content_copy</mat-icon>
+      </button>
+      <button mat-icon-button *ngIf="!data.subTaskMode" (click)="move()">
+        <mat-icon>drive_file_move_outline</mat-icon>
+      </button>
+      <button mat-icon-button (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button (click)="onNoClick()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="task-body">
+
+    <div class="task-details-section example-full-width add-padding-right">
+        <mat-form-field appearance="fill" class="example-full-width">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput [(ngModel)]="task.description" (change)="descriptionChange()" ></textarea>
         </mat-form-field>
-      </div>
-      <div class="substasks-section">
-        <h3>Subtareas:</h3>
-        <hr>
-        <ul>
-          <li *ngFor="let subtask of task.subTasks" (click)="openSubTask(subtask)">
-            <span class="task-title">{{ subtask.title }}</span>
-          </li>
-          <li (click)="createSubTask()" class="createSubTaskButton">
-            <span class="task-title">Crear nueva Subtarea</span>
-          </li>
-        </ul>
-      </div>
-      <div class="attachments-section">
-        <h3>Adjuntos:</h3>
-        <hr>
-        <div class="flex-me">
-          <mat-card *ngFor="let attachment of task.attachments" (click)="downloadAttachment(attachment)">
-            <img mat-card-image [src]="_getImageExtensionFromAttachment(attachment)" alt="Placeholder image">
-            <mat-card-content>
-              <div class="card-title">
-                <span class="attachment-name">{{attachment.name}}</span>
-              </div>
-            </mat-card-content>
-          </mat-card>
 
-          <mat-card (click)="f_input.click()" >
-            <input
-              type="file"
-              hidden
-              [multiple]="true"
-              #f_input
-              (change)="addAttachments(f_input.files)"
-            />
-            <mat-card-content>
-              <div class="board-header">
-                <span class="mat-h2">Añadir adjunto</span>
-                <span class="spacer"></span>
-              </div>
-            </mat-card-content>
-          </mat-card>
+        <div class="task-info-section">
+          <h3>Fecha de vencimiento:</h3>
+          <mat-form-field appearance="fill">
+            <mat-label>Elige una fecha</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="task.date_end" (dateChange)="onChangeDate($event)">
+            <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
         </div>
-      </div>
-    </div>
-  <div class="task-messages-section example-full-width">
-    <div *ngFor="let message of task.messages">
-      <div *ngIf="message.user.username !== currentUser.username" class="message-container">
-        <div class="message-content">
-          <div class="message-header">
-            <img *ngIf="!message.user.photo" src="../../assets/user-default.png" alt="Avatar de {{ message.user.name }}"
-                 class="user-avatar">
-            <img *ngIf="message.user.photo"
-                 src="data:image/png;base64,{{message.user.photo.substring(1, message.user.photo.length - 1)}}"
-                 class="user-avatar">
-            <span class="user-name">{{message.user.username}}</span>
-          </div>
-          <div class="message-bubble">
-            <p>{{ message.body }}</p>
-          </div>
+        <div class="task-info-section">
+          <h3>Prioridad:</h3>
+          <mat-form-field appearance="fill">
+            <mat-label>Elige Prioridad</mat-label>
+            <mat-select [(ngModel)]="selectedPriority" (selectionChange)="selectPriority($event.value)">
+              <mat-select-trigger>
+                <mat-icon [ngStyle]="{'color':getPriorityFlagColor(selectedPriority)}">flag</mat-icon>&nbsp;{{getPriorityPrintableName(selectedPriority)}}
+              </mat-select-trigger>
+              <mat-option *ngFor="let priority of priorities" [value]="priority">
+            <span>
+              <mat-icon class="priority-icon" [ngStyle]="{'color':getPriorityFlagColor(priority)}">flag</mat-icon>
+              {{ getPriorityPrintableName(priority) }}
+              </span>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
-      </div>
-      <div *ngIf="message.user.username === currentUser.username" class="message-container my-message">
-        <div class="message-content">
-          <div class="message-header">
-            <img *ngIf="!message.user.photo" src="../../assets/user-default.png" alt="Avatar de {{ message.user.name }}"
-                 class="user-avatar">
-            <img *ngIf="message.user.photo"
-                 src="data:image/png;base64,{{message.user.photo.substring(1, message.user.photo.length - 1)}}"
-                 class="user-avatar">
-            <span class="user-name">{{message.user.username}}</span>
-          </div>
-          <div class="message-bubble">
-            <p>{{ message.body }}</p>
-          </div>
+        <div class="substasks-section">
+          <h3>Subtareas:</h3>
+          <hr>
+          <ul>
+            <li *ngFor="let subtask of task.subTasks" (click)="openSubTask(subtask)">
+              <span class="task-title">{{ subtask.title }}</span>
+            </li>
+            <li (click)="createSubTask()" class="createSubTaskButton">
+              <span class="task-title">Crear nueva Subtarea</span>
+            </li>
+          </ul>
         </div>
-      </div>
-    </div>
-    <form (ngSubmit)="addMessage()" #newMessageForm="ngForm" class="new-message-form">
-      <div class="form-group">
-        <label for="message">Nuevo comentario:</label>
-        <textarea id="message" name="message" [(ngModel)]="newMessage" required class="new-message-field"></textarea>
-      </div>
+        <div class="attachments-section">
+          <h3>Adjuntos:</h3>
+          <hr>
+          <div class="flex-me">
+            <mat-card *ngFor="let attachment of task.attachments" (click)="downloadAttachment(attachment)">
+              <img mat-card-image [src]="_getImageExtensionFromAttachment(attachment)" alt="Placeholder image">
+              <mat-card-content>
+                <div class="card-title">
+                  <span class="attachment-name">{{attachment.name}}</span>
+                </div>
+              </mat-card-content>
+            </mat-card>
 
-      <button type="submit" [disabled]="newMessageForm.invalid" class="submit-button">Enviar</button>
-    </form>
+            <mat-card (click)="f_input.click()" >
+              <input
+                type="file"
+                hidden
+                [multiple]="true"
+                #f_input
+                (change)="addAttachments(f_input.files)"
+              />
+              <mat-card-content>
+                <div class="board-header">
+                  <span class="mat-h2">Añadir adjunto</span>
+                  <span class="spacer"></span>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+    <div class="task-messages-section example-full-width">
+      <div *ngFor="let message of task.messages">
+        <div *ngIf="message.user.username !== currentUser.username" class="message-container">
+          <div class="message-content">
+            <div class="message-header">
+              <img *ngIf="!message.user.photo" src="../../assets/user-default.png" alt="Avatar de {{ message.user.name }}"
+                   class="user-avatar">
+              <img *ngIf="message.user.photo"
+                   src="data:image/png;base64,{{message.user.photo.substring(1, message.user.photo.length - 1)}}"
+                   class="user-avatar">
+              <span class="user-name">{{message.user.username}}</span>
+            </div>
+            <div class="message-bubble">
+              <p>{{ message.body }}</p>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="message.user.username === currentUser.username" class="message-container my-message">
+          <div class="message-content">
+            <div class="message-header">
+              <img *ngIf="!message.user.photo" src="../../assets/user-default.png" alt="Avatar de {{ message.user.name }}"
+                   class="user-avatar">
+              <img *ngIf="message.user.photo"
+                   src="data:image/png;base64,{{message.user.photo.substring(1, message.user.photo.length - 1)}}"
+                   class="user-avatar">
+              <span class="user-name">{{message.user.username}}</span>
+            </div>
+            <div class="message-bubble">
+              <p>{{ message.body }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form (ngSubmit)="addMessage()" #newMessageForm="ngForm" class="new-message-form">
+        <div class="form-group">
+          <label for="message">Nuevo comentario:</label>
+          <textarea id="message" name="message" [(ngModel)]="newMessage" required class="new-message-field"></textarea>
+        </div>
+
+        <button type="submit" [disabled]="newMessageForm.invalid" class="submit-button">Enviar</button>
+      </form>
+    </div>
   </div>
 </div>
