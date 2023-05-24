@@ -78,7 +78,7 @@ export class BoardInsideComponent implements OnInit {
     }
     this.subscriptionOnChangeViewMode = this.sharedService.buttonClickChangeView$.subscribe((clicked) => {
       if (clicked) {
-        this.changeMode()
+        this.changeMode(clicked)
       }
     });
     this.subscriptionOnOpenStats = this.sharedService.buttonClickStats$.subscribe((clicked) => {
@@ -313,12 +313,11 @@ export class BoardInsideComponent implements OnInit {
     })
   }
 
-  changeMode() {
-    let mode = localStorage.getItem("viewMode") || "board"
-    if (mode == 'board') {
+  changeMode(mode:string) {
+    if (mode == 'list') {
       localStorage.setItem('viewMode', 'list');
       this.mode = 'list'
-    } else {
+    } else if (mode=='board') {
       localStorage.setItem('viewMode', 'board');
       this.mode = 'board'
     }
@@ -386,7 +385,6 @@ export class BoardInsideComponent implements OnInit {
         let tasklist = this.getTaskList(task)!!
         this.deleteTask(task, tasklist,subTaskMode)
         this.taskDeleted.subscribe(() => {
-          debugger;
           dialogTaskDetails.close()
         });
       });

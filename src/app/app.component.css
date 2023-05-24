@@ -109,6 +109,8 @@ mat-sidenav {
 }
 .sidenav-content {
   text-align: center;
+  background-color: #e58800;
+  height: 100%;
 }
 
 
@@ -224,4 +226,21 @@ button.lightbox-edit {
   -moz-transition: .5s ease-in-out;
   -o-transition: .5s ease-in-out;
   transition: .5s ease-in-out;
+}
+.example-icon{
+  margin-left: 70px;
+  min-width: 0;
+  height: 40px;
+  color:inherit;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.example-icon mat-icon{
+  vertical-align: middle;
+}
+.example-icon:hover{
+  background: #ff9800;
+  border: 1px solid #7a4902;
+
 }

@@ -29,25 +29,26 @@
   <div class="task-info-section min-width-30">
     <h3>Etiquetas</h3>
     <div class="example-full-width">
-    <mat-chip-list #chipGrid aria-label="Elección de etiquetas">
-          <mat-chip [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of task.tag_ids" selectable="false"
-                        [removable]="removable"
-                        (removed)="removeTag(tag)">{{tag?.name}}
-            <button matChipRemove [attr.aria-label]="'remove ' + tag?.name">
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </mat-chip>
-        </mat-chip-list>
-        <input placeholder="Añade una etiqueta..." #tagInput
-               [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
-               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-               (matChipInputTokenEnd)="addTag($event)"
-               [formControl]="tagCtrl"/>
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)" panelWidth="auto">
-          <mat-option [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of filteredTags" [value]="tag">
-            {{tag.name}}
-          </mat-option>
-        </mat-autocomplete>
+      <mat-chip-list #chipGrid aria-label="Elección de etiquetas">
+            <mat-chip [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of task.tag_ids" selectable="false"
+                          [removable]="removable"
+                          (removed)="removeTag(tag)">{{tag?.name}}
+              <button matChipRemove [attr.aria-label]="'remove ' + tag?.name">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+      </mat-chip-list>
+      <input placeholder="Añade una etiqueta..." #tagInput
+                 [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 (matChipInputTokenEnd)="addTag($event)"
+                 (input)="onInputChange($event)"
+                 [formControl]="tagCtrl"/>
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)" panelWidth="auto">
+        <mat-option [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of filteredTags" [value]="tag">
+              {{tag.name}}
+        </mat-option>
+      </mat-autocomplete>
     </div>
   </div>
   <div class="task-buttons">

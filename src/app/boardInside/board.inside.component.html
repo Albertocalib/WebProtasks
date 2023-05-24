@@ -49,9 +49,24 @@
         <ul cdkDrag *ngFor="let list of taskLists" cdkDropList [cdkDropListData]="list.tasks"
             (cdkDropListDropped)="drop($event,'task',list)">
           <h2>{{ list.title }}</h2>
-          <li *ngFor="let task of list.tasks" cdkDrag (click)="openTask(task,false)">
-            <span class="task-title">{{ task.title }}</span>
-            <span> {{ task.description }}</span>
+          <li *ngFor="let task of list.tasks" (click)="openTask(task,false)">
+            <div class="elements-list-task">
+              <span class="task-title">{{ task.title }}</span>
+              <span class="task-title"> {{ task.description }}</span>
+              <mat-chip-list class="task-title">
+                <mat-chip *ngFor="let user of task.users" class="no-padding-right" matTooltip="{{ user.name }} {{user.surname}}"
+                          [removable]="false">
+                  <img matChipAvatar *ngIf="user.photo" src="data:image/png;base64,{{user.photo.substring(1, user.photo.length - 1)}}" alt="Avatar de {{ user.name }}" class="assigment-avatar">
+                  <img matChipAvatar *ngIf="!user.photo" src="../../assets/user-default.png" alt="Avatar de {{ user.name }}"  class="assigment-avatar">
+                </mat-chip>
+              </mat-chip-list>
+              <mat-chip-list>
+                <mat-chip [style.background]="tag?.color ? tag.color : '#e0e0e0'" *ngFor="let tag of task.tag_ids"
+                          selectable="false"
+                          [removable]="false">{{tag?.name}}
+                </mat-chip>
+              </mat-chip-list>
+            </div>
           </li>
         </ul>
       </div>

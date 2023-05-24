@@ -64,15 +64,25 @@
             </mat-form-field>
           </div>
           <div>
-            <button style="margin-left: 70px" mat-icon-button class="example-icon favorite-icon"
-                    (click)="changeVIewMode()">
+            <button class="example-icon"
+                    (click)="changeVIewMode('list')">
               <mat-icon>view_list</mat-icon>
-              <span class="button-text">Cambiar vista</span>
+              <span class="button-text">Lista</span>
             </button>
-            <button style="margin-left: 140px" mat-icon-button class="example-icon favorite-icon"
+            <button class="example-icon"
+                    (click)="changeVIewMode('board')">
+              <mat-icon>view_week</mat-icon>
+              <span class="button-text">Tablero</span>
+            </button>
+            <button class="example-icon"
                     (click)="openStats()">
               <mat-icon>bar_chart</mat-icon>
               <span class="button-text">Gráficos</span>
+            </button>
+            <button class="example-icon"
+                    (click)="openSettings()">
+              <mat-icon>settings</mat-icon>
+              <span class="button-text">Ajustes</span>
             </button>
           </div>
         </mat-toolbar-row>

@@ -44,6 +44,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import {MessageService} from "./services/message.service";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {FileExtensions} from "./file.model";
+import {BoardSettingsComponent} from "./boardSettings/board.settings.component";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 
 @NgModule({
@@ -57,7 +59,8 @@ import {FileExtensions} from "./file.model";
     DeleteElementDialogComponent,
     CopyOrMoveElementDialogComponent,
     TaskCardComponent,
-    TaskDetailsDialog
+    TaskDetailsDialog,
+    BoardSettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -88,7 +91,9 @@ import {FileExtensions} from "./file.model";
     ColorPickerModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatCheckboxModule
+
   ],
   providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService,MessageService,FileExtensions,
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }],

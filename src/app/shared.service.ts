@@ -5,12 +5,12 @@ import {BehaviorSubject} from 'rxjs';
   providedIn: 'root'
 })
 export class SharedService {
-  private buttonClickSource = new BehaviorSubject<boolean>(false);
+  private buttonClickSource = new BehaviorSubject<string>("");
   private buttonClickStatsSource = new BehaviorSubject<boolean>(false);
   buttonClickChangeView$ = this.buttonClickSource.asObservable();
   buttonClickStats$ = this.buttonClickStatsSource.asObservable();
 
-  notifyButtonClickChangeView(value:boolean) {
+  notifyButtonClickChangeView(value:string) {
     this.buttonClickSource.next(value);
   }
 
@@ -19,7 +19,7 @@ export class SharedService {
   }
 
   resetObservers(){
-    this.buttonClickSource = new BehaviorSubject<boolean>(false)
+    this.buttonClickSource = new BehaviorSubject<string>('')
     this.buttonClickStatsSource = new BehaviorSubject<boolean>(false)
     this.buttonClickChangeView$ = this.buttonClickSource.asObservable();
     this.buttonClickStats$ = this.buttonClickStatsSource.asObservable();

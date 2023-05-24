@@ -43,6 +43,7 @@ export class TaskDetailsDialog implements OnInit{
   boardId:string
   tagCtrl = new FormControl('');
   assigmentCtrl = new FormControl('');
+  lastSearchName?:string
 
   constructor(
     public dialogRef: MatDialogRef<TaskDetailsDialog>,
@@ -78,7 +79,9 @@ export class TaskDetailsDialog implements OnInit{
     this.assigmentCtrl.setValue(null);
 
     this.tagCtrl.valueChanges.subscribe(value=>{
-      this._filterTags(value)
+      if (value!=null){
+        this._filterTags((value as unknown as Tag).name)
+      }
     });
     this.tagCtrl.setValue(null);
     this._formatTaskDateEnd()
@@ -219,14 +222,15 @@ export class TaskDetailsDialog implements OnInit{
   selected(event: MatAutocompleteSelectedEvent): void {
     let tag = event.option.value
     if (tag==this.createTag){
-      this.createTagDialog(this.tagInput!!.nativeElement.value || '')
+      this.createTagDialog(this.lastSearchName || '')
+    }else{
+      this.tagService.addTagToTask(tag.id,this.task.id!!).subscribe(response=>{
+        if (response){
+          this.task.tag_ids?.push(tag);
+          this._filterTags(null)
+        }
+      })
     }
-    this.tagService.addTagToTask(tag.id,this.task.id!!).subscribe(response=>{
-      if (response){
-        this.task.tag_ids?.push(event.option.value);
-        this._filterTags(null)
-      }
-    })
     this.tagInput!!.nativeElement.value = '';
 
     this.tagCtrl.setValue(null);
@@ -372,6 +376,11 @@ export class TaskDetailsDialog implements OnInit{
       .catch((error) => {
         console.error(error);
       });
+  }
+
+  onInputChange(event: Event) {
+    this.lastSearchName = (event.target as HTMLInputElement).value;
+
   }
 }
 

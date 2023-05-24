@@ -1,7 +1,8 @@
+import {Rol} from "./rol.model";
+
 export interface User {
     id?: number;
     name: string;
-    rol?: string;
     password?:string;
     surname?:string;
     username?:string;
