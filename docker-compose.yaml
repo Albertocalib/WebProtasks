@@ -1,0 +1,32 @@
+version: '3'
+services:
+  web_protasks:
+    image: web_protasks
+    ports:
+      - 4200:4200
+    depends_on:
+      - backend
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+
+  backend:
+    image: backend
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/protasks?allowPublicKeyRetrieval=true&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+    depends_on:
+      - database
+  database:
+    image: mysql:8.0
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=protasks
+      - MYSQL_PASSWORD=root
