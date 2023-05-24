@@ -14,7 +14,7 @@
   box-sizing: border-box;
   margin: 30px 8px 30px 30px;
   flex-shrink: 0;
-  background: rgba(0, 0, 0, 0.03);
+  background: #00000007;
   padding: 8px;
 }
 .example-list .cdk-drop-list{

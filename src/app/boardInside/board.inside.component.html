@@ -2,7 +2,7 @@
   <div *ngIf="mode==='board'" cdkDropList [cdkDropListData]="taskLists" (cdkDropListDropped)="drop($event,'list')"
        cdkDropListOrientation="horizontal">
     <div cdkDropListGroup class="example-container">
-      <div cdkDrag *ngFor="let list of taskLists" class="example-list mat-elevation-z1">
+      <div cdkDrag *ngFor="let list of taskLists" class="example-list mat-elevation-z1" [style.backgroundColor]="board && board.wipActivated && list.title===board.wipList ? backgroundColor : '#00000007'">
         <div class="list-header">
           <span class="mat-h2">{{list.title}}</span>
           <span class="spacer"></span>
@@ -28,9 +28,14 @@
             </button>
           </mat-menu>
         </div>
-        <div class="card-list-content" cdkDropList [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
+
+        <div cdkDropList [cdkDropListEnterPredicate]="canDrop" *ngIf="board && board.wipActivated && list.title===board.wipList" class="card-list-content"   [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
           <task-card #taskCard *ngFor="let task of list.tasks" cdkDrag  [task]="task" (deleteTask)="deleteTask(task,list,false)"
                       (copyTask)="copyTask(task)" (moveTask)="moveTask(task,list)" (openTask)="openTask(task,false)"></task-card>
+        </div>
+        <div *ngIf="!(board && board.wipActivated && list.title===board.wipList)" class="card-list-content" cdkDropList  [cdkDropListData]="list.tasks" (cdkDropListDropped)="drop($event,'task',list)">
+          <task-card #taskCard *ngFor="let task of list.tasks" cdkDrag  [task]="task" (deleteTask)="deleteTask(task,list,false)"
+                     (copyTask)="copyTask(task)" (moveTask)="moveTask(task,list)" (openTask)="openTask(task,false)"></task-card>
         </div>
         <div fxLayout="row" fxLayoutAlign="baseline baseline">
           <button style="width: fit-content;" class="add-task" (click)="addTask(list)" color="primary"

@@ -47,6 +47,7 @@ import {FileExtensions} from "./file.model";
 import {BoardSettingsComponent} from "./boardSettings/board.settings.component";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {DatePipe} from "@angular/common";
+import {MatSnackBar, MatSnackBarModule} from "@angular/material/snack-bar";
 
 
 @NgModule({
@@ -93,7 +94,8 @@ import {DatePipe} from "@angular/common";
     MatDatepickerModule,
     MatNativeDateModule,
     MatAutocompleteModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSnackBarModule
 
   ],
   providers: [LoginService,AuthGuard,BoardService,TaskListService,TaskService,TagService,MessageService,FileExtensions,

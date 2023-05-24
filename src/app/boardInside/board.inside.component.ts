@@ -4,7 +4,7 @@ import {TaskList} from "../tasklist.model";
 import {Task} from "../task.model";
 import {TaskListService} from "../services/tasklist.service";
 import {TaskService} from "../services/task.service";
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {MatDialog} from "@angular/material/dialog";
 import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
 import {DeleteElementDialogComponent} from "../DeleteElementDialog/delete.element.dialog.component";
@@ -17,6 +17,7 @@ import {TaskDetailsDialog} from "../TaskDetailsDIalog/task.details.dialog.compon
 import {TaskCardComponent} from "../taskCard/taskCard.component";
 import {DatePipe} from "@angular/common";
 import {Board} from "../board.model";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -37,6 +38,8 @@ export class BoardInsideComponent implements OnInit {
   colorSchemaPie: Array<any>;
   @ViewChildren(TaskCardComponent) taskCards!:TaskCardComponent[];
   taskDeleted = new EventEmitter<void>();
+  wipLimit?:number
+  backgroundColor="#00000007"
   colors = {
       cycle: '#7f2a91',
       lead: '#07a5fa', // Colores personalizados
@@ -51,7 +54,8 @@ export class BoardInsideComponent implements OnInit {
     private sharedService: SharedService,
     private appComponent: AppComponent,
     public boardService: BoardService,
-    public datepipe: DatePipe
+    public datepipe: DatePipe,
+    private _snackBar: MatSnackBar
   ) {
     this.taskLists = []
     this.boardId = ""
@@ -80,6 +84,8 @@ export class BoardInsideComponent implements OnInit {
       if (this.taskLists.length > 0) {
         this.appComponent.board = this.taskLists[0].board
         this.board=this.taskLists[0].board
+        this.wipLimit=this.board?.wipLimit
+        console.log(this.wipLimit)
       }
     } catch (error) {
       console.log(error);
@@ -501,6 +507,24 @@ export class BoardInsideComponent implements OnInit {
       colors[list.title]=newColor
     }
     return colors
+  }
+
+  canDrop = (drag: CdkDrag, drop: CdkDropList) => {
+    // Return true if the list has less than wipLimit items or false otherwise
+    const canDrop = drop.data.length < this.wipLimit!!;
+    if (!canDrop){
+      this._snackBar.open('Se supera el límite máximo de WIP', 'Cerrar', {
+        duration: 2000,
+      });
+      let previousColor = this.backgroundColor;
+      // Cambiar el color actual al nuevo color
+      this.backgroundColor = "red";
+      // Después de 5 segundos, restaurar el color anterior
+      setTimeout(() => {
+        this.backgroundColor = previousColor;
+      }, 2000);
+    }
+    return canDrop
   }
 }
 
