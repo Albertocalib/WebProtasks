@@ -6,7 +6,8 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "serve-docker": "ng serve --host 0.0.0.0 --poll 2000 --port 4200 --disable-host-check --proxy-config proxy.conf.docker.json"
   },
   "private": true,
   "dependencies": {
