@@ -29,6 +29,7 @@ export class BoardInsideComponent implements OnInit {
   subscriptionOnOpenStats: Subscription | undefined
   subscription: Subscription | undefined
   userData: Array<any>
+  cycleGraphData: Array<any>;
   @ViewChildren(TaskCardComponent) taskCards!:TaskCardComponent[];
   taskDeleted = new EventEmitter<void>();
 
@@ -46,6 +47,7 @@ export class BoardInsideComponent implements OnInit {
     this.boardId = ""
     this.mode = localStorage.getItem("viewMode") || "board"
     this.userData = new Array<any>()
+    this.cycleGraphData = new Array<any>()
   }
 
 
@@ -328,14 +330,26 @@ export class BoardInsideComponent implements OnInit {
       return taskList.tasks.some((t: Task) => t.id === task.id);
     });
   }
+  private _calculateDaysBetweenDates(date1: Date, date2: Date): number {
+    console.log(date1)
+    console.log(date2)
+    // Calculate the time difference in milliseconds
+    const timeDifference = date2.getTime() - date1.getTime();
+
+    // Convert milliseconds to days
+    return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+  }
 
   private openStats() {
     this.mode = 'stats'
     let taskDict: { [user: string]: { [state: string]: number } } = {};
     let noUser = "No asignado"
+    const tasks:Task[] = new Array<Task>;
     for (let list of this.taskLists) {
       let title = list.title;
       for (let task of list.tasks) {
+        tasks.push(task)
         let users = task.users ? task.users : [];
         if (users.length === 0) {
           taskDict[noUser] ??= {};
@@ -361,6 +375,50 @@ export class BoardInsideComponent implements OnInit {
       this.userData.push({name: user, statuses: userStatuses, total: userTotal});
     }
 
+    this.cycleGraphData = tasks.map(task => {
+        let dateStartCycle = task.date_start_cycle_time;
+        const dateStartLead = new Date(task.date_start_lead_time!!);
+        let dateEndCycle = task.date_end_cycle_time
+        let dateEndLead = task.date_end_lead_time
+
+        let nameCycle="Cycle time"
+        if (!dateEndCycle){
+          nameCycle+="* (En progreso)"
+          dateEndCycle = new Date()
+        }else{
+          dateEndCycle = new Date(dateEndCycle!!);
+
+        }
+        let nameLead="Lead time"
+        if (!dateEndLead){
+          nameLead+="* (En progreso)"
+          dateEndLead = new Date()
+        }else{
+          dateEndLead = new Date(dateEndLead!!);
+        }
+        let daysCycle=0
+        if (dateStartCycle){
+          dateStartCycle = new Date(dateStartCycle!!)
+          daysCycle = this._calculateDaysBetweenDates(dateStartCycle!!,dateEndCycle!!)
+        }else{
+          nameCycle="Cycle time* (No iniciado)"
+        }
+        const daysLead = this._calculateDaysBetweenDates(dateStartLead!!,dateEndLead!!)
+
+        return {
+            name: task.title,
+            series: [{name:nameCycle,
+                      value:daysCycle,
+                      extra: {start:task.date_start_cycle_time,
+                              end:task.date_end_cycle_time}
+                    },
+                    {name:nameLead,
+                      value:daysLead,
+                      extra: {start:task.date_start_lead_time,
+                              end:task.date_end_lead_time}
+                    }]
+          };
+      });
   }
 
   openTask(task: Task, subTaskMode:boolean) {

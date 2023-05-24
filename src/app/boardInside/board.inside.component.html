@@ -89,4 +89,22 @@
       <div class="pie-chart-label">{{ userD.name }}</div>
     </div>
   </div>
+  <div *ngIf="mode==='stats'">
+
+    <ngx-charts-bar-vertical-2d
+      [view]="[1500, 300]"
+      [animations]="true"
+      [results]="cycleGraphData"
+      [gradient]="false"
+      [xAxis]="true"
+      [yAxis]="true"
+      [legend]="true"
+      [showXAxisLabel]="true"
+      [showYAxisLabel]="true"
+      [xAxisLabel]="'Tarea'"
+      [yAxisLabel]="'Dias'"
+      [roundEdges]="true"
+      [rotateXAxisTicks]="false">
+    </ngx-charts-bar-vertical-2d>
+  </div>
 </div>
