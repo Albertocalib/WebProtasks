@@ -18,5 +18,9 @@ export interface Task {
     date_end?:Date
     priority?:Priority
     messages?:Array<Message>
+    date_start_cycle_time?:Date;
+    date_end_cycle_time?:Date;
+    date_start_lead_time?:Date;
+    date_end_lead_time?:Date;
 }
 

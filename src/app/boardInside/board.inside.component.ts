@@ -4,7 +4,7 @@ import {TaskList} from "../tasklist.model";
 import {Task} from "../task.model";
 import {TaskListService} from "../services/tasklist.service";
 import {TaskService} from "../services/task.service";
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {MatDialog} from "@angular/material/dialog";
 import {AddElementDialogComponent} from "../AddElementDialog/add.element.dialog.component";
 import {DeleteElementDialogComponent} from "../DeleteElementDialog/delete.element.dialog.component";
@@ -15,6 +15,9 @@ import {AppComponent} from "../app.component";
 import {BoardService} from "../services/board.service";
 import {TaskDetailsDialog} from "../TaskDetailsDIalog/task.details.dialog.component";
 import {TaskCardComponent} from "../taskCard/taskCard.component";
+import {DatePipe} from "@angular/common";
+import {Board} from "../board.model";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   templateUrl: './board.inside.component.html',
@@ -24,13 +27,23 @@ export class BoardInsideComponent implements OnInit {
   taskLists: TaskList[]
 
   boardId: string | null
+  board?:Board
   mode: string
   subscriptionOnChangeViewMode: Subscription | undefined
   subscriptionOnOpenStats: Subscription | undefined
   subscription: Subscription | undefined
   userData: Array<any>
+  cycleGraphData: Array<any>;
+  colorSchema: Array<any>;
+  colorSchemaPie: Array<any>;
   @ViewChildren(TaskCardComponent) taskCards!:TaskCardComponent[];
   taskDeleted = new EventEmitter<void>();
+  wipLimit?:number
+  backgroundColor="#00000007"
+  colors = {
+      cycle: '#7f2a91',
+      lead: '#07a5fa', // Colores personalizados
+    };
 
   constructor(
     public router: Router,
@@ -41,11 +54,16 @@ export class BoardInsideComponent implements OnInit {
     private sharedService: SharedService,
     private appComponent: AppComponent,
     public boardService: BoardService,
+    public datepipe: DatePipe,
+    private _snackBar: MatSnackBar
   ) {
     this.taskLists = []
     this.boardId = ""
     this.mode = localStorage.getItem("viewMode") || "board"
     this.userData = new Array<any>()
+    this.cycleGraphData = new Array<any>()
+    this.colorSchema = new Array<any>()
+    this.colorSchemaPie = new Array<any>()
   }
 
 
@@ -65,6 +83,9 @@ export class BoardInsideComponent implements OnInit {
       this.taskLists = await lastValueFrom(this.taskListService.getTaskLists(this.boardId!!));
       if (this.taskLists.length > 0) {
         this.appComponent.board = this.taskLists[0].board
+        this.board=this.taskLists[0].board
+        this.wipLimit=this.board?.wipLimit
+        console.log(this.wipLimit)
       }
     } catch (error) {
       console.log(error);
@@ -328,14 +349,25 @@ export class BoardInsideComponent implements OnInit {
       return taskList.tasks.some((t: Task) => t.id === task.id);
     });
   }
+  private _calculateDaysBetweenDates(date1: Date, date2: Date): number {
+    // Calculate the time difference in milliseconds
+    const timeDifference = date2.getTime() - date1.getTime();
+
+    // Convert milliseconds to days
+    return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+  }
 
   private openStats() {
     this.mode = 'stats'
     let taskDict: { [user: string]: { [state: string]: number } } = {};
     let noUser = "No asignado"
+    const tasks:Task[] = new Array<Task>;
+    const colors = this._getListColors()
     for (let list of this.taskLists) {
       let title = list.title;
       for (let task of list.tasks) {
+        tasks.push(task)
         let users = task.users ? task.users : [];
         if (users.length === 0) {
           taskDict[noUser] ??= {};
@@ -343,7 +375,7 @@ export class BoardInsideComponent implements OnInit {
           taskDict[noUser][title]++;
         }
         for (const user of users) {
-          let name = user.name;
+          let name = user.username!!;
           taskDict[name] ??= {};
           taskDict[name][title] ??= 0;
           taskDict[name][title]++;
@@ -356,17 +388,77 @@ export class BoardInsideComponent implements OnInit {
       let userTotal = 0;
       for (let state in taskDict[user]) {
         userStatuses.push({name: state, value: taskDict[user][state]});
+        this.colorSchemaPie.push(({name:state,value:colors[state]}))
         userTotal += taskDict[user][state];
       }
       this.userData.push({name: user, statuses: userStatuses, total: userTotal});
     }
+    if (this.board && this.board.timeActivated) {
+      this.cycleGraphData = tasks.map(task => {
+        let dateStartCycle = task.date_start_cycle_time;
+        const dateStartLead = new Date(task.date_start_lead_time!!);
+        let dateEndCycle = task.date_end_cycle_time
+        let dateEndLead = task.date_end_lead_time
 
+        let nameCycle = "Cycle time"
+        let dateStartCycleString = "Sin empezar"
+        let dateEndCycleString = "In Progress"
+        let dateStartLeadString = this.datepipe.transform(dateStartLead, 'dd-MM-yyyy')!!
+        let dateEndLeadString = "In Progress"
+
+        if (!dateEndCycle) {
+          dateEndCycle = new Date()
+        } else {
+          dateEndCycle = new Date(dateEndCycle!!);
+          dateEndCycleString = this.datepipe.transform(dateEndCycle, 'dd-MM-yyyy')!!
+
+        }
+        let nameLead = "Lead time"
+        if (!dateEndLead) {
+          dateEndLead = new Date()
+        } else {
+          dateEndLead = new Date(dateEndLead!!);
+          dateEndLeadString = this.datepipe.transform(dateEndLead, 'dd-MM-yyyy')!!
+        }
+        let daysCycle = 0
+        if (dateStartCycle) {
+          dateStartCycle = new Date(dateStartCycle!!)
+          dateStartCycleString = this.datepipe.transform(dateStartCycle, 'dd-MM-yyyy')!!
+          daysCycle = this._calculateDaysBetweenDates(dateStartCycle!!, dateEndCycle!!)
+        }
+        const daysLead = this._calculateDaysBetweenDates(dateStartLead!!, dateEndLead!!)
+        this.colorSchema.push({name: nameCycle, value: this.colors.cycle})
+        this.colorSchema.push({name: nameLead, value: this.colors.lead})
+        return {
+          name: task.title,
+          series: [{
+            name: nameCycle,
+            value: daysCycle,
+            extra: {
+              start: dateStartCycleString,
+              end: dateEndCycleString,
+              nameTooltip: `${nameCycle} · ${task.title}`
+            }
+          },
+            {
+              name: nameLead,
+              value: daysLead,
+              extra: {
+                start: dateStartLeadString,
+                end: dateEndLeadString,
+                nameTooltip: `${nameLead} · ${task.title}`
+              }
+            }]
+        };
+      });
+    }
   }
 
   openTask(task: Task, subTaskMode:boolean) {
     if (!this.taskCards.some(card=>card.matMenuTrigger.menuOpen)) {
       let dialogTaskDetails = this._dialog.open(TaskDetailsDialog, {
         width: '80%',
+        height: '85%',
         data: {task:task,boardId:this.boardId, subTaskMode:subTaskMode},
         panelClass: 'my-dialog-container',
         autoFocus: false
@@ -394,6 +486,46 @@ export class BoardInsideComponent implements OnInit {
     }
   }
 
+  private static _generateRandomColor() {
+    // Generar un número hexadecimal aleatorio entre 0 y 16777215
+    let numero = Math.floor(Math.random() * 16777216);
+    // Convertir el número a una cadena hexadecimal de 6 dígitos
+    let cadena = numero.toString(16).padStart(6, "0");
+    return "#" + cadena;
+  }
+  private _getListColors() {
+    let colors: { [list: string]: string } = {};
+
+    let colorUsed = new Set()
+    for (const list of this.taskLists) {
+      let newColor = BoardInsideComponent._generateRandomColor()
+      let hasColor= colorUsed.has(newColor)
+      while (hasColor){
+        newColor = BoardInsideComponent._generateRandomColor()
+      }
+      colorUsed.add(newColor)
+      colors[list.title]=newColor
+    }
+    return colors
+  }
+
+  canDrop = (drag: CdkDrag, drop: CdkDropList) => {
+    // Return true if the list has less than wipLimit items or false otherwise
+    const canDrop = drop.data.length < this.wipLimit!!;
+    if (!canDrop){
+      this._snackBar.open('Se supera el límite máximo de WIP', 'Cerrar', {
+        duration: 2000,
+      });
+      let previousColor = this.backgroundColor;
+      // Cambiar el color actual al nuevo color
+      this.backgroundColor = "red";
+      // Después de 5 segundos, restaurar el color anterior
+      setTimeout(() => {
+        this.backgroundColor = previousColor;
+      }, 2000);
+    }
+    return canDrop
+  }
 }
 
 

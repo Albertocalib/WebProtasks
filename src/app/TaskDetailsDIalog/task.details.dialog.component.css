@@ -1,3 +1,10 @@
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
 .task-header{
   display: flex;
   justify-content: space-between;
@@ -5,11 +12,19 @@
   background: rgba(0, 0, 0, 0.03);
   padding: 20px;
   border-bottom: 0.2rem solid orange;
+
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 .task-body{
   display: flex;
   justify-content: space-between;
   background: rgba(0, 0, 0, 0.03);
+  flex-grow: 1;
+  overflow-y: hidden;
+
 }
 .substasks-section hr{
   border-width: 0.1rem;
@@ -24,12 +39,13 @@
 .task-details-section{
   padding: 20px;
   border-right: 0.2rem solid orange;
+  overflow-y: auto;
 }
 .task-messages-section{
-  padding: 20px;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  position: relative;
+  padding: 10px;
 }
 .message-container {
   display: flex;
@@ -93,14 +109,21 @@
 .spacer {
   flex: 1;
 }
+.chatter-form {
+  overflow-y: auto;
+  max-height: calc(100vh - 50px);
+}
+
 .new-message-form {
+  position: sticky;
+  bottom: 0;
   background-color: #f5f5f5;
   padding: 10px;
   border-radius: 5px;
 }
 
 .new-message-field {
-  width: 100%;
+  width: 97%;
   min-height: 50px;
   resize: vertical;
   font-size: 16px;
