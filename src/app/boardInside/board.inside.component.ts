@@ -34,6 +34,7 @@ export class BoardInsideComponent implements OnInit {
   userData: Array<any>
   cycleGraphData: Array<any>;
   colorSchema: Array<any>;
+  colorSchemaPie: Array<any>;
   @ViewChildren(TaskCardComponent) taskCards!:TaskCardComponent[];
   taskDeleted = new EventEmitter<void>();
   colors = {
@@ -58,6 +59,7 @@ export class BoardInsideComponent implements OnInit {
     this.userData = new Array<any>()
     this.cycleGraphData = new Array<any>()
     this.colorSchema = new Array<any>()
+    this.colorSchemaPie = new Array<any>()
   }
 
 
@@ -342,8 +344,6 @@ export class BoardInsideComponent implements OnInit {
     });
   }
   private _calculateDaysBetweenDates(date1: Date, date2: Date): number {
-    console.log(date1)
-    console.log(date2)
     // Calculate the time difference in milliseconds
     const timeDifference = date2.getTime() - date1.getTime();
 
@@ -357,6 +357,7 @@ export class BoardInsideComponent implements OnInit {
     let taskDict: { [user: string]: { [state: string]: number } } = {};
     let noUser = "No asignado"
     const tasks:Task[] = new Array<Task>;
+    const colors = this._getListColors()
     for (let list of this.taskLists) {
       let title = list.title;
       for (let task of list.tasks) {
@@ -381,6 +382,7 @@ export class BoardInsideComponent implements OnInit {
       let userTotal = 0;
       for (let state in taskDict[user]) {
         userStatuses.push({name: state, value: taskDict[user][state]});
+        this.colorSchemaPie.push(({name:state,value:colors[state]}))
         userTotal += taskDict[user][state];
       }
       this.userData.push({name: user, statuses: userStatuses, total: userTotal});
@@ -478,6 +480,28 @@ export class BoardInsideComponent implements OnInit {
     }
   }
 
+  private static _generateRandomColor() {
+    // Generar un número hexadecimal aleatorio entre 0 y 16777215
+    let numero = Math.floor(Math.random() * 16777216);
+    // Convertir el número a una cadena hexadecimal de 6 dígitos
+    let cadena = numero.toString(16).padStart(6, "0");
+    return "#" + cadena;
+  }
+  private _getListColors() {
+    let colors: { [list: string]: string } = {};
+
+    let colorUsed = new Set()
+    for (const list of this.taskLists) {
+      let newColor = BoardInsideComponent._generateRandomColor()
+      let hasColor= colorUsed.has(newColor)
+      while (hasColor){
+        newColor = BoardInsideComponent._generateRandomColor()
+      }
+      colorUsed.add(newColor)
+      colors[list.title]=newColor
+    }
+    return colors
+  }
 }
 
 
