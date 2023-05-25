@@ -53,17 +53,10 @@
           </button>
         </mat-toolbar-row>
         <mat-toolbar-row class="secondary-row" *ngIf="board" style="display: flex; align-items: center;">
-          <div>
+          <div (click)="openBoard(board)">
             <span>{{board.name}}</span>
           </div>
-          <div style="margin-left: 70px">
-            <mat-form-field floatLabel="never">
-              <mat-icon class="search-icon">search</mat-icon>
-              <input matInput />
-              <mat-label>Buscar...</mat-label>
-            </mat-form-field>
-          </div>
-          <div>
+          <div *ngIf="!settingsOpened">
             <button class="example-icon"
                     (click)="changeVIewMode('list')">
               <mat-icon>view_list</mat-icon>
@@ -83,6 +76,13 @@
                     (click)="openSettings()">
               <mat-icon>settings</mat-icon>
               <span class="button-text">Ajustes</span>
+            </button>
+          </div>
+          <div *ngIf="settingsOpened">
+            <button class="example-icon"
+                    (click)="openBoard(board)">
+              <mat-icon>arrow_back</mat-icon>
+              <span class="button-text">Volver</span>
             </button>
           </div>
         </mat-toolbar-row>

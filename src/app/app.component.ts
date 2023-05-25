@@ -15,6 +15,7 @@ export class AppComponent{
   title = "WebProtasks"
   boards: Board[] | undefined
   board: Board | undefined
+  settingsOpened:boolean=false
   @ViewChild("sidenav") sidenav!:MatSidenav;
 
   constructor(
@@ -42,6 +43,7 @@ export class AppComponent{
     this.router.navigate(["/"])
   }
   openBoard(board:Board){
+    this.settingsOpened=false
     this.board=board
     this.sharedService.resetObservers()
     this.router.navigate(['/board/'+board.id]);
@@ -96,6 +98,7 @@ export class AppComponent{
   }
 
   openSettings() {
+    this.settingsOpened=true
     this.router.navigate([`/board/${this.board?.id}/settings`]);
   }
 }
