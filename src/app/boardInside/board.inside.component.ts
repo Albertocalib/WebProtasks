@@ -515,6 +515,7 @@ export class BoardInsideComponent implements OnInit {
     if (!canDrop){
       this._snackBar.open('Se supera el límite máximo de WIP', 'Cerrar', {
         duration: 2000,
+        verticalPosition:"top"
       });
       let previousColor = this.backgroundColor;
       // Cambiar el color actual al nuevo color
