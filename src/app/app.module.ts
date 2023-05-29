@@ -48,6 +48,7 @@ import {BoardSettingsComponent} from "./boardSettings/board.settings.component";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {DatePipe} from "@angular/common";
 import {MatSnackBar, MatSnackBarModule} from "@angular/material/snack-bar";
+import {ProfilePhotoDialogComponent} from "./ProfilePhotoDialog/profile.photo.dialog.component";
 
 
 @NgModule({
@@ -62,7 +63,8 @@ import {MatSnackBar, MatSnackBarModule} from "@angular/material/snack-bar";
     CopyOrMoveElementDialogComponent,
     TaskCardComponent,
     TaskDetailsDialog,
-    BoardSettingsComponent
+    BoardSettingsComponent,
+    ProfilePhotoDialogComponent
   ],
   imports: [
     BrowserModule,

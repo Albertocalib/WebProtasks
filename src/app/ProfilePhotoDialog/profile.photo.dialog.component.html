@@ -1,0 +1,23 @@
+<mat-dialog-content>
+  <img *ngIf="!loginService.user?.photo" src="../assets/user-default.png" alt="Foto de perfil">
+  <img *ngIf="loginService.user?.photo" src="data:image/png;base64,{{loginService.user?.photo?.substring(1, loginService.user?.photo?.length!! - 1)}}" alt="Foto de perfil">
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="example-icon" (click)="downloadPhoto()">
+    <mat-icon>download</mat-icon>
+    <span>Descargar</span>
+  </button>
+  <button class="example-icon" (click)="f_input.click()" >
+    <input
+      type="file"
+      hidden
+      [multiple]="false"
+      accept="image/*"
+      #f_input
+      (change)="editPhoto(f_input.files)"
+    />
+    <mat-icon>edit</mat-icon>
+    <span>Editar</span>
+  </button>
+  <button mat-button mat-dialog-close >Cerrar</button>
+</mat-dialog-actions>

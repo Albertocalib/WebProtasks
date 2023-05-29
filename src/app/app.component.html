@@ -1,31 +1,10 @@
 <mat-sidenav-container fullscreen>
   <mat-sidenav #sidenav mode="side">
     <div class="sidenav-content">
-      <a class="profile-pic" href="#openImage">
+      <a class="profile-pic" (click)="openProfilePic()">
         <img *ngIf="!loginService.user?.photo" src="../assets/user-default.png" alt="Foto de perfil">
         <img *ngIf="loginService.user?.photo" src="data:image/png;base64,{{loginService.user?.photo?.substring(1, loginService.user?.photo?.length!!- 1)}}" alt="Foto de perfil">
       </a>
-      <div class="lightbox-target" id="openImage">
-        <img *ngIf="!loginService.user?.photo" src="../assets/user-default.png" alt="Foto de perfil">
-        <img *ngIf="loginService.user?.photo" src="data:image/png;base64,{{loginService.user?.photo?.substring(1, loginService.user?.photo?.length!! - 1)}}" alt="Foto de perfil">
-        <a class="lightbox-close" href="#">
-          <mat-icon class="center">close</mat-icon>
-        </a>
-        <button class="lightbox-download" (click)="downloadPhoto()">
-          <mat-icon>download</mat-icon>
-        </button>
-        <button class="lightbox-edit" (click)="f_input.click()" >
-          <input
-            type="file"
-            hidden
-            [multiple]="false"
-            accept="image/*"
-            #f_input
-            (change)="editPhoto(f_input.files)"
-          />
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
       <mat-nav-list>
         <h1>Tableros</h1>
         <a *ngFor="let board of boards" mat-list-item (click)="openBoard(board)"> {{board.name}} </a>

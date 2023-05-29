@@ -4,6 +4,8 @@ import {LoginService} from "./services/logIn.service";
 import {Board} from "./board.model";
 import {SharedService} from "./shared.service";
 import {MatSidenav} from "@angular/material/sidenav";
+import {MatDialog} from "@angular/material/dialog";
+import {ProfilePhotoDialogComponent} from "./ProfilePhotoDialog/profile.photo.dialog.component";
 
 
 @Component({
@@ -22,6 +24,7 @@ export class AppComponent{
     public router: Router,
     public loginService: LoginService,
     private sharedService: SharedService,
+    private dialog:MatDialog
   )
   {
   }
@@ -49,57 +52,16 @@ export class AppComponent{
     this.router.navigate(['/board/'+board.id]);
   }
 
-  async downloadPhoto() {
-    const link = document.createElement('a');
-    const photo = this.loginService.user?.photo
-    if (photo != null) {
-      link.href = `data:image/png;base64,${photo?.substring(1, photo.length - 1)}`;
-    } else {
-      link.href = await this.fileToBase64('../assets/user-default.png');
-    }
-    const currentTimeMillis = new Date().getTime();
-    link.download = `${this.loginService.user?.username}-${currentTimeMillis}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  editPhoto(l: FileList | null): void  {
-    if (l != null && l.length) {
-      const f = l[0];
-      const imageType = /^image\//;
-
-      if (!imageType.test(f.type)) {
-        alert('Por favor seleccione solo archivos de imagen');
-        return;
-      }
-      let reader = new FileReader();
-      reader.readAsDataURL(f);
-      reader.onload = () => {
-        let photo = (reader.result as string).split(',')[1];
-        this.loginService.updatePhoto(photo).subscribe(updatedUser => {
-          if (updatedUser) {
-            this.loginService.setCurrentUser(updatedUser);
-          }
-        });
-      };
-    }
-  }
-
-  async fileToBase64(route: string): Promise<string> {
-    const response = await fetch(route);
-    const blob = await response.blob();
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
 
   openSettings() {
     this.settingsOpened=true
     this.router.navigate([`/board/${this.board?.id}/settings`]);
+  }
+
+  openProfilePic() {
+    const dialogRef = this.dialog.open(ProfilePhotoDialogComponent, { width: '80vw',
+      height: '75vh',
+    });
   }
 }
 
