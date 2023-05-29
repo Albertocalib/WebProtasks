@@ -354,7 +354,8 @@ export class BoardInsideComponent implements OnInit {
     const timeDifference = date2.getTime() - date1.getTime();
 
     // Convert milliseconds to days
-    return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
+    return days > 0 ? days : 0;
 
   }
 

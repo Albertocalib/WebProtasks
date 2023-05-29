@@ -104,19 +104,33 @@
           </mat-form-field>
         </div>
         <div class="substasks-section">
-          <h3>Subtareas:</h3>
+          <div class="button-aligned-title">
+            <h3>Subtareas:</h3>
+            <button (click)="createSubTask()">
+              <span>Nueva Subtarea</span>
+            </button>
+          </div>
           <hr>
           <ul>
             <li *ngFor="let subtask of task.subTasks" (click)="openSubTask(subtask)">
               <span class="task-title">{{ subtask.title }}</span>
             </li>
-            <li (click)="createSubTask()" class="createSubTaskButton">
-              <span class="task-title">Crear nueva Subtarea</span>
-            </li>
           </ul>
         </div>
         <div class="attachments-section">
-          <h3>Adjuntos:</h3>
+          <div class="button-aligned-title">
+            <h3>Adjuntos:</h3>
+            <button (click)="f_input.click()">
+              <input
+                type="file"
+                hidden
+                [multiple]="true"
+                #f_input
+                (change)="addAttachments(f_input.files)"
+              />
+              <span>Nuevo Adjunto</span>
+            </button>
+          </div>
           <hr>
           <div class="flex-me">
             <mat-card *ngFor="let attachment of task.attachments" (click)="downloadAttachment(attachment)">
@@ -127,25 +141,10 @@
                 </div>
               </mat-card-content>
             </mat-card>
-
-            <mat-card (click)="f_input.click()" >
-              <input
-                type="file"
-                hidden
-                [multiple]="true"
-                #f_input
-                (change)="addAttachments(f_input.files)"
-              />
-              <mat-card-content>
-                <div class="board-header">
-                  <span class="mat-h2">Añadir adjunto</span>
-                  <span class="spacer"></span>
-                </div>
-              </mat-card-content>
-            </mat-card>
           </div>
         </div>
       </div>
+
     <div class="task-messages-section example-full-width">
       <div class="chatter-form">
         <div  *ngFor="let message of task.messages">
@@ -181,6 +180,7 @@
         </div>
       </div>
       </div>
+      <hr>
       <form (ngSubmit)="addMessage()" #newMessageForm="ngForm" class="new-message-form">
         <div class="form-group">
           <label for="message">Nuevo comentario:</label>
