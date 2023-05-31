@@ -11,7 +11,7 @@ install:
 
 script:
   - npm run build --prod
-  - npm run test
+  - npm run test --watch=false
 
 deploy:
   provider: pages
