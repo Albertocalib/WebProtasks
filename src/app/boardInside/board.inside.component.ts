@@ -50,7 +50,7 @@ export class BoardInsideComponent implements OnInit {
     public taskListService: TaskListService,
     private activateRoute: ActivatedRoute,
     public taskService: TaskService,
-    private _dialog: MatDialog,
+    public _dialog: MatDialog,
     private sharedService: SharedService,
     private appComponent: AppComponent,
     public boardService: BoardService,
@@ -85,7 +85,6 @@ export class BoardInsideComponent implements OnInit {
         this.appComponent.board = this.taskLists[0].board
         this.board=this.taskLists[0].board
         this.wipLimit=this.board?.wipLimit
-        console.log(this.wipLimit)
       }
     } catch (error) {
       console.log(error);
