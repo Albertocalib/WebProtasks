@@ -2,6 +2,7 @@ import { Component} from '@angular/core';
 import {LoginService} from "../services/logIn.service";
 import {Router} from "@angular/router";
 import {User} from "../user.model";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'signUp-component',
@@ -19,7 +20,8 @@ export class SignUpComponent {
 
   constructor(
     public loginService: LoginService,
-    public router: Router
+    public router: Router,
+    public snackBar: MatSnackBar
   )
   {
     this.userRegister={name:"",surname:"",password:"",username:"",email:""}
@@ -32,7 +34,10 @@ export class SignUpComponent {
       },
       (error) => {
         console.log(error);
-        alert('Invalid user or password');
+        this.snackBar.open('Usuario o Contraseña Incorrecto', 'Cerrar', {
+          duration: 2000,
+          verticalPosition:"top"
+        });
       },
     );
 
@@ -40,7 +45,10 @@ export class SignUpComponent {
   signUp(){
     this.loginService.register(this.userRegister).subscribe(
       (u:User)=>{
-        alert("Cuenta creada satisfactoriamente");
+        this.snackBar.open('Cuenta creada satisfactoriamente', 'Cerrar', {
+          duration: 2000,
+          verticalPosition:"top"
+        });
         this.router.navigate(['/logIn']);
       },error1 => console.log(error1)
     )

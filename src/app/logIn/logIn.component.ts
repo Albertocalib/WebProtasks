@@ -1,6 +1,7 @@
 import { Component} from '@angular/core';
 import {LoginService} from "../services/logIn.service";
 import {Router} from "@angular/router";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -15,7 +16,8 @@ export class LogInComponent{
 
   constructor(
     public loginService: LoginService,
-    public router: Router
+    public router: Router,
+    public snackBar: MatSnackBar
   )
   {
 
@@ -28,7 +30,10 @@ export class LogInComponent{
       },
       (error) => {
         console.log(error);
-        alert('Invalid user or password');
+        this.snackBar.open('Invalid user or password', 'Cerrar', {
+          duration: 2000,
+          verticalPosition:"top"
+        });
       },
     );
 

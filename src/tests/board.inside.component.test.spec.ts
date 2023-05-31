@@ -18,14 +18,14 @@ import { DatePipe } from '@angular/common';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 import { BoardInsideComponent } from '../app/boardInside/board.inside.component';
-import {from, lastValueFrom, of} from "rxjs";
+import {from, lastValueFrom, of, throwError} from "rxjs";
 import SpyObj = jasmine.SpyObj;
+import createSpyObj = jasmine.createSpyObj;
 
 describe('BoardInsideComponent', () => {
   let component: BoardInsideComponent;
   let router: Router;
   let taskListService: TaskListService;
-  let taskService: TaskService;
   let dialog: MatDialog;
   let sharedService: SharedService;
   let appComponent: AppComponent;
@@ -34,6 +34,7 @@ describe('BoardInsideComponent', () => {
   let tasklistServiceMock: SpyObj<TaskListService>
   let boardServiceMock: SpyObj<BoardService>
   let dialogMock: SpyObj<MatDialog>
+  let taskServiceMock: SpyObj<TaskService>
 
 
   beforeEach(() => {
@@ -46,7 +47,8 @@ describe('BoardInsideComponent', () => {
           subscribe: function (callback: ReturnType<any>) {
             callback({id: 2, title: 'Task List 2', tasks: []})
           }
-        }
+        },
+        updatePosition:{}
       });
     boardServiceMock = jasmine.createSpyObj('BoardService', ['getBoards']);
     dialogMock = jasmine.createSpyObj('MatDialog', {
@@ -60,6 +62,7 @@ describe('BoardInsideComponent', () => {
         }
       }
     });
+    taskServiceMock = createSpyObj("TaskService",["updatePosition"])
     TestBed.configureTestingModule({
       declarations: [BoardInsideComponent],
       providers: [
@@ -73,7 +76,7 @@ describe('BoardInsideComponent', () => {
         },
         {
           provide: TaskService,
-          useValue: { updatePosition: jasmine.createSpy('updatePosition').and.returnValue({}) }
+          useValue: taskServiceMock
         },
         {
           provide: MatDialog,
@@ -112,13 +115,13 @@ describe('BoardInsideComponent', () => {
     component = TestBed.createComponent(BoardInsideComponent).componentInstance;
     router = TestBed.inject(Router);
     taskListService = TestBed.inject(TaskListService);
-    taskService = TestBed.inject(TaskService);
     dialog = TestBed.inject(MatDialog);
     sharedService = TestBed.inject(SharedService);
     appComponent = TestBed.inject(AppComponent);
     datePipe = TestBed.inject(DatePipe);
     snackBar = TestBed.inject(MatSnackBar);
     boardServiceMock.getBoards.and.returnValue(of([]));
+    spyOn(console, 'log');
   });
 
   it('should create the component', () => {
@@ -158,4 +161,47 @@ describe('BoardInsideComponent', () => {
     expect(taskListService.createList).toHaveBeenCalled();
     expect(component.taskLists.length).toEqual(2);
   });
+
+  it('should update the position of a task', () => {
+    const id = 1;
+    const position = 2;
+    const listId = 3;
+    taskServiceMock.updatePosition.and.returnValue(of({} as Task));
+
+    component.updatePositionTask(id, position, listId);
+
+    expect(taskServiceMock.updatePosition).toHaveBeenCalledWith(id, position, listId);
+  });
+
+  it('should handle the error when updating task position', () => {
+    const id = 1;
+    const position = 2;
+    const listId = 3;
+    const error = 'Error updating task position';
+    taskServiceMock.updatePosition.and.returnValue(throwError(error));
+    component.updatePositionTask(id, position, listId);
+    expect(taskServiceMock.updatePosition).toHaveBeenCalledWith(id, position, listId);
+    expect(console.log).toHaveBeenCalledWith(error);
+  });
+
+  it('should update the position of a task list', () => {
+    const id = 1;
+    const position = 2;
+    tasklistServiceMock.updatePosition.and.returnValue(of({} as TaskList));
+    component.updatePositionTaskList(id, position);
+    expect(taskListService.updatePosition).toHaveBeenCalledWith(id, position);
+  });
+
+  it('should handle the error when updating task list position', () => {
+    const id = 1;
+    const position = 2;
+    const error = 'Error updating task list position';
+    tasklistServiceMock.updatePosition.and.returnValue(throwError(error));
+    component.updatePositionTaskList(id, position);
+
+    expect(taskListService.updatePosition).toHaveBeenCalledWith(id, position);
+    expect(console.log).toHaveBeenCalledWith(error);
+  });
+
+
 });
