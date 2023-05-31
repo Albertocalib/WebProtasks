@@ -1,6 +1,9 @@
 language: node_js
 node_js:
   - "16"
+dist: xenial
+services:
+  - xvfb
 
 cache:
   directories:
@@ -11,7 +14,7 @@ install:
 
 script:
   - npm run build --prod
-  - npm run test --watch=false
+  - karma start --browsers Firefox --single-run
 
 deploy:
   provider: pages
