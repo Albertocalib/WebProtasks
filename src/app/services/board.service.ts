@@ -33,7 +33,6 @@ export class BoardService {
       'Content-Type': 'application/json',
     });
     let url=`${BASE_URL}newBoard/username=${this.user.username}`
-    console.log(url)
     return this.http.post<Board>(url, board, {headers}).pipe(
       map(response => response),
       catchError(error => this.handleError(error))
