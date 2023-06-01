@@ -17,10 +17,11 @@ describe('BoardService', () => {
       imports: [HttpClientTestingModule],
       providers: [BoardService]
     });
+
+    mockUser = { username: 'testuser1', name:'test' };
+    localStorage.setItem('currentUser',JSON.stringify(mockUser))
     service = TestBed.inject(BoardService);
     httpMock = TestBed.inject(HttpTestingController);
-    mockUser = { username: 'testuser', name:'test' };
-    localStorage.setItem('currentUser',JSON.stringify(mockUser))
   });
 
   afterEach(() => {
@@ -47,6 +48,8 @@ describe('BoardService', () => {
   });
 
   it('should create a board', () => {
+    mockUser = { username: 'testuser1', name:'test' };
+    localStorage.setItem('currentUser',JSON.stringify(mockUser))
     const mockBoard: Board = { id: 1, name: 'Board 1', photo:'' };
     const expectedUrl = `${BASE_URL}newBoard/username=${mockUser.username}`;
 

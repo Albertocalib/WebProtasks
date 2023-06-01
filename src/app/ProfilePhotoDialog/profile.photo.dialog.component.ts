@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {LoginService} from "../services/logIn.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   templateUrl: './profile.photo.dialog.component.html',
@@ -7,9 +8,11 @@ import {LoginService} from "../services/logIn.service";
 })
 export class ProfilePhotoDialogComponent {
   constructor(
-    public loginService:LoginService
+    public loginService:LoginService,
+    public snackBar: MatSnackBar
 
-  ) {}
+
+) {}
 
   async downloadPhoto() {
     const link = document.createElement('a');
@@ -32,7 +35,10 @@ export class ProfilePhotoDialogComponent {
       const imageType = /^image\//;
 
       if (!imageType.test(f.type)) {
-        alert('Por favor seleccione solo archivos de imagen');
+        this.snackBar.open('Por favor seleccione solo archivos de imagen', 'Cerrar', {
+          duration: 2000,
+          verticalPosition:"top"
+        });
         return;
       }
       let reader = new FileReader();

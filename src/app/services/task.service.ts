@@ -29,7 +29,6 @@ export class TaskService {
       'Content-Type': 'application/json',
     });
     let url=`${BASE_URL}newTask/listId=${listId}`
-    console.log(url)
     return this.http.post<Task>(url, task, {headers}).pipe(
         map(response => response),
         catchError(error => TaskService.handleError(error))
