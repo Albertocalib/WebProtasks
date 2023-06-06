@@ -1,6 +1,6 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { MatSelect } from '@angular/material/select';
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, Validators } from '@angular/forms';
 import {AddElementDialogComponent} from "../app/AddElementDialog/add.element.dialog.component";

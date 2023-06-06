@@ -426,7 +426,7 @@ export class BoardInsideComponent implements OnInit {
           dateStartCycleString = this.datepipe.transform(dateStartCycle, 'dd-MM-yyyy')!!
           daysCycle = this._calculateDaysBetweenDates(dateStartCycle, dateEndCycle)
         }
-        const daysLead = this._calculateDaysBetweenDates(dateStartLead!!, dateEndLead)
+        const daysLead = this._calculateDaysBetweenDates(dateStartLead, dateEndLead)
         this.colorSchema.push({name: nameCycle, value: this.colors.cycle})
         this.colorSchema.push({name: nameLead, value: this.colors.lead})
         return {

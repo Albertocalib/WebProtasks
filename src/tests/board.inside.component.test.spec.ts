@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AppComponent } from '../app/app.component';
 import { AddElementDialogComponent } from '../app/AddElementDialog/add.element.dialog.component';
 import { BoardService } from '../app/services/board.service';
@@ -20,13 +19,7 @@ import createSpyObj = jasmine.createSpyObj;
 
 describe('BoardInsideComponent', () => {
   let component: BoardInsideComponent;
-  let router: Router;
   let taskListService: TaskListService;
-  let dialog: MatDialog;
-  let sharedService: SharedService;
-  let appComponent: AppComponent;
-  let datePipe: DatePipe;
-  let snackBar: MatSnackBar;
   let tasklistServiceMock: SpyObj<TaskListService>
   let boardServiceMock: SpyObj<BoardService>
   let dialogMock: SpyObj<MatDialog>
@@ -109,13 +102,7 @@ describe('BoardInsideComponent', () => {
     });
 
     component = TestBed.createComponent(BoardInsideComponent).componentInstance;
-    router = TestBed.inject(Router);
     taskListService = TestBed.inject(TaskListService);
-    dialog = TestBed.inject(MatDialog);
-    sharedService = TestBed.inject(SharedService);
-    appComponent = TestBed.inject(AppComponent);
-    datePipe = TestBed.inject(DatePipe);
-    snackBar = TestBed.inject(MatSnackBar);
     boardServiceMock.getBoards.and.returnValue(of([]));
     spyOn(console, 'log');
   });

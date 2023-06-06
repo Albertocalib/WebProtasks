@@ -17,7 +17,6 @@ describe('TaskCardComponent', () => {
   let fixture: ComponentFixture<TaskCardComponent>;
   let tagService: TagService;
   let taskService: TaskService;
-  let dialog: MatDialog;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -36,7 +35,6 @@ describe('TaskCardComponent', () => {
     component = fixture.componentInstance;
     tagService = TestBed.inject(TagService);
     taskService = TestBed.inject(TaskService);
-    dialog = TestBed.inject(MatDialog);
 
     // Mock task data
     component.task = {
