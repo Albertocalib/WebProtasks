@@ -61,13 +61,13 @@ export class TaskDetailsDialog implements OnInit{
     this.boardId=data.boardId
     this.selectedPriority= this.task.priority ? this.task.priority : Priority.NO_PRIORITY
     this.currentUser = JSON.parse(<string>localStorage.getItem('currentUser'));
-    this.tagService.getTagsInBoard(Number(this.boardId!!)).subscribe(response =>{
+    this.tagService.getTagsInBoard(+this.boardId).subscribe(response =>{
       if (response){
         this.boardTags=response
         this._filterTags(null)
       }
     })
-    this.loginService.getUsersInBoard(+this.boardId!!).subscribe(response =>{
+    this.loginService.getUsersInBoard(+this.boardId).subscribe(response =>{
       if (response){
         this.boardUsers=response
         this._filterAssigments(null)
