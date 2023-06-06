@@ -6,19 +6,15 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponent } from '../app/app.component';
 import { AddElementDialogComponent } from '../app/AddElementDialog/add.element.dialog.component';
 import { BoardService } from '../app/services/board.service';
-import { CopyOrMoveElementDialogComponent } from '../app/CopyOrMoveElementDialog/copyOrMove.element.dialog.component';
-import { DeleteElementDialogComponent } from '../app/DeleteElementDialog/delete.element.dialog.component';
 import { SharedService } from '../app/shared.service';
 import { Task } from '../app/task.model';
 import { TaskList } from '../app/tasklist.model';
-import { TaskCardComponent } from '../app/taskCard/taskCard.component';
 import { TaskListService } from '../app/services/tasklist.service';
 import { TaskService } from '../app/services/task.service';
 import { DatePipe } from '@angular/common';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 import { BoardInsideComponent } from '../app/boardInside/board.inside.component';
-import {from, lastValueFrom, of, throwError} from "rxjs";
+import { of, throwError} from "rxjs";
 import SpyObj = jasmine.SpyObj;
 import createSpyObj = jasmine.createSpyObj;
 

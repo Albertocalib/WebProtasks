@@ -10,14 +10,12 @@ import { MatIconModule } from "@angular/material/icon";
 import {of, throwError} from "rxjs";
 import {MatInputModule} from "@angular/material/input";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {Router} from "@angular/router";
 
 describe('LogInComponent', () => {
   let component: LogInComponent;
   let fixture: ComponentFixture<LogInComponent>;
   let mockLoginService: jasmine.SpyObj<LoginService>;
   let mockSnackBar: jasmine.SpyObj<MatSnackBar>;
-  let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
     mockLoginService = jasmine.createSpyObj('LoginService', ['logIn']);

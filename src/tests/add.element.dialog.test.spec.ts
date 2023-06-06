@@ -3,8 +3,6 @@ import { MatSelect } from '@angular/material/select';
 import { Component, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, Validators } from '@angular/forms';
-import { createCanvas } from 'canvas';
-import { LoginService } from '../app/services/logIn.service';
 import {AddElementDialogComponent} from "../app/AddElementDialog/add.element.dialog.component";
 
 @Component({

@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { MessageService } from '../app/services/message.service';
-import { User } from '../app/user.model';
 import { Message } from '../app/message.model';
 import { environment } from '../environments/environment';
 import {Task} from "../app/task.model";

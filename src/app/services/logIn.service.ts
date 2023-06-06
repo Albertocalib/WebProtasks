@@ -4,7 +4,6 @@ import {catchError, map} from 'rxjs/operators';
 import {User} from "../user.model";
 import {Observable, throwError} from "rxjs";
 import {environment} from "../../environments/environment";
-import {Tag} from "../tag.model";
 
 const BASE_URL = environment.apiEndpoint + "/user/";
 
