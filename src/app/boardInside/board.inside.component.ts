@@ -59,7 +59,7 @@ export class BoardInsideComponent implements OnInit {
   ) {
     this.taskLists = []
     this.boardId = ""
-    this.mode = localStorage.getItem("viewMode") || "board"
+    this.mode = localStorage.getItem("viewMode") ?? "board"
     this.userData = new Array<any>()
     this.cycleGraphData = new Array<any>()
     this.colorSchema = new Array<any>()
@@ -393,7 +393,7 @@ export class BoardInsideComponent implements OnInit {
       }
       this.userData.push({name: user, statuses: userStatuses, total: userTotal});
     }
-    if (this.board && this.board.timeActivated) {
+    if (this.board?.timeActivated) {
       this.cycleGraphData = tasks.map(task => {
         let dateStartCycle = task.date_start_cycle_time;
         const dateStartLead = new Date(task.date_start_lead_time!!);
@@ -409,7 +409,7 @@ export class BoardInsideComponent implements OnInit {
         if (!dateEndCycle) {
           dateEndCycle = new Date()
         } else {
-          dateEndCycle = new Date(dateEndCycle!!);
+          dateEndCycle = new Date(dateEndCycle);
           dateEndCycleString = this.datepipe.transform(dateEndCycle, 'dd-MM-yyyy')!!
 
         }
@@ -417,16 +417,16 @@ export class BoardInsideComponent implements OnInit {
         if (!dateEndLead) {
           dateEndLead = new Date()
         } else {
-          dateEndLead = new Date(dateEndLead!!);
+          dateEndLead = new Date(dateEndLead);
           dateEndLeadString = this.datepipe.transform(dateEndLead, 'dd-MM-yyyy')!!
         }
         let daysCycle = 0
         if (dateStartCycle) {
-          dateStartCycle = new Date(dateStartCycle!!)
+          dateStartCycle = new Date(dateStartCycle)
           dateStartCycleString = this.datepipe.transform(dateStartCycle, 'dd-MM-yyyy')!!
-          daysCycle = this._calculateDaysBetweenDates(dateStartCycle!!, dateEndCycle!!)
+          daysCycle = this._calculateDaysBetweenDates(dateStartCycle, dateEndCycle)
         }
-        const daysLead = this._calculateDaysBetweenDates(dateStartLead!!, dateEndLead!!)
+        const daysLead = this._calculateDaysBetweenDates(dateStartLead!!, dateEndLead)
         this.colorSchema.push({name: nameCycle, value: this.colors.cycle})
         this.colorSchema.push({name: nameLead, value: this.colors.lead})
         return {

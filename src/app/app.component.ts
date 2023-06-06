@@ -59,7 +59,7 @@ export class AppComponent{
   }
 
   openProfilePic() {
-    const dialogRef = this.dialog.open(ProfilePhotoDialogComponent, { width: '80vw',
+    this.dialog.open(ProfilePhotoDialogComponent, { width: '80vw',
       height: '75vh',
     });
   }

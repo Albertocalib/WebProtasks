@@ -190,7 +190,7 @@ export class TaskDetailsDialog implements OnInit{
   }
 
   async addTag(event: MatChipInputEvent) {
-    await this.createTagDialog(event.value || '')
+    this.createTagDialog(event.value ?? '')
     event.chipInput!.clear();
 
     this.tagCtrl.setValue(null);
@@ -222,7 +222,7 @@ export class TaskDetailsDialog implements OnInit{
   selected(event: MatAutocompleteSelectedEvent): void {
     let tag = event.option.value
     if (tag==this.createTag){
-      this.createTagDialog(this.lastSearchName || '')
+      this.createTagDialog(this.lastSearchName ?? '')
     }else{
       this.tagService.addTagToTask(tag.id,this.task.id!!).subscribe(response=>{
         if (response){
@@ -338,9 +338,8 @@ export class TaskDetailsDialog implements OnInit{
     let setFiles = new Set<FileModel>();
     let filePromises: Promise<void>[] = [];
 
-    for (let i = 0; i < files.length; i++) {
-      const file: File = files[i];
-      let reader = new FileReader();
+    for (const file of Array.from(files) as File[]) {
+      const reader = new FileReader();
       reader.readAsDataURL(file);
 
       const promise = new Promise<void>((resolve, reject) => {

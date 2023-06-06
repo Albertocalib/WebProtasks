@@ -30,7 +30,7 @@ import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
 import {DeleteElementDialogComponent} from "./DeleteElementDialog/delete.element.dialog.component";
 import {CopyOrMoveElementDialogComponent} from "./CopyOrMoveElementDialog/copyOrMove.element.dialog.component";
-import {MAT_DATE_LOCALE, MatOptionModule} from "@angular/material/core";
+import {MAT_DATE_LOCALE, MatOptionModule,MatNativeDateModule} from "@angular/material/core";
 import {MatSelectModule} from "@angular/material/select";
 import {TaskCardComponent} from "./taskCard/taskCard.component";
 import {MatChipsModule} from "@angular/material/chips";
@@ -40,14 +40,13 @@ import {TaskDetailsDialog} from "./TaskDetailsDIalog/task.details.dialog.compone
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {ColorPickerModule} from "ngx-color-picker";
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import {MessageService} from "./services/message.service";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {FileExtensions} from "./file.model";
 import {BoardSettingsComponent} from "./boardSettings/board.settings.component";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {DatePipe} from "@angular/common";
-import {MatSnackBar, MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {ProfilePhotoDialogComponent} from "./ProfilePhotoDialog/profile.photo.dialog.component";
 
 
