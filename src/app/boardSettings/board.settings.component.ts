@@ -3,7 +3,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {BoardService} from "../services/board.service";
 import {lastValueFrom} from "rxjs";
 import {TaskListService} from "../services/tasklist.service";
-import {TaskService} from "../services/task.service";
 import {MatDialog} from "@angular/material/dialog";
 import {SharedService} from "../shared.service";
 import {AppComponent} from "../app.component";
@@ -42,7 +41,6 @@ export class BoardSettingsComponent implements OnInit {
     public router: Router,
     public taskListService: TaskListService,
     private activateRoute: ActivatedRoute,
-    public taskService: TaskService,
     private _dialog: MatDialog,
     private sharedService: SharedService,
     private appComponent: AppComponent,
