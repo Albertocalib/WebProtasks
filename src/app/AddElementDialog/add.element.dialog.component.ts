@@ -47,11 +47,10 @@ export class AddElementDialogComponent{
     this.dialogRef.close(false);
   }
   onImgSelected(l: FileList|null): void {
-    if (l != null && l.length) {
+    if (l?.length) {
       const f = l[0];
-      const imageType = /^image\//;
 
-      if (!imageType.test(f.type)) {
+      if (!f.type.startsWith('image')){
         alert('Por favor seleccione solo archivos de imagen');
         return;
       }

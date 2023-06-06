@@ -30,11 +30,10 @@ export class ProfilePhotoDialogComponent {
   }
 
   editPhoto(l: FileList | null): void  {
-    if (l != null && l.length) {
+    if (l?.length) {
       const f = l[0];
-      const imageType = /^image\//;
 
-      if (!imageType.test(f.type)) {
+      if (!f.type.startsWith('image')) {
         this.snackBar.open('Por favor seleccione solo archivos de imagen', 'Cerrar', {
           duration: 2000,
           verticalPosition:"top"

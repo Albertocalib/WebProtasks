@@ -176,21 +176,12 @@ li {
   align-items: center;
 }
 
-mat-card {
-  height: 110px;
-  width: 110px;
-  margin: 7px;
-}
-
 .board-img-card{
   width: 80px;
   height: 80px;
   margin: auto;
 }
 
-.spacer {
-  flex: 1;
-}
 
 .board-header{ display: flex}
 
