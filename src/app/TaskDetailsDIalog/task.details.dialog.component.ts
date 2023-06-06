@@ -37,8 +37,8 @@ export class TaskDetailsDialog implements OnInit{
   filteredTags?:Array<Tag>
   separatorKeysCodes: number[] = [ENTER];
   createTag:Tag = {name:'Crear nueva Etiqueta'}
-  @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement> | undefined;
-  @ViewChild('assigmentInput') assigmentInput: ElementRef<HTMLInputElement> | undefined;
+  @ViewChild('tagInput') tagInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('assigmentInput') assigmentInput?: ElementRef<HTMLInputElement>;
   task:Task
   boardId:string
   tagCtrl = new FormControl('');
