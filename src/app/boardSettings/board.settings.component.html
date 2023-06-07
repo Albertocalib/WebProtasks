@@ -5,7 +5,7 @@
       <mat-checkbox color="primary" [(ngModel)]="enableCycleLeadTimeCalculation" (change)="timeChanged()">Activar
         cálculo del ciclo y lead time
       </mat-checkbox>
-      <table *ngIf="enableCycleLeadTimeCalculation">
+      <table *ngIf="enableCycleLeadTimeCalculation" aria-label="Cycle Lead Time Calculation">
         <thead>
         <tr>
           <th>Inicio</th>

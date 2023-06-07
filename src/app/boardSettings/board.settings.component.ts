@@ -55,8 +55,8 @@ export class BoardSettingsComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.activateRoute.params.subscribe(_ => {
-      this.initialization()
+    this.activateRoute.params.subscribe(async _ => {
+      await this.initialization()
     });
   }
 

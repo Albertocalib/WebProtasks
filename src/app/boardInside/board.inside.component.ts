@@ -68,8 +68,8 @@ export class BoardInsideComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.subscription = this.activateRoute.params.subscribe(_ => {
-      this.initialization()
+    this.subscription = this.activateRoute.params.subscribe(async _ => {
+      await this.initialization()
     });
   }
 
