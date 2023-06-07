@@ -488,9 +488,11 @@ export class BoardInsideComponent implements OnInit {
 
   private static _generateRandomColor() {
     // Generar un número hexadecimal aleatorio entre 0 y 16777215
-    let numero = Math.floor(Math.random() * 16777216);
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    const randomNumber = array[0] % 16777216;
     // Convertir el número a una cadena hexadecimal de 6 dígitos
-    let cadena = numero.toString(16).padStart(6, "0");
+    let cadena = randomNumber.toString(16).padStart(6, "0");
     return "#" + cadena;
   }
   private _getListColors() {

@@ -4,7 +4,12 @@ FROM node:16-alpine
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-COPY . .
+COPY angular.json ./
+COPY tsconfig.json ./
+COPY src/ ./src/
+COPY proxy.conf*.json ./
+COPY karma.conf.js ./
+
 # update alpine system and install dependencies to install canvas dependencies in npm install
 RUN apk update
 RUN apk add --no-cache \
@@ -20,9 +25,10 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev
 
-
-RUN npm install
+COPY --chown=node:node . /usr/src/app
+RUN npm install --ignore-scripts
 RUN npm run build --prod
 
 EXPOSE 4200
+USER node
 CMD [ "npm" , "run" , "serve-docker" ]
