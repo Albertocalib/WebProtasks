@@ -25,7 +25,13 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev
 
-COPY --chown=node:node . /usr/src/app
+COPY --chown=node:node angular.json /usr/src/app/
+COPY --chown=node:node tsconfig*.json /usr/src/app/
+COPY --chown=node:node karma.conf.js /usr/src/app/
+COPY --chown=node:node package*.json /usr/src/app/
+COPY --chown=node:node src/ /usr/src/app/src/
+RUN find /usr/src/app -type f -exec chmod a-w {} +
+
 RUN npm install --ignore-scripts
 RUN npm run build --prod
 
