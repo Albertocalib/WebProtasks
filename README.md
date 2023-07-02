@@ -15,7 +15,7 @@ Para desplegar la aplicación se han desarrollado dos Dockerfile, uno en el repo
      `docker build -t webProTasks .`
   3. Ejecutamos el docker-compose situado en la carpeta raíz de este proyecto para levantar los servicios.
      ` docker-compose up`
-  4. Una vez ejecutado el docker-compose up, bastará con abrir el navegador Web que se quiera en el puerto 3306. http://localhost:3306/
+  4. Una vez ejecutado el docker-compose up, bastará con abrir el navegador Web que se quiera en el puerto 4200. http://localhost:4200/
      
 
 
